@@ -3,6 +3,6 @@
 int main()
 {
     // Bonjour
-    // Nique tout !!
+    // Nique rien !!
     return 0;
 }
