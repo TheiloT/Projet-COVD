@@ -2,7 +2,7 @@
 
 int main()
 {
-    // Bonjour
+    // Bonjour le monde
     // Nique rien !!
     return 0;
 }
