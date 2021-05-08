@@ -7,5 +7,11 @@ find_package(Imagine REQUIRED)
 project(projet-COVD)
 
 add_executable(main
-               main.cpp)
+               main.cpp
+               Personnage.cpp
+               Personnage.h
+               Map.cpp
+               Map.h
+               Point.cpp
+               Point.h)
 ImagineUseModules(main Images)
