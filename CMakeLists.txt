@@ -8,6 +8,7 @@ project(projet-COVD)
 
 add_executable(main
                main.cpp
+               Correspondance.h
                Personnage.cpp
                Personnage.h
                Map.cpp

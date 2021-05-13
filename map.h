@@ -14,8 +14,8 @@ class Map
 public:
     int H; // Hauteur
     int L; // Longueur
-    MultiArray<int, 2> grille; // Grille d'entiers
-    int x0, y0; // Position initiale du joueur
+    MultiArray<int, 2> grille_blocs; // Grille des types de blocs
+    MultiArray<int, 2> grille_couleurs; // Grille des couleurs
 
     void drawCase(int x, int y, int taille_case);
 

@@ -49,7 +49,7 @@ int Map::get_case(int x, int y){
 
 void Map::load(int k){
 
-    string const nomFichier("C:/Ecole_des_Ponts/Atelier de programmation/Projet-COVD/Niveaux.txt");
+    string const nomFichier("Niveaux.txt");
     ifstream flux(nomFichier.c_str());
 
     if(flux)

@@ -15,7 +15,7 @@ void affiche_grille(int H, int L, int taille_case){ // Affiche une grille de la 
     }
 }
 
-void Creer_map(string nom_map, int L, int H, int taille_case){
+void creer_map(string nom_map, int L, int H, int taille_case){
     Window w = openWindow(L*taille_case, H*taille_case);
     setActiveWindow(w);
     affiche_grille(H, L, taille_case);
@@ -77,7 +77,7 @@ int main()
     int taille_case = 16;
     openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 
-    // Construction d'une map ala main
+    // Construction d'une map à la main
     Map map(H, L);
     for (int x=0; x<L; x++){
             map.set_case(x, 20, 1); // Murs
@@ -85,8 +85,8 @@ int main()
     }
     map.set_case(5, 18, 1);
     map.set_case(30, 19, 1);
-    map.set_case(28, 20, 2); // Case de saut
-    map.set_case(42, 20, 2); // Case de saut
+    map.set_case(29, 20, 2); // Case de saut
+    map.set_case(43, 20, 2); // Case de saut
     map.set_case(45, 16, 2); // Case de saut
     map.set_case(42, 16, 0); // Trou
     map.set_case(43, 16, 0); // Trou
@@ -110,7 +110,7 @@ int main()
     map.load(3); // Charge la map dans le fichier Niveaux.txt
     map.affiche(18);
     map.x0 = 0;
-    map.y0 = 0;
+    map.y0 = 18;
     Personnage perso(map.x0, map.y0, vitesse);
     run (perso, map, taille_case, g, deltat); // Joue le niveau
 
