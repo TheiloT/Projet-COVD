@@ -60,7 +60,6 @@ void run (Personnage perso, Map map, int taille_case, float g, int deltat){ // J
     while (    perso.est_vivant()
             && !perso.est_arrive() ){
 
-        clearWindow();
         map.affiche(taille_case); // Affichage de la map
         perso.affiche(taille_case); // Affichage du perso
         perso.gravite(g); // Modifie la vitesse
