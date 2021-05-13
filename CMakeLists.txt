@@ -13,5 +13,6 @@ add_executable(main
                Map.cpp
                Map.h
                Point.cpp
-               Point.h)
+               Point.h
+               Niveaux.txt)
 ImagineUseModules(main Images)

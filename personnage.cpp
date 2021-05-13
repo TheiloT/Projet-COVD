@@ -19,6 +19,8 @@ Personnage::Personnage(int x0, int y0, float vitesse){
     vivant = true;
     arrive = false;
     actualiser_coins();
+    x_change_dir = -1;
+    y_change_dir = -1;
 }
 
 bool Personnage::est_vivant(){
@@ -47,7 +49,7 @@ void Personnage::collision(Map map){
         int y_c = floor(coin.y);
         int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
 
-        if (k == 1){
+        if (k == 1 || k == 2 || k == 4){
 
             int x_c_prev = floor(coin.x - vx);
             int y_c_prev = floor(coin.y - vy);
@@ -125,7 +127,7 @@ void Personnage::gravite(float g){
 
 void Personnage::interragit(Map map){
 
-    const float vitesse_saut = 0.25;
+    const float vitesse_saut = 0.42;
     const float marge_hitbox = 0.01;
 
     if (    map.get_case(floor(x), floor(y + 1 + marge_hitbox)) == 2
@@ -134,5 +136,27 @@ void Personnage::interragit(Map map){
         vy = -vitesse_saut;
 
     }
+
+    if (    map.get_case(floor(x), floor(y + 1 + marge_hitbox)) == 4 ){ // Retour arrière par la droite
+
+         if (    x_change_dir != floor(x)
+              || y_change_dir != floor(y + 1 + marge_hitbox) ){
+
+             vx = -vx;
+             x_change_dir = floor(x);
+             y_change_dir = floor(y + 1 + marge_hitbox);
+         }
+    }
+    if (    map.get_case(floor(x+1), floor(y + 1 + marge_hitbox)) == 4 ){ // Retour arrière par la gauche
+
+         if (    x_change_dir != floor(x+1)
+              || y_change_dir != floor(y + 1 + marge_hitbox) ){
+
+             vx = -vx;
+             x_change_dir = floor(x+1);
+             y_change_dir = floor(y + 1 + marge_hitbox);
+         }
+    }
+
 }
 

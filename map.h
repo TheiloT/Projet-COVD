@@ -4,6 +4,10 @@
 #include <Imagine/Images.h>
 using namespace Imagine;
 
+#include<iostream>
+#include <fstream>
+using namespace std;
+
 
 class Map
 {
@@ -16,9 +20,10 @@ public:
     void drawCase(int x, int y, int taille_case);
 
     Map(int h, int l);
-    void affiche(int taille_case);
+    void affiche(int taille_case); // Affiche la map
     void set_case(int x, int y, int k); // Attribut la valeur k à la case (x,y)
-    int get_case(int x, int y);
+    int get_case(int x, int y); // Donne la valeur de la case (x,y)
+    void load(int k); // Charge une map
 };
 
 #endif // MAP_H
