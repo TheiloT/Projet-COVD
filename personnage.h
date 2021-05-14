@@ -31,6 +31,7 @@ class Personnage {
 public:
     Personnage(const Map &map); // Initialise le personnage
     int get_couleur() const;
+    void set_couleur(int k);
     bool est_vivant() const;
     bool est_arrive() const;
     bool est_sur_terre(const Map &map) const;

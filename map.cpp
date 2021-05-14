@@ -11,7 +11,7 @@ Map::Map(int h, int l)
     grille_couleurs.fill(neutre);
 }
 
-void drawTriangle(int j, int i, int k, int taille_case){
+void drawTriangle(int j, int i, int k, int taille_case, int couleur){
 
     int x = j*taille_case;
     int y = i*taille_case;
@@ -35,59 +35,133 @@ void drawTriangle(int j, int i, int k, int taille_case){
     int yg = y;
     int yh = y + demi;
 
+    Color color;
+    if (couleur == bleu){
+        color = BLUE;
+    }
+    else if (couleur == rouge){
+        color = RED;
+    }
+    else if (couleur == vert){
+        color = GREEN;
+    }
+    else{
+        color = BLACK;
+    }
+
     if (k == pic_bas){
         int liste_points[6] = {xa, ya, xc, yc, xf, yf};
-        fillPoly(liste_points, 3, BLACK);
+        fillPoly(liste_points, 3, color);
     }
 
     else if (k == pic_droite){
         int liste_points[6] = {xc, yc, xe, ye, xh, yh};
-        fillPoly(liste_points, 3, BLACK);
+        fillPoly(liste_points, 3, color);
     }
 
     else if (k == pic_haut){
         int liste_points[6] = {xg, yg, xe, ye, xb, yb};
-        fillPoly(liste_points, 3, BLACK);
+        fillPoly(liste_points, 3, color);
     }
 
     else{
         int liste_points[6] = {xg, yg, xa, ya, xd, yd};
-        fillPoly(liste_points, 3, BLACK);
+        fillPoly(liste_points, 3, color);
     }
 
 
 }
 
+void drawLave(int x, int y, int taille_case, int bloc){
+    if (bloc == lave_totale) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, ORANGE);
+    else{
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        fillRect(x*taille_case, (y+1)*taille_case, taille_case, -0.6666 * taille_case, ORANGE);
+    }
+}
+
 void Map::drawCase(int x, int y, int taille_case) const{
 
     int bloc = grille_blocs(x,y);
+    int couleur = grille_couleurs(x, y);
 
-    if (grille_blocs(x,y) == vide){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE); // Il n'y a rien
+    if (bloc == vide) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE); // Il n'y a rien
+
+    else if (bloc == mur_non_modif) {
+        // Couleur du bloc
+        if (couleur == neutre) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK);
+
+        else if (couleur == rouge) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
+
+        else if (couleur == vert) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN);
+
+        else if (couleur == bleu) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLUE);
     }
 
-    else if (grille_blocs(x,y) == mur_modif || grille_blocs(x,y) == mur_non_modif){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK); // Le sol en noir
+    else if (bloc == mur_modif) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, PURPLE); // On représente pour l'instant les blocs modifiables en violet
+
+    else if (bloc == porte_entree){
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        drawCircle(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, (5.0/8.0)*taille_case-2, CYAN, 2);
+        drawCircle(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, (3.0/8.0)*taille_case-2, CYAN, 2);
+        drawPoint(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, CYAN);
     }
 
-    else if (grille_blocs(x,y) == saut){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN); // Les sauts en vert
+    else if (bloc == porte_sortie){
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        fillRect(x*taille_case, y*taille_case+(1.0/2.0)*taille_case, taille_case-1, (1.0/2.0)*taille_case, ORANGE);
+        fillCircle(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, (1.0/2.0)*taille_case-1, ORANGE);
+        fillCircle(x*taille_case+(3.0/4.0)*taille_case-1, y*taille_case+(3.0/5.0)*taille_case, (1.0/10.0)*taille_case, BLACK);
     }
 
-    else if (grille_blocs(x,y) == porte_sortie){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, YELLOW); // La fin en jaune
+    else if (est_dans(bloc, effets_couleur)){
+            fillRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, WHITE);
+            drawRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, BLACK);
+            if (bloc == rend_neutre) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, BLACK);
+            else if (bloc == rend_rouge) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, RED);
+            else if (bloc == rend_vert) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, GREEN);
+            else if (bloc == rend_bleu) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, BLUE);
+        }
+
+    else if (bloc == saut){
+        fillRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, WHITE);
+        drawRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, BLACK);
+        fillRect(x*taille_case+(1.0/7.0+5.0/28.0)*taille_case, y*taille_case+(1.0/9.0+7.0/18.0)*taille_case,
+                 (7.0/18.0)*taille_case, (5.0/14.0)*taille_case, PURPLE); // Base de la fleche epaisse
+        int coord_triangle[6] = {int(x*taille_case+(1.0/7.0)*taille_case), int(y*taille_case+(1.0/9.0+7.0/18.0)*taille_case),
+                                 int(x*taille_case+(1.0/2.0)*taille_case), int(y*taille_case+(1.0/9.0)*taille_case),
+                                 int(x*taille_case+(6.0/7.0)*taille_case), int(y*taille_case+(1.0/9.0+7.0/18.0)*taille_case)}; // coordonnées x1, y1, x2, y2, x3, y3.
+        fillPoly(coord_triangle, 3, PURPLE);
     }
 
-    else if (grille_blocs(x,y) == porte_entree){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, ORANGE); // Le debut en orange
-    }
+    else if (bloc == retour_arriere){
+        fillRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, WHITE);
+        drawRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, BLACK);
 
-    else if (grille_blocs(x,y) == retour_arriere){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, PURPLE); // Les retours arriere en purple
+        // fleche vers la droite
+        drawLine(x*taille_case+(1.0/4.0)*taille_case, y*taille_case+(1.0/3.0)*taille_case,
+                 x*taille_case+(3.0/4.0)*taille_case, y*taille_case+(1.0/3.0)*taille_case, PURPLE, 2);
+        int coord_triangle1[6] = {int(x*taille_case+(3.0/4.0)*taille_case+1), int(y*taille_case+(1.0/3.0)*taille_case),
+                                 int(x*taille_case+(3.0/4.0)*taille_case-(1.0/6.0)*taille_case), int(y*taille_case+(1.0/3.0)*taille_case-(1.0/4.0)*taille_case),
+                                 int(x*taille_case+(3.0/4.0)*taille_case-(1.0/6.0)*taille_case), int(y*taille_case+(1.0/3.0)*taille_case+(1.0/4.0)*taille_case)};
+        fillPoly(coord_triangle1, 3, PURPLE);
+
+        // fleche vers la gauche
+        drawLine(x*taille_case+(1.0/4.0)*taille_case, y*taille_case+(2.0/3.0)*taille_case+1,
+                 x*taille_case+(3.0/4.0)*taille_case, y*taille_case+(2.0/3.0)*taille_case+1, PURPLE, 2);
+        int coord_triangle2[6] = {int(x*taille_case+(1.0/4.0)*taille_case)-1, int(y*taille_case+(2.0/3.0)*taille_case+1),
+                                 int(x*taille_case+(1.0/4.0)*taille_case+(1.0/6.0)*taille_case), int(y*taille_case+(2.0/3.0)*taille_case-(1.0/4.0)*taille_case+1),
+                                 int(x*taille_case+(1.0/4.0)*taille_case+(1.0/6.0)*taille_case), int(y*taille_case+(2.0/3.0)*taille_case+(1.0/4.0)*taille_case+1)};
+        fillPoly(coord_triangle2, 3, PURPLE);
     }
 
     else if ( est_dans (bloc, pics) ){
-        drawTriangle (x, y, bloc, taille_case);
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        drawTriangle (x, y, bloc, taille_case, couleur);
+    }
+
+    else if ( est_dans(bloc, laves) ){
+        drawLave(x, y, taille_case, bloc);
     }
 }
 
@@ -122,7 +196,7 @@ void Map::load(int k){
 
     if(flux)
     {
-        for(int n=0; n<k; n++){
+        for(int n=0; n<k; n++){ // Boucle: on lit tous les niveaux avant le niveau k
             string map_name;
             flux >> map_name;
             int h,l;
@@ -131,6 +205,12 @@ void Map::load(int k){
             for (int x=0; x<L; x++){
                 for (int y=0; y<H; y++){
                     int valeur = get_case(x, y);
+                    flux >> valeur;
+                }
+            }
+            for (int x=0; x<L; x++){
+                for (int y=0; y<H; y++){
+                    int valeur = get_couleur(x, y);
                     flux >> valeur;
                 }
             }
@@ -148,6 +228,13 @@ void Map::load(int k){
                 int valeur = get_case(x, y);
                 flux >> valeur;
                 grille_blocs(x, y) = valeur;
+            }
+        }
+        for (int x=0; x<L; x++){
+            for (int y=0; y<H; y++){
+                int valeur = get_couleur(x, y);
+                flux >> valeur;
+                grille_couleurs(x, y) = valeur;
             }
         }
     }

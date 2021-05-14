@@ -33,6 +33,10 @@ int Personnage:: get_couleur() const{
     return couleur;
 }
 
+void Personnage:: set_couleur(int k){
+    couleur = k;
+}
+
 bool Personnage::est_vivant() const{
     return vivant;
 }
@@ -50,9 +54,8 @@ bool Personnage::il_y_a_de_la_terre_en_dessous(const Map &map) const{
         int y_d = floor(detecteur.y);
         int k = map.get_case(x_d, y_d); // Contenu de la case dans laquelle se trouve le detecteur
 
-        assertion =    est_dans(k, murs)
-                    || est_dans(k, effets_action)
-                    || est_dans(k, effets_couleur);
+        assertion =      (  est_dans(k, murs) || est_dans(k, effets ))
+                      && ( couleur != map.grille_couleurs(x_d, y_d) || couleur == neutre ) ;
         i+=1;
     }
     return assertion;
@@ -97,7 +100,7 @@ void Personnage::collision( const Map &map){
         int y_c = floor(coin.y);
         int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
 
-        if (     (couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
+        if (     ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
                  &&
                  ( est_dans(k, murs)
                 || est_dans(k, effets_action)
@@ -176,7 +179,17 @@ void Personnage::cherche_sortie(const Map &map){
 }
 
 void Personnage::affiche(int taille_case) const{
-    fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
+    if (couleur == neutre) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK);
+
+    else if (couleur == rouge) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
+
+    else if (couleur == vert) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN);
+
+    else if (couleur == bleu) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLUE);
+
+    drawLine(x*taille_case+1, y*taille_case+1, x*taille_case+taille_case-1, y*taille_case+taille_case-1, WHITE, 2);
+
+    drawLine(x*taille_case+1, y*taille_case+taille_case-1, x*taille_case+taille_case-1, y*taille_case+1, WHITE, 2);
 }
 
 void Personnage::gravite(){
@@ -213,6 +226,13 @@ void Personnage::interragit(const Map &map){
             retourner_en_arriere(x_d, y_d);
         }
 
+        if (est_dans(k, effets_couleur)){
+            if (k==rend_neutre) set_couleur(neutre);
+            if (k==rend_rouge) set_couleur(rouge);
+            if (k==rend_vert) set_couleur(vert);
+            if (k==rend_bleu) set_couleur(bleu);
+        }
+
         i+=1;
     }
 }
@@ -241,6 +261,30 @@ bool collision_pic(float x, float y, int k){
     return ( a_gauche || a_droite);
 }
 
+bool collision_lave(float y, int k){
+    if (k == lave_totale){
+        return true;
+    }
+    else{
+        return y - floor(y) > 0.3333;
+    }
+}
+
+bool est_coin_oppose (int i, int k){
+    if (k == pic_bas){
+        return (i == 1 || i == 3);
+    }
+    else if (k == pic_haut){
+        return (i == 0 || i == 2);
+    }
+    else if (k == pic_droite){
+        return (i == 0 || i == 1);
+    }
+    else{
+        return (i == 2 || i == 3);
+    }
+}
+
 void Personnage::collision_obstacle(const Map &map){ // gere les collisions avec les obstacles
     int i = 0;
     while (i<4 && vivant){
@@ -249,12 +293,20 @@ void Personnage::collision_obstacle(const Map &map){ // gere les collisions avec
         int y_c = floor(coin.y);
         int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
 
-        if ( ! est_dans(k, pics) ){
-            return;
+        if ( est_dans(k, pics) ){
+
+            if (      est_coin_oppose(i, k)
+                 && ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )){
+                vivant = false;
+            }
+            if (    ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
+                 && collision_pic(coin.x, coin.y, k) ){
+                vivant = false;
+            }
         }
 
-        if (    ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
-             && collision_pic(coin.x, coin.y, k) ){
+        else if (    est_dans(k, laves)
+                  && collision_lave(coin.y, k) ){
             vivant = false;
         }
 

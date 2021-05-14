@@ -16,7 +16,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     setActiveWindow(w);
     affiche_grille(H, L, taille_case);
     Map map(H,L);
-    int N_case = 11;
+    int N_case = 13;
     int i, j;
     while( getMouse(j, i) != 3 ){
         int x = floor(j/taille_case);
@@ -37,7 +37,13 @@ void creer_map(string nom_map, int L, int H, int taille_case){
             flux << L << endl;
             for (int x=0; x<L; x++){
                 for (int y=0; y<H; y++){
-                    flux << map.get_case(x, y) << " ";
+                    flux << map.get_case(x, y) << " "; // Ecriture de grille_blocs
+                }
+            }
+            flux << endl;
+            for (int x=0; x<L; x++){
+                for (int y=0; y<H; y++){
+                    flux << map.get_couleur(x, y) << " "; // Ecriture de grille_couleurs
                 }
             }
             flux << endl;
@@ -55,7 +61,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
 
 void run (const Map &map, int taille_case){ // Joue le niveau
 
-    int deltat = 10; // Regle la vitesse d'affichage
+    int deltat = 20; // Regle la vitesse d'affichage
 
     Personnage perso (map);
 
@@ -89,6 +95,16 @@ void construire_map_a_la_main(Map map, int H, int L){
             map.set_case(x, 20, mur_non_modif); // Murs
             map.set_case(x, 16, mur_non_modif);
     }
+    map.set_case(7, 20, rend_rouge); // rend rouge
+
+    // Murs rouges
+    map.set_case(11, 19, mur_non_modif);
+    map.set_case(11, 18, mur_non_modif);
+    map.set_case(11, 17, mur_non_modif);
+    map.set_couleur(11, 19, rouge);
+    map.set_couleur(11, 18, rouge);
+    map.set_couleur(11, 17, rouge);
+
     map.set_case(3, 18, mur_non_modif);
     map.set_case(6, 17, mur_non_modif);
     map.set_case(6, 18, pic_haut); // pic
@@ -97,6 +113,7 @@ void construire_map_a_la_main(Map map, int H, int L){
     map.set_case(42, 20, saut); // Case de saut
     map.set_case(45, 16, saut); // Case de saut
     map.set_case(43, 19, pic_bas); // pic
+    map.set_couleur(40, 15, rouge); // pic rouge
     map.set_case(40, 15, pic_bas);
     map.set_case(41, 16, vide); // Trou
     map.set_case(42, 16, vide); // Trou
@@ -105,26 +122,40 @@ void construire_map_a_la_main(Map map, int H, int L){
     map.set_case(49, 16, retour_arriere); // Case de retour arrière
     // Position initiale du joueur
     map.set_case(0, 19, porte_entree);
-    map.set_case(3, 15, pic_bas); // pic
+    map.set_case(3, 15, pic_bas); // pic vert
+    map.set_couleur(3, 15, vert);
     // Case de fin
-    map.set_case(1, 15, porte_sortie);
+    map.set_case(3, 17, porte_sortie);
+    // Rend vert
+    map.set_case(20, 16, rend_vert);
+    // Blocs verts
+    map.set_couleur(3, 16, vert);
+    map.set_couleur(4, 16, vert);
+    map.set_couleur(2, 16, vert);
+    // Lave
+    map.set_case(45, 19, mur_non_modif);
+    map.set_case(46, 19, lave_partiel);
+    map.set_case(47, 19, lave_partiel);
+    map.set_case(48, 19, lave_partiel);
+    map.set_case(49, 19, mur_non_modif);
+
 }
 
 int main()
 {
     int H = 30;
     int L = 55;
-    int taille_case = 16;
+    int taille_case = 24;
     openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 
     Map map(H, L);
     construire_map_a_la_main(map, H, L);
     run (map, taille_case);
 
-//    creer_map("Ma_map", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
+//    creer_map("test_graphismes", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
 
 //    Map map(H, L);
-//    map.load(5); // Charge la map dans le fichier Niveaux.txt
+//    map.load(0); // Charge la map dans le fichier Niveaux.txt
 //    run (map, taille_case); // Joue le niveau
 
     endGraphics();
