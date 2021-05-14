@@ -74,6 +74,7 @@ void run (const Map &map, int taille_case){ // Joue le niveau
         }
         perso.actualise_position(); // Modifie la position grace a la vitesse
         perso.collision(map); // Gere les collisions
+        perso.collision_obstacle(map); // Gere les collisions avec les obstacles
         perso.cherche_sortie(map); // Sort si touche la porte de sortie
         perso.interragit(map); // Gere les interractions avec les blocs en dessous
 
@@ -88,11 +89,15 @@ void construire_map_a_la_main(Map map, int H, int L){
             map.set_case(x, 20, mur_non_modif); // Murs
             map.set_case(x, 16, mur_non_modif);
     }
-    map.set_case(5, 18, mur_non_modif);
+    map.set_case(3, 18, mur_non_modif);
+    map.set_case(6, 17, mur_non_modif);
+    map.set_case(6, 18, pic_haut); // pic
     map.set_case(30, 19, mur_non_modif);
     map.set_case(29, 20, saut); // Case de saut
     map.set_case(42, 20, saut); // Case de saut
     map.set_case(45, 16, saut); // Case de saut
+    map.set_case(43, 19, pic_bas); // pic
+    map.set_case(40, 15, pic_bas);
     map.set_case(41, 16, vide); // Trou
     map.set_case(42, 16, vide); // Trou
     map.set_case(43, 16, vide); // Trou
@@ -100,6 +105,7 @@ void construire_map_a_la_main(Map map, int H, int L){
     map.set_case(49, 16, retour_arriere); // Case de retour arrière
     // Position initiale du joueur
     map.set_case(0, 19, porte_entree);
+    map.set_case(3, 15, pic_bas); // pic
     // Case de fin
     map.set_case(1, 15, porte_sortie);
 }
@@ -111,15 +117,15 @@ int main()
     int taille_case = 16;
     openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 
-//    Map map(H, L);
-//    construire_map_a_la_main(map, H, L);
-//    run (map, taille_case);
+    Map map(H, L);
+    construire_map_a_la_main(map, H, L);
+    run (map, taille_case);
 
 //    creer_map("Ma_map", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
 
-    Map map(H, L);
-    map.load(5); // Charge la map dans le fichier Niveaux.txt
-    run (map, taille_case); // Joue le niveau
+//    Map map(H, L);
+//    map.load(5); // Charge la map dans le fichier Niveaux.txt
+//    run (map, taille_case); // Joue le niveau
 
     endGraphics();
     return 0;

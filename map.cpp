@@ -11,7 +11,56 @@ Map::Map(int h, int l)
     grille_couleurs.fill(neutre);
 }
 
+void drawTriangle(int j, int i, int k, int taille_case){
+
+    int x = j*taille_case;
+    int y = i*taille_case;
+    int demi = taille_case/2;
+
+    int xa = x;
+    int xb = x + demi;
+    int xc = x + taille_case;
+    int xd = x + taille_case;
+    int xe = x + taille_case;
+    int xf = x + demi;
+    int xg = x;
+    int xh = x;
+
+    int ya = y + taille_case;
+    int yb = y + taille_case;
+    int yc = y + taille_case;
+    int yd = y + demi;
+    int ye = y;
+    int yf = y;
+    int yg = y;
+    int yh = y + demi;
+
+    if (k == pic_bas){
+        int liste_points[6] = {xa, ya, xc, yc, xf, yf};
+        fillPoly(liste_points, 3, BLACK);
+    }
+
+    else if (k == pic_droite){
+        int liste_points[6] = {xc, yc, xe, ye, xh, yh};
+        fillPoly(liste_points, 3, BLACK);
+    }
+
+    else if (k == pic_haut){
+        int liste_points[6] = {xg, yg, xe, ye, xb, yb};
+        fillPoly(liste_points, 3, BLACK);
+    }
+
+    else{
+        int liste_points[6] = {xg, yg, xa, ya, xd, yd};
+        fillPoly(liste_points, 3, BLACK);
+    }
+
+
+}
+
 void Map::drawCase(int x, int y, int taille_case) const{
+
+    int bloc = grille_blocs(x,y);
 
     if (grille_blocs(x,y) == vide){
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE); // Il n'y a rien
@@ -35,6 +84,10 @@ void Map::drawCase(int x, int y, int taille_case) const{
 
     else if (grille_blocs(x,y) == retour_arriere){
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, PURPLE); // Les retours arriere en purple
+    }
+
+    else if ( est_dans (bloc, pics) ){
+        drawTriangle (x, y, bloc, taille_case);
     }
 }
 

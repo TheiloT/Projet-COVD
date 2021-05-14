@@ -97,9 +97,11 @@ void Personnage::collision( const Map &map){
         int y_c = floor(coin.y);
         int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
 
-        if (       est_dans(k, murs)
+        if (     (couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
+                 &&
+                 ( est_dans(k, murs)
                 || est_dans(k, effets_action)
-                || est_dans(k, effets_couleur) ){
+                || est_dans(k, effets_couleur) ) ){
 
             il_y_a_eu_collision = true;
             int x_c_prev = floor(coin.x - vx);
@@ -214,3 +216,63 @@ void Personnage::interragit(const Map &map){
         i+=1;
     }
 }
+
+bool collision_pic(float x, float y, int k){
+    float x_case_i = x - float(floor(x));
+    float y_case_i = y - float(floor(y));
+    float x_case = x_case_i;
+    float y_case = y_case_i;
+
+    if (k == pic_droite){
+        x_case = y_case_i;
+        y_case = 1.0 - x_case_i;
+    }
+    else if (k == pic_haut){
+        x_case = 1.0 - x_case_i;
+        y_case = 1.0 - y_case_i;
+    }
+    else if (k == pic_gauche){
+        x_case = 1.0 - y_case_i;
+        y_case = x_case_i;
+    }
+
+    bool a_gauche = (x_case < 0.5) && (y_case > 1.0 - 2.0*x_case);
+    bool a_droite = (x_case > 0.5) && (y_case > (2.0*x_case - 1.0));
+    return ( a_gauche || a_droite);
+}
+
+void Personnage::collision_obstacle(const Map &map){ // gere les collisions avec les obstacles
+    int i = 0;
+    while (i<4 && vivant){
+        Point coin = Coins[i];
+        int x_c = floor(coin.x);
+        int y_c = floor(coin.y);
+        int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
+
+        if ( ! est_dans(k, pics) ){
+            return;
+        }
+
+        if (    ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
+             && collision_pic(coin.x, coin.y, k) ){
+            vivant = false;
+        }
+
+        i += 1;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

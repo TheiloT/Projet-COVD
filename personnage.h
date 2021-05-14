@@ -40,5 +40,6 @@ public:
     void interragit(const Map &map); // Gere les Sauts, les retours arriere
     void gravite(); // Diminue la vitesse verticale
     void cherche_sortie(const Map &map); // Cherche la porte de sortie et actualise arrive
+    void collision_obstacle(const Map &map); // gere les collisions avec les obstacles
 };
 

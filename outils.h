@@ -17,6 +17,7 @@ using namespace std;
 //#include "libloaderapi.h"
 
 
+
 class Point
 {
 public:
