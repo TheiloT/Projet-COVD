@@ -21,16 +21,17 @@ const int pic = 5;
 const int rend_rouge = 6;
 const int rend_vert = 7;
 const int rend_bleu = 8;
+const int rend_neutre = 12;
 
 const int saut = 9;
 const int retour_arriere = 10;
 const int accelerateur = 11;
 
-const vector<int> effets_couleur = {rend_rouge, rend_vert, rend_bleu};
+const vector<int> effets_couleur = {rend_neutre, rend_rouge, rend_vert, rend_bleu};
 const vector<int> effets_action = {saut, retour_arriere, accelerateur};
 
 // generateur ennemi
-const int gen_ennemi = 12;
+const int gen_ennemi = 13;
 
 // etoile : a voir
 
@@ -41,5 +42,5 @@ const int rouge = 1;
 const int vert = 2;
 const int bleu = 3;
 
-const vector<int> couleurs = {rouge, vert, bleu};
+const vector<int> couleurs = {neutre, rouge, vert, bleu};
 

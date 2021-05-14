@@ -16,7 +16,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     setActiveWindow(w);
     affiche_grille(H, L, taille_case);
     Map map(H,L);
-    int N_case = 11;
+    int N_case = 13;
     int i, j;
     while( getMouse(j, i) != 3 ){
         int x = floor(j/taille_case);
@@ -55,7 +55,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
 
 void run (const Map &map, int taille_case){ // Joue le niveau
 
-    int deltat = 10; // Regle la vitesse d'affichage
+    int deltat = 20; // Regle la vitesse d'affichage
 
     Personnage perso (map);
 
@@ -115,10 +115,10 @@ int main()
 //    construire_map_a_la_main(map, H, L);
 //    run (map, taille_case);
 
-//    creer_map("Ma_map", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
+//    creer_map("test_graphismes", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
 
     Map map(H, L);
-    map.load(5); // Charge la map dans le fichier Niveaux.txt
+    map.load(6); // Charge la map dans le fichier Niveaux.txt
     run (map, taille_case); // Joue le niveau
 
     endGraphics();

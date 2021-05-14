@@ -33,6 +33,10 @@ int Personnage:: get_couleur() const{
     return couleur;
 }
 
+void Personnage:: set_couleur(int k){
+    couleur = k;
+}
+
 bool Personnage::est_vivant() const{
     return vivant;
 }
@@ -174,7 +178,17 @@ void Personnage::cherche_sortie(const Map &map){
 }
 
 void Personnage::affiche(int taille_case) const{
-    fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
+    if (couleur == neutre) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK);
+
+    else if (couleur == rouge) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
+
+    else if (couleur == vert) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN);
+
+    else if (couleur == bleu) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLUE);
+
+    drawLine(x*taille_case+1, y*taille_case+1, x*taille_case+taille_case-1, y*taille_case+taille_case-1, WHITE, 2);
+
+    drawLine(x*taille_case+1, y*taille_case+taille_case-1, x*taille_case+taille_case-1, y*taille_case+1, WHITE, 2);
 }
 
 void Personnage::gravite(){
@@ -209,6 +223,13 @@ void Personnage::interragit(const Map &map){
 
         if (k == retour_arriere){
             retourner_en_arriere(x_d, y_d);
+        }
+
+        if (est_dans(k, effets_couleur)){
+            if (k==rend_neutre) set_couleur(neutre);
+            if (k==rend_rouge) set_couleur(rouge);
+            if (k==rend_vert) set_couleur(vert);
+            if (k==rend_bleu) set_couleur(bleu);
         }
 
         i+=1;

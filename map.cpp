@@ -13,28 +13,77 @@ Map::Map(int h, int l)
 
 void Map::drawCase(int x, int y, int taille_case) const{
 
-    if (grille_blocs(x,y) == vide){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE); // Il n'y a rien
+    int bloc = grille_blocs(x, y);
+    int couleur = grille_couleurs(x, y);
+
+    if (bloc == vide) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE); // Il n'y a rien
+
+    else if (bloc == mur_non_modif) {
+        // Couleur du bloc
+        if (couleur == neutre) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK);
+
+        else if (couleur == rouge) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
+
+        else if (couleur == vert) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN);
+
+        else if (couleur == bleu) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLUE);
     }
 
-    else if (grille_blocs(x,y) == mur_modif || grille_blocs(x,y) == mur_non_modif){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK); // Le sol en noir
+    else if (bloc == mur_modif) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, PURPLE); // On représente pour l'instant les blocs modifiables en violet
+
+    else if (bloc == porte_entree){
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        drawCircle(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, (5.0/8.0)*taille_case-2, CYAN, 2);
+        drawCircle(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, (3.0/8.0)*taille_case-2, CYAN, 2);
+        drawPoint(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, CYAN);
     }
 
-    else if (grille_blocs(x,y) == saut){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN); // Les sauts en vert
+    else if (bloc == porte_sortie){
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        fillRect(x*taille_case, y*taille_case+(1.0/2.0)*taille_case, taille_case-1, (1.0/2.0)*taille_case, ORANGE);
+        fillCircle(x*taille_case+(1.0/2.0)*taille_case-1, y*taille_case+(1.0/2.0)*taille_case-1, (1.0/2.0)*taille_case-1, ORANGE);
+        fillCircle(x*taille_case+(3.0/4.0)*taille_case-1, y*taille_case+(3.0/5.0)*taille_case, (1.0/10.0)*taille_case, BLACK);
     }
 
-    else if (grille_blocs(x,y) == porte_sortie){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, YELLOW); // La fin en jaune
+    else if (est_dans(bloc, effets_couleur)){
+            fillRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, WHITE);
+            drawRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, BLACK);
+            if (bloc == rend_neutre) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, BLACK);
+            else if (bloc == rend_rouge) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, RED);
+            else if (bloc == rend_vert) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, GREEN);
+            else if (bloc == rend_bleu) fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, BLUE);
+        }
+
+    else if (bloc == saut){
+        fillRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, WHITE);
+        drawRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, BLACK);
+        fillRect(x*taille_case+(1.0/7.0+5.0/28.0)*taille_case, y*taille_case+(1.0/9.0+7.0/18.0)*taille_case,
+                 (7.0/18.0)*taille_case, (5.0/14.0)*taille_case, PURPLE); // Base de la fleche epaisse
+        int coord_triangle[6] = {int(x*taille_case+(1.0/7.0)*taille_case), int(y*taille_case+(1.0/9.0+7.0/18.0)*taille_case),
+                                 int(x*taille_case+(1.0/2.0)*taille_case), int(y*taille_case+(1.0/9.0)*taille_case),
+                                 int(x*taille_case+(6.0/7.0)*taille_case), int(y*taille_case+(1.0/9.0+7.0/18.0)*taille_case)}; // coordonnées x1, y1, x2, y2, x3, y3.
+        fillPoly(coord_triangle, 3, PURPLE);
     }
 
-    else if (grille_blocs(x,y) == porte_entree){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, ORANGE); // Le debut en orange
-    }
+    else if (bloc == retour_arriere){
+        fillRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, WHITE);
+        drawRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, BLACK);
 
-    else if (grille_blocs(x,y) == retour_arriere){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, PURPLE); // Les retours arriere en purple
+        // fleche vers la droite
+        drawLine(x*taille_case+(1.0/4.0)*taille_case, y*taille_case+(1.0/3.0)*taille_case,
+                 x*taille_case+(3.0/4.0)*taille_case, y*taille_case+(1.0/3.0)*taille_case, PURPLE, 2);
+        int coord_triangle1[6] = {int(x*taille_case+(3.0/4.0)*taille_case+1), int(y*taille_case+(1.0/3.0)*taille_case),
+                                 int(x*taille_case+(3.0/4.0)*taille_case-(1.0/6.0)*taille_case), int(y*taille_case+(1.0/3.0)*taille_case-(1.0/4.0)*taille_case),
+                                 int(x*taille_case+(3.0/4.0)*taille_case-(1.0/6.0)*taille_case), int(y*taille_case+(1.0/3.0)*taille_case+(1.0/4.0)*taille_case)};
+        fillPoly(coord_triangle1, 3, PURPLE);
+
+        // fleche vers la gauche
+        drawLine(x*taille_case+(1.0/4.0)*taille_case, y*taille_case+(2.0/3.0)*taille_case+1,
+                 x*taille_case+(3.0/4.0)*taille_case, y*taille_case+(2.0/3.0)*taille_case+1, PURPLE, 2);
+        int coord_triangle2[6] = {int(x*taille_case+(1.0/4.0)*taille_case)-1, int(y*taille_case+(2.0/3.0)*taille_case+1),
+                                 int(x*taille_case+(1.0/4.0)*taille_case+(1.0/6.0)*taille_case), int(y*taille_case+(2.0/3.0)*taille_case-(1.0/4.0)*taille_case+1),
+                                 int(x*taille_case+(1.0/4.0)*taille_case+(1.0/6.0)*taille_case), int(y*taille_case+(2.0/3.0)*taille_case+(1.0/4.0)*taille_case+1)};
+        fillPoly(coord_triangle2, 3, PURPLE);
     }
 }
 
