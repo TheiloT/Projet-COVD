@@ -1,14 +1,7 @@
-#ifndef PERSONNAGE_H
-#define PERSONNAGE_H
-
-#include <Imagine/Images.h>
-using namespace Imagine;
-
-#include "vector"
-using namespace std;
+#pragma once
 
 #include "map.h"
-#include "point.h"
+#include "outils.h"
 
 class Personnage {
     // Position
@@ -17,24 +10,35 @@ class Personnage {
     // Vitesse
     float vx;
     float vy;
-    // Tableau des quatres coins
+    // Tableau des quatres coins et des deux detecteurs
     Point Coins[4];
+    Point Detecteurs[2];
     // Etat du personnage
     bool vivant;
     bool arrive;
+    // Couleur du personnage
+    int couleur;
     // Case du dernier changement de direction
     int x_change_dir, y_change_dir;
 
     void actualiser_coins();
+    void actualiser_detecteurs();
+
+    void sauter();
+    void retourner_en_arriere(int x_d, int y_d);
+
+    bool il_y_a_de_la_terre_en_dessous(const Map &map) const;
 public:
-    Personnage(int x0, int y0, float vitesse);
-    bool est_vivant();
-    bool est_arrive();
-    void affiche(int taille_case); // Affiche le personnage
+    Personnage(const Map &map, float vitesse); // Initialise le personnage
+    int get_couleur();
+    bool est_vivant() const;
+    bool est_arrive() const;
+    bool est_sur_terre(const Map &map) const;
+    void affiche(int taille_case) const; // Affiche le personnage
     void actualise_position(); // Calcul la nouvelle position a partir de la vitesse
-    void interragit(Map map); // Gere les Sauts, les retours arriere
+    void collision(const Map &map); // Gere les collisions suivant qu'elles soient verticales ou horizontales
+    void interragit(const Map &map); // Gere les Sauts, les retours arriere
     void gravite(float g); // Diminue la vitesse verticale
-    void collision(Map map); // Gere les collisions suivant qu'elles soient verticales ou horizontales
+    void cherche_sortie(const Map &map); // Cherche la porte de sortie et actualise arrive
 };
 
-#endif // PERSONNAGE_H

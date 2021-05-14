@@ -1,37 +1,44 @@
 #include "map.h"
+#include "correspondance.h"
 
 Map::Map(int h, int l)
 {
-    H = h;
-    L = l;
-    grille = MultiArray<int, 2> (L, H);
-    grille.fill(0);
+    H = h; // Hauteur
+    L = l; // Longueur
+    grille_blocs = MultiArray<int, 2> (L, H);
+    grille_blocs.fill(vide);
+    grille_couleurs = MultiArray<int, 2> (L, H);
+    grille_couleurs.fill(neutre);
 }
 
-void Map::drawCase(int x, int y, int taille_case){
+void Map::drawCase(int x, int y, int taille_case) const{
 
-    if (grille(x,y) == 0){
+    if (grille_blocs(x,y) == vide){
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE); // Il n'y a rien
     }
 
-    if (grille(x,y) == 1){
+    else if (grille_blocs(x,y) == mur_modif || grille_blocs(x,y) == mur_non_modif){
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK); // Le sol en noir
     }
 
-    if (grille(x,y) == 2){
+    else if (grille_blocs(x,y) == saut){
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN); // Les sauts en vert
     }
 
-    if (grille(x,y) == 3){
+    else if (grille_blocs(x,y) == porte_sortie){
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, YELLOW); // La fin en jaune
     }
 
-    if (grille(x,y) == 4){
+    else if (grille_blocs(x,y) == porte_entree){
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, ORANGE); // Le debut en orange
+    }
+
+    else if (grille_blocs(x,y) == retour_arriere){
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, PURPLE); // Les retours arriere en purple
     }
 }
 
-void Map::affiche(int taille_case){
+void Map::affiche(int taille_case) const{
     for (int x=0; x<L; x++){
         for (int y=0; y<H; y++){
             drawCase(x, y, taille_case);
@@ -40,16 +47,24 @@ void Map::affiche(int taille_case){
 }
 
 void Map::set_case(int x, int y, int k){
-    grille(x,y) = k;
+    grille_blocs(x,y) = k;
 }
 
-int Map::get_case(int x, int y){
-    return grille(x, y);
+int Map::get_case(int x, int y) const{
+    return grille_blocs(x, y);
+}
+
+void Map::set_couleur(int x, int y, int k){
+    grille_couleurs(x,y) = k;
+}
+
+int Map::get_couleur(int x, int y) const{
+    return grille_couleurs(x, y);
 }
 
 void Map::load(int k){
 
-    string const nomFichier("Niveaux.txt");
+    string const nomFichier("C:/Ecole_des_Ponts/Atelier de programmation/Projet-COVD/Niveaux.txt");
     ifstream flux(nomFichier.c_str());
 
     if(flux)
@@ -79,7 +94,7 @@ void Map::load(int k){
             for (int y=0; y<H; y++){
                 int valeur = get_case(x, y);
                 flux >> valeur;
-                grille(x, y) = valeur;
+                grille_blocs(x, y) = valeur;
             }
         }
     }

@@ -1,12 +1,8 @@
-#include <Imagine/Images.h>
-using namespace Imagine;
 #include "map.h"
 #include "personnage.h"
+#include "correspondance.h"
 
-#include<iostream>
-#include <fstream>
-
-void affiche_grille(int H, int L, int taille_case){ // Affiche une grille de la bonne dimension pour la creation de niveau
+void affiche_grille(int H, int L, int taille_case){ // Affiche une grille_blocs de la bonne dimension pour la creation de niveau
     for (int i=0; i<=H; i++){
         drawLine(0, i*taille_case, L*taille_case, i*taille_case, BLACK);
     }
@@ -20,7 +16,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     setActiveWindow(w);
     affiche_grille(H, L, taille_case);
     Map map(H,L);
-    int N_case = 5;
+    int N_case = 11;
     int i, j;
     while( getMouse(j, i) != 3 ){
         int x = floor(j/taille_case);
@@ -44,6 +40,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
                     flux << map.get_case(x, y) << " ";
                 }
             }
+            flux << endl;
         }
         else
         {
@@ -56,15 +53,24 @@ void creer_map(string nom_map, int L, int H, int taille_case){
         return;
 }
 
-void run (Personnage perso, Map map, int taille_case, float g, int deltat){ // Joue le niveau
+void run (const Map &map, int taille_case, float g, int deltat, float vitesse){ // Joue le niveau
+
+    Personnage perso (map, vitesse);
+
     while (    perso.est_vivant()
             && !perso.est_arrive() ){
 
+        noRefreshBegin();
         map.affiche(taille_case); // Affichage de la map
         perso.affiche(taille_case); // Affichage du perso
-        perso.gravite(g); // Modifie la vitesse
+        noRefreshEnd();
+
+        if (!perso.est_sur_terre(map)){
+                perso.gravite(g); // Modifie la vitesse
+        }
         perso.actualise_position(); // Modifie la position grace a la vitesse
         perso.collision(map); // Gere les collisions
+        perso.cherche_sortie(map); // Sort si touche la porte de sortie
         perso.interragit(map); // Gere les interractions avec les blocs en dessous
         milliSleep(deltat);
     }
@@ -80,39 +86,34 @@ int main()
     // Construction d'une map à la main
     Map map(H, L);
     for (int x=0; x<L; x++){
-            map.set_case(x, 20, 1); // Murs
-            map.set_case(x, 16, 1);
+            map.set_case(x, 20, mur_non_modif); // Murs
+            map.set_case(x, 16, mur_non_modif);
     }
-    map.set_case(5, 18, 1);
-    map.set_case(30, 19, 1);
-    map.set_case(29, 20, 2); // Case de saut
-    map.set_case(43, 20, 2); // Case de saut
-    map.set_case(45, 16, 2); // Case de saut
-    map.set_case(42, 16, 0); // Trou
-    map.set_case(43, 16, 0); // Trou
-    map.set_case(44, 16, 0); // Trou
-    map.set_case(49, 16, 4); // Case de retour arrière
+    map.set_case(5, 18, mur_non_modif);
+    map.set_case(30, 19, mur_non_modif);
+    map.set_case(29, 20, saut); // Case de saut
+    map.set_case(42, 20, saut); // Case de saut
+    map.set_case(45, 16, saut); // Case de saut
+    map.set_case(41, 16, vide); // Trou
+    map.set_case(42, 16, vide); // Trou
+    map.set_case(43, 16, vide); // Trou
+    map.set_case(44, 16, vide); // Trou
+    map.set_case(49, 16, retour_arriere); // Case de retour arrière
     // Position initiale du joueur
-    map.x0 = 0;
-    map.y0 = 19;
+    map.set_case(0, 19, porte_entree);
     // Case de fin
-    map.set_case(1, 15, 3);
+    map.set_case(1, 15, porte_sortie);
 
     float vitesse = 2/ float(taille_case);
-    int deltat = 14;
+    int deltat = 30;
     const float g = 0.02;
 
-//    Personnage perso(map.x0, map.y0, vitesse);
-//    run (perso, map, taille_case, g, deltat);
+    run (map, taille_case, g, deltat, vitesse);
 
-//    Creer_map("Ma_map", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
+//    creer_map("Ma_map", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
 
-    map.load(3); // Charge la map dans le fichier Niveaux.txt
-    map.affiche(18);
-    map.x0 = 0;
-    map.y0 = 18;
-    Personnage perso(map.x0, map.y0, vitesse);
-    run (perso, map, taille_case, g, deltat); // Joue le niveau
+//    map.load(4); // Charge la map dans le fichier Niveaux.txt
+//    run (map, taille_case, g, deltat, vitesse); // Joue le niveau
 
     endGraphics();
     return 0;

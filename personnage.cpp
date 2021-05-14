@@ -1,7 +1,66 @@
 #include "personnage.h"
+#include "correspondance.h"
 
-#include "vector"
-using namespace std;
+#include "outils.h"
+
+Personnage::Personnage(const Map &map, float vitesse){
+    int x0, y0; // Coordonnee de depart
+    for (int j=0; j<map.L; j++){
+        for (int i=0; i<map.H; i++){
+            if ( map.get_case(j,i) == porte_entree ){
+                x0 = j;
+                y0 = i;
+            }
+        }
+    }
+    x = x0;
+    y = y0;
+    vx = vitesse;
+    vy = 0;
+    vivant = true;
+    arrive = false;
+    couleur = neutre;
+    actualiser_coins();
+    actualiser_detecteurs();
+    x_change_dir = -1;
+    y_change_dir = -1;
+}
+
+int Personnage:: get_couleur(){
+    return couleur;
+}
+
+bool Personnage::est_vivant() const{
+    return vivant;
+}
+
+bool Personnage::est_arrive() const{
+    return arrive;
+}
+
+bool Personnage::il_y_a_de_la_terre_en_dessous(const Map &map) const{
+    bool assertion = false;
+    int i = 0;
+    while (i<2){
+        Point detecteur = Detecteurs[i];
+        int x_d = floor(detecteur.x);
+        int y_d = floor(detecteur.y);
+        int k = map.get_case(x_d, y_d); // Contenu de la case dans laquelle se trouve le detecteur
+
+        if (      est_dans(k, murs)
+               || est_dans(k, effets_action)
+               || est_dans(k, effets_couleur) ){
+            assertion = true;
+        }
+        i+=1;
+    }
+    return assertion;
+}
+
+bool Personnage::est_sur_terre(const Map &map) const{
+    return (    vy == 0
+             && il_y_a_de_la_terre_en_dessous(map) );
+}
 
 void Personnage::actualiser_coins(){
     const float marge_hitbox = 0.01;
@@ -11,36 +70,24 @@ void Personnage::actualiser_coins(){
     Coins[3] = Point (x + 1 - marge_hitbox, y + marge_hitbox);
 }
 
-Personnage::Personnage(int x0, int y0, float vitesse){
-    x = x0;
-    y = y0;
-    vx = vitesse;
-    vy = 0;
-    vivant = true;
-    arrive = false;
-    actualiser_coins();
-    x_change_dir = -1;
-    y_change_dir = -1;
-}
-
-bool Personnage::est_vivant(){
-    return vivant;
-}
-
-bool Personnage::est_arrive(){
-    return arrive;
+void Personnage::actualiser_detecteurs(){
+    const float marge_hitbox = 0.01;
+    Detecteurs[0] = Point (x + marge_hitbox, y + 1 + marge_hitbox);
+    Detecteurs[1] = Point (x + 1 - marge_hitbox, y + 1 + marge_hitbox);
 }
 
 void Personnage::actualise_position(){
     x += vx;
     y += vy;
     actualiser_coins();
+    actualiser_detecteurs();
 }
 
-void Personnage::collision(Map map){
+void Personnage::collision( const Map &map){
 
     int i=0;
     bool collision_resolue = false;
+    bool il_y_a_eu_collision = false;
     while (   i<4
            && !collision_resolue){
 
@@ -49,26 +96,24 @@ void Personnage::collision(Map map){
         int y_c = floor(coin.y);
         int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
 
-        if (k == 1 || k == 2 || k == 4){
+        if (       est_dans(k, murs)
+                || est_dans(k, effets_action)
+                || est_dans(k, effets_couleur) ){
 
+            il_y_a_eu_collision = true;
             int x_c_prev = floor(coin.x - vx);
             int y_c_prev = floor(coin.y - vy);
 
             int delta_x = x_c - x_c_prev;
             int delta_y = y_c - y_c_prev;
 
-            if ( delta_x != 0
-              && delta_y == 0){ // Percute un mur
-
+            if ( delta_y == 0 && delta_x != 0){ // Percute un mur
                 vivant = false;
                 collision_resolue = true;
             }
 
-            else if ( delta_x == 0
-                   && delta_y != 0){ // Touche un mur
-
+            else if ( delta_x == 0 && delta_y != 0){ // Touche un mur
                 y = y_c_prev;
-                vy = 0;
                 collision_resolue = true;
             }
 
@@ -87,7 +132,6 @@ void Personnage::collision(Map map){
                     }
                     else{
                         y = y_c_prev;
-                        vy = 0;
                         collision_resolue = true;
                     }
                 }
@@ -101,23 +145,34 @@ void Personnage::collision(Map map){
                     }
                     else{
                         y = y_c_prev;
-                        vy = 0;
                         collision_resolue = true;
                     }
                 }
             }
         }
+        i += 1;
+    }
 
-        else if (k == 3){
-            arrive = true; // Arrive à la case d'arrivee
-            collision_resolue = true;
+    if (il_y_a_eu_collision){
+        vy = 0;
+    }
+}
+
+void Personnage::cherche_sortie(const Map &map){
+    int i =0;
+    while (i<4){
+        Point coin = Coins[i];
+        int x_c = floor(coin.x);
+        int y_c = floor(coin.y);
+        int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
+        if (k == porte_sortie){
+                    arrive = true; // Arrive à la case d'arrivee
         }
-
         i += 1;
     }
 }
 
-void Personnage::affiche(int taille_case){
+void Personnage::affiche(int taille_case) const{
     fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
 }
 
@@ -125,38 +180,36 @@ void Personnage::gravite(float g){
     vy += g;
 }
 
-void Personnage::interragit(Map map){
-
+void Personnage::sauter(){
     const float vitesse_saut = 0.42;
-    const float marge_hitbox = 0.01;
-
-    if (    map.get_case(floor(x), floor(y + 1 + marge_hitbox)) == 2
-         || map.get_case(floor(x+1), floor(y + 1 + marge_hitbox)) == 2 ){ // Saut
-
-        vy = -vitesse_saut;
-
-    }
-
-    if (    map.get_case(floor(x), floor(y + 1 + marge_hitbox)) == 4 ){ // Retour arrière par la droite
-
-         if (    x_change_dir != floor(x)
-              || y_change_dir != floor(y + 1 + marge_hitbox) ){
-
-             vx = -vx;
-             x_change_dir = floor(x);
-             y_change_dir = floor(y + 1 + marge_hitbox);
-         }
-    }
-    if (    map.get_case(floor(x+1), floor(y + 1 + marge_hitbox)) == 4 ){ // Retour arrière par la gauche
-
-         if (    x_change_dir != floor(x+1)
-              || y_change_dir != floor(y + 1 + marge_hitbox) ){
-
-             vx = -vx;
-             x_change_dir = floor(x+1);
-             y_change_dir = floor(y + 1 + marge_hitbox);
-         }
-    }
-
+    vy = -vitesse_saut;
 }
 
+void Personnage::retourner_en_arriere(int x_d, int y_d){
+    if (x_d != x_change_dir || y_d != y_change_dir){
+        vx = -vx;
+        x_change_dir = x_d;
+        y_change_dir = y_d;
+    }
+}
+
+void Personnage::interragit(const Map &map){
+
+    int i=0;
+    while (i<2){
+        Point detecteur = Detecteurs[i];
+        int x_d = floor(detecteur.x);
+        int y_d = floor(detecteur.y);
+        int k = map.get_case(x_d, y_d); // Contenu de la case dans laquelle se trouve le detecteur
+
+        if (k == saut){
+            sauter();
+        }
+
+        if (k == retour_arriere){
+            retourner_en_arriere(x_d, y_d);
+        }
+
+        i+=1;
+    }
+}
