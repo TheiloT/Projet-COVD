@@ -64,7 +64,7 @@ int Map::get_couleur(int x, int y) const{
 
 void Map::load(int k){
 
-    string const nomFichier("C:/Ecole_des_Ponts/Atelier de programmation/Projet-COVD/Niveaux.txt");
+    string const nomFichier(srcPath("Niveaux.txt"));
     ifstream flux(nomFichier.c_str());
 
     if(flux)

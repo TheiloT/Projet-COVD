@@ -27,7 +27,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
 
     if ( getMouse(j, i) == 3 ){ // On sauvegarde
         closeWindow(w);
-        string const nomFichier("C:/Ecole_des_Ponts/Atelier de programmation/Projet-COVD/Niveaux.txt");
+        string const nomFichier(srcPath("Niveaux.txt"));
         ofstream flux(nomFichier.c_str(), ios::app); // flux d'ajout en fin de fichier
 
         if(flux)
@@ -53,12 +53,16 @@ void creer_map(string nom_map, int L, int H, int taille_case){
         return;
 }
 
-void run (const Map &map, int taille_case, float g, int deltat, float vitesse){ // Joue le niveau
+void run (const Map &map, int taille_case){ // Joue le niveau
 
-    Personnage perso (map, vitesse);
+    int deltat = 10; // Regle la vitesse d'affichage
+
+    Personnage perso (map);
 
     while (    perso.est_vivant()
             && !perso.est_arrive() ){
+
+        clock_t t = clock(); // Debut du timer
 
         noRefreshBegin();
         map.affiche(taille_case); // Affichage de la map
@@ -66,25 +70,20 @@ void run (const Map &map, int taille_case, float g, int deltat, float vitesse){ 
         noRefreshEnd();
 
         if (!perso.est_sur_terre(map)){
-                perso.gravite(g); // Modifie la vitesse
+                perso.gravite(); // Modifie la vitesse
         }
         perso.actualise_position(); // Modifie la position grace a la vitesse
         perso.collision(map); // Gere les collisions
         perso.cherche_sortie(map); // Sort si touche la porte de sortie
         perso.interragit(map); // Gere les interractions avec les blocs en dessous
-        milliSleep(deltat);
+
+        while (clock() - t < deltat){  // On attend deltat
+        }
     }
 }
 
-int main()
-{
-    int H = 30;
-    int L = 55;
-    int taille_case = 16;
-    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-
+void construire_map_a_la_main(Map map, int H, int L){
     // Construction d'une map à la main
-    Map map(H, L);
     for (int x=0; x<L; x++){
             map.set_case(x, 20, mur_non_modif); // Murs
             map.set_case(x, 16, mur_non_modif);
@@ -103,17 +102,24 @@ int main()
     map.set_case(0, 19, porte_entree);
     // Case de fin
     map.set_case(1, 15, porte_sortie);
+}
 
-    float vitesse = 2/ float(taille_case);
-    int deltat = 30;
-    const float g = 0.02;
+int main()
+{
+    int H = 30;
+    int L = 55;
+    int taille_case = 16;
+    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 
-    run (map, taille_case, g, deltat, vitesse);
+//    Map map(H, L);
+//    construire_map_a_la_main(map, H, L);
+//    run (map, taille_case);
 
 //    creer_map("Ma_map", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
 
-//    map.load(4); // Charge la map dans le fichier Niveaux.txt
-//    run (map, taille_case, g, deltat, vitesse); // Joue le niveau
+    Map map(H, L);
+    map.load(5); // Charge la map dans le fichier Niveaux.txt
+    run (map, taille_case); // Joue le niveau
 
     endGraphics();
     return 0;

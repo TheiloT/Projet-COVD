@@ -9,5 +9,5 @@ Point::Point(float x1, float y1){
 }
 
 bool est_dans (int num, vector<int> liste){
-    return *find(liste.begin(), liste.end(), num) == num;
+    return *find(liste.begin(), liste.end()-1, num) == num;
 }

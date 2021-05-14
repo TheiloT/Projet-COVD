@@ -3,7 +3,10 @@
 
 #include "outils.h"
 
-Personnage::Personnage(const Map &map, float vitesse){
+Personnage::Personnage(const Map &map){
+
+    float vitesse = 0.125; // Regle la vitesse du perso
+
     int x0, y0; // Coordonnee de depart
     for (int j=0; j<map.L; j++){
         for (int i=0; i<map.H; i++){
@@ -26,7 +29,7 @@ Personnage::Personnage(const Map &map, float vitesse){
     y_change_dir = -1;
 }
 
-int Personnage:: get_couleur(){
+int Personnage:: get_couleur() const{
     return couleur;
 }
 
@@ -41,17 +44,15 @@ bool Personnage::est_arrive() const{
 bool Personnage::il_y_a_de_la_terre_en_dessous(const Map &map) const{
     bool assertion = false;
     int i = 0;
-    while (i<2){
+    while (i<2 && !assertion){
         Point detecteur = Detecteurs[i];
         int x_d = floor(detecteur.x);
         int y_d = floor(detecteur.y);
         int k = map.get_case(x_d, y_d); // Contenu de la case dans laquelle se trouve le detecteur
 
-        if (      est_dans(k, murs)
-               || est_dans(k, effets_action)
-               || est_dans(k, effets_couleur) ){
-            assertion = true;
-        }
+        assertion =    est_dans(k, murs)
+                    || est_dans(k, effets_action)
+                    || est_dans(k, effets_couleur);
         i+=1;
     }
     return assertion;
@@ -176,8 +177,8 @@ void Personnage::affiche(int taille_case) const{
     fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
 }
 
-void Personnage::gravite(float g){
-    vy += g;
+void Personnage::gravite(){
+    vy += 0.02; // On prend g = 0.02
 }
 
 void Personnage::sauter(){
