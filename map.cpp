@@ -11,9 +11,78 @@ Map::Map(int h, int l)
     grille_couleurs.fill(neutre);
 }
 
+void drawTriangle(int j, int i, int k, int taille_case, int couleur){
+
+    int x = j*taille_case;
+    int y = i*taille_case;
+    int demi = taille_case/2;
+
+    int xa = x;
+    int xb = x + demi;
+    int xc = x + taille_case;
+    int xd = x + taille_case;
+    int xe = x + taille_case;
+    int xf = x + demi;
+    int xg = x;
+    int xh = x;
+
+    int ya = y + taille_case;
+    int yb = y + taille_case;
+    int yc = y + taille_case;
+    int yd = y + demi;
+    int ye = y;
+    int yf = y;
+    int yg = y;
+    int yh = y + demi;
+
+    Color color;
+    if (couleur == bleu){
+        color = BLUE;
+    }
+    else if (couleur == rouge){
+        color = RED;
+    }
+    else if (couleur == vert){
+        color = GREEN;
+    }
+    else{
+        color = BLACK;
+    }
+
+    if (k == pic_bas){
+        int liste_points[6] = {xa, ya, xc, yc, xf, yf};
+        fillPoly(liste_points, 3, color);
+    }
+
+    else if (k == pic_droite){
+        int liste_points[6] = {xc, yc, xe, ye, xh, yh};
+        fillPoly(liste_points, 3, color);
+    }
+
+    else if (k == pic_haut){
+        int liste_points[6] = {xg, yg, xe, ye, xb, yb};
+        fillPoly(liste_points, 3, color);
+    }
+
+    else{
+        int liste_points[6] = {xg, yg, xa, ya, xd, yd};
+        fillPoly(liste_points, 3, color);
+    }
+
+
+}
+
+void drawLave(int x, int y, int taille_case, int bloc){
+    if (bloc == lave_totale) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, ORANGE);
+    else{
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        fillRect(x*taille_case, (y+1)*taille_case, taille_case, -0.6666 * taille_case, ORANGE);
+    }
+}
+
 void Map::drawCase(int x, int y, int taille_case) const{
 
-    int bloc = grille_blocs(x, y);
+    int bloc = grille_blocs(x,y);
     int couleur = grille_couleurs(x, y);
 
     if (bloc == vide) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE); // Il n'y a rien
@@ -85,6 +154,15 @@ void Map::drawCase(int x, int y, int taille_case) const{
                                  int(x*taille_case+(1.0/4.0)*taille_case+(1.0/6.0)*taille_case), int(y*taille_case+(2.0/3.0)*taille_case+(1.0/4.0)*taille_case+1)};
         fillPoly(coord_triangle2, 3, PURPLE);
     }
+
+    else if ( est_dans (bloc, pics) ){
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        drawTriangle (x, y, bloc, taille_case, couleur);
+    }
+
+    else if ( est_dans(bloc, laves) ){
+        drawLave(x, y, taille_case, bloc);
+    }
 }
 
 void Map::affiche(int taille_case) const{
@@ -118,7 +196,7 @@ void Map::load(int k){
 
     if(flux)
     {
-        for(int n=0; n<k; n++){
+        for(int n=0; n<k; n++){ // Boucle: on lit tous les niveaux avant le niveau k
             string map_name;
             flux >> map_name;
             int h,l;
@@ -127,6 +205,12 @@ void Map::load(int k){
             for (int x=0; x<L; x++){
                 for (int y=0; y<H; y++){
                     int valeur = get_case(x, y);
+                    flux >> valeur;
+                }
+            }
+            for (int x=0; x<L; x++){
+                for (int y=0; y<H; y++){
+                    int valeur = get_couleur(x, y);
                     flux >> valeur;
                 }
             }
@@ -144,6 +228,13 @@ void Map::load(int k){
                 int valeur = get_case(x, y);
                 flux >> valeur;
                 grille_blocs(x, y) = valeur;
+            }
+        }
+        for (int x=0; x<L; x++){
+            for (int y=0; y<H; y++){
+                int valeur = get_couleur(x, y);
+                flux >> valeur;
+                grille_couleurs(x, y) = valeur;
             }
         }
     }
