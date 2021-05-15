@@ -108,7 +108,7 @@ int main()
 {
     int H = 30;
     int L = 55;
-    int taille_case = 16;
+    int taille_case = 30;
     openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 
 //    Map map(H, L);
