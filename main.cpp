@@ -46,7 +46,7 @@ void affiche_grille(int H, int L, int taille_case){ // Affiche une grille_blocs 
     }
 }
 
-void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_texte){
+void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map){
     int x_dep = L * taille_case;
 
     // Lignes de separation
@@ -55,6 +55,10 @@ void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_
     drawLine(x_dep, bande_texte + 4 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 4 * taille_case_editeur, BLACK);
 
     // Affichage du nom de la map
+
+    int dx = int (3.25*taille_case_editeur - taille_case_editeur * 0.125 * nom_map.size() );
+    int dy = int (0.5 * bande_texte - 0.125 * taille_case_editeur );
+    drawString(x_dep + dx, bande_texte - dy, nom_map, BLACK, int (taille_case_editeur * 0.25));
 
     // Affichage des cases d'action
     int y_a = bande_texte + taille_case_editeur/2.0;
@@ -122,8 +126,8 @@ bool placeBloc(int x, int y, int L, int H, int taille_case){
 }
 
 void creer_map(string nom_map, int L, int H, int taille_case){
-    const int taille_case_editeur = 48;
-    const int bande_texte = 48;
+    const int taille_case_editeur = 2*taille_case;
+    const int bande_texte = taille_case_editeur;
     const int nb_lignes = 3;
 
     // Ouverture de la fenetre
@@ -131,7 +135,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     setActiveWindow(w);
     // Affichage de la grille et des boutons
     affiche_grille(H, L, taille_case);
-    affiche_boutons(L, taille_case, taille_case_editeur, bande_texte);
+    affiche_boutons(L, taille_case, taille_case_editeur, bande_texte, nom_map);
     // Creation de la map
     Map map(H,L);
 
@@ -269,21 +273,21 @@ void construire_map_a_la_main(Map map, int H, int L){
 
 int main()
 {
-    int H = 30;
-    int L = 55;
-    int taille_case = 24;
+    int H = 20;
+    int L = 34;
+    int taille_case = 30;
 
 //    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 //    Map map(H, L);
 //    construire_map_a_la_main(map, H, L);
 //    run (map, taille_case);
 
-//    creer_map("test_graphismes", L, H, taille_case); // Cree une map
+    creer_map("Ma_map", L, H, taille_case); // Cree une map
 
-    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-    Map map(H, L);
-    map.load(0); // Charge la map dans le fichier Niveaux.txt
-    run (map, taille_case); // Joue le niveau
+//    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
+//    Map map(H, L);
+//    map.load(0); // Charge la map dans le fichier Niveaux.txt
+//    run (map, taille_case); // Joue le niveau
 
     endGraphics();
     return 0;
