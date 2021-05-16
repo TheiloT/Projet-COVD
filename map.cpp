@@ -17,24 +17,24 @@ Map::Map(int h, int l)
 // (x, y) : coordonnees en cases ; (u, v) : coordonnees en pixels
 
 void efface_bloc(int x, int y, int taille_case) {
-    fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+    fillRect(x, y, taille_case, taille_case, WHITE);
 }
 
 void contour_bloc(int x, int y, int taille_case) {
-   drawRect(x*taille_case, y*taille_case, taille_case-1, taille_case-1, BLACK);
+   drawRect(x, y, taille_case-1, taille_case-1, BLACK);
 }
 
 void trace_bloc(int x, int y, int taille_case, int couleur) {
-    fillRect(x*taille_case, y*taille_case, taille_case, taille_case, couleur_int_vers_color.at(couleur));
+    fillRect(x, y, taille_case, taille_case, couleur_int_vers_color.at(couleur));
 }
 
 void trace_bloc_modif(int x, int y, int taille_case) {
-    fillRect(x*taille_case, y*taille_case, taille_case, taille_case, PURPLE);
+    fillRect(x, y, taille_case, taille_case, PURPLE);
 }
 
 void trace_porte_entree(int x, int y, int k, int taille_case, int couleur) {
-    int u = x*taille_case;
-    int v = y*taille_case;
+    int u = x;
+    int v = y;
     int demi = taille_case/2;
 
     // planche de porte
@@ -87,8 +87,8 @@ void trace_porte_entree(int x, int y, int k, int taille_case, int couleur) {
 };
 
 void trace_porte_sortie(int x, int y, int taille_case, int couleur) {
-    int u = x*taille_case;
-    int v = y*taille_case;
+    int u = x;
+    int v = y;
     int demi = taille_case/2;
 
     // planche de porte
@@ -100,8 +100,8 @@ void trace_porte_sortie(int x, int y, int taille_case, int couleur) {
 }
 
 void trace_saut(int x, int y, int taille_case) {
-    int u = x*taille_case;
-    int v = y*taille_case;
+    int u = x;
+    int v = y;
 
     // base de la fleche
     int ua = u + taille_case/7 + 5*taille_case/28;
@@ -126,8 +126,8 @@ void trace_saut(int x, int y, int taille_case) {
 }
 
 void trace_retour_arriere(int x, int y, int taille_case) {
-    int u = x * taille_case;
-    int v = y * taille_case;
+    int u = x;
+    int v = y;
     int epaisseur = taille_case/10;
 
     // fleche vers la droite
@@ -171,10 +171,10 @@ void trace_retour_arriere(int x, int y, int taille_case) {
     fillPoly(coord_triangle2, 3, PURPLE);
 }
 
-void trace_triangle(int x, int y, int k, int taille_case, int couleur){
+void trace_pic(int x, int y, int k, int taille_case, int couleur){
 
-    int u = x*taille_case;
-    int v = y*taille_case;
+    int u = x;
+    int v = y;
     int demi = taille_case/2;
 
     int ua = u;
@@ -221,17 +221,14 @@ void trace_triangle(int x, int y, int k, int taille_case, int couleur){
 }
 
 void trace_lave(int x, int y, int taille_case, int bloc){
-    if (bloc == lave_totale) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, ORANGE);
+    if (bloc == lave_totale) fillRect(x, y, taille_case, taille_case, ORANGE);
     else{
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
-        fillRect(x*taille_case, (y+1)*taille_case, taille_case, -0.6666 * taille_case, ORANGE);
+        fillRect(x, y+taille_case, taille_case, -0.6666 * taille_case, ORANGE);
     }
 }
 
-void trace_etoile(int j, int i, int taille_case){
+void trace_etoile(int x, int y, int taille_case){
 
-    int x = j * taille_case;
-    int y = i * taille_case;
     int demi = taille_case/2;
     int h = int (0.75*float(taille_case));
 
@@ -244,10 +241,7 @@ void trace_etoile(int j, int i, int taille_case){
 
 // ========== Fin gaphismes ==========
 
-void Map::drawCase(int x, int y, int taille_case) const{
-
-    int bloc = grille_blocs(x,y);
-    int couleur = grille_couleurs(x, y);
+void dessineCase (int x, int y, int taille_case, int bloc, int couleur){
 
     if (bloc == vide) efface_bloc(x, y, taille_case); // Il n'y a rien
 
@@ -268,7 +262,7 @@ void Map::drawCase(int x, int y, int taille_case) const{
     else if (est_dans(bloc, effets_couleur)){
             efface_bloc(x, y, taille_case);
             contour_bloc(x, y, taille_case);
-            fillCircle(x*taille_case+taille_case/2, y*taille_case+taille_case/2, taille_case/3, couleur_int_vers_color.at(bloc));
+            fillCircle(x+taille_case/2, y+taille_case/2, taille_case/3, couleur_int_vers_color.at(bloc));
         }
 
     else if (bloc == saut){
@@ -285,16 +279,26 @@ void Map::drawCase(int x, int y, int taille_case) const{
 
     else if ( est_dans(bloc, pics) ){
         efface_bloc(x, y, taille_case);
-        trace_triangle (x, y, bloc, taille_case, couleur);
+        trace_pic (x, y, bloc, taille_case, couleur);
     }
 
     else if ( est_dans(bloc, laves) ){
+        efface_bloc(x, y, taille_case);
         trace_lave(x, y, taille_case, bloc);
     }
 
     else if (bloc == etoile){
+        efface_bloc(x, y, taille_case);
         trace_etoile(x, y, taille_case);
     }
+}
+
+void Map::drawCase(int x, int y, int taille_case) const{
+
+    int bloc = grille_blocs(x,y);
+    int couleur = grille_couleurs(x, y);
+    dessineCase(x*taille_case, y*taille_case, taille_case, bloc, couleur);
+
 }
 
 void Map::drawEtoiles(int x, int y, int taille_case, const Personnage &perso) const{

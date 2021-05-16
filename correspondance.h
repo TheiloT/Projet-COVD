@@ -92,11 +92,10 @@ const vector<int> bouton_lave = laves;
 const vector<int> bouton_gen_ennemi = {gen_ennemi};
 const vector<int> bouton_etoile = {etoile};
 
+// Vecteur qui contient les vecteurs des blocs pour chaque bouton
 const vector<vector<int>> Liste_boutons = { bouton_mur, bouton_porte_entree, bouton_porte_sortie, bouton_vide,
                                             bouton_saut, bouton_retour_arriere, bouton_accelerateur, bouton_rend_couleur,
                                             bouton_pic, bouton_lave, bouton_gen_ennemi, bouton_etoile};
-
-// Vecteur qui contient les vecteurs des blocs pour chaque bouton
 
 
 

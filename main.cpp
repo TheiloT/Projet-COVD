@@ -1,5 +1,6 @@
 #include "map.h"
 #include "personnage.h"
+#include "map.h"
 #include "correspondance.h"
 #include "outils.h"
 
@@ -39,23 +40,55 @@ void run (const Map &map, int taille_case){ // Joue le niveau
 
 void affiche_grille(int H, int L, int taille_case){ // Affiche une grille_blocs de la bonne dimension pour la creation de niveau
     for (int i=0; i<=H; i++){
-        drawLine(0, i*taille_case, L*taille_case, i*taille_case, BLACK);
+        drawLine(0, i*taille_case, L*taille_case, i*taille_case, BLACK, 2);
     }
     for (int j=0; j<=L; j++){
-        drawLine(j*taille_case, 0, j*taille_case, H*taille_case, BLACK);
+        drawLine(j*taille_case, 0, j*taille_case, H*taille_case, BLACK, 2);
     }
 }
 
+void drawAction(int x, int y, int k, int taille_case_editeur){
+    if (k == bouton_play){
+        int xa = x + int (0.25*taille_case_editeur);
+        int xb = x + int (0.25*taille_case_editeur);
+        int xc = x + int (0.85*taille_case_editeur);
+        int ya = y + int (0.80*taille_case_editeur);
+        int yb = y + int (0.20*taille_case_editeur);
+        int yc = y + int (0.5*taille_case_editeur);
+        int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
+        fillRect(x, y, taille_case_editeur, taille_case_editeur, RED);
+        fillPoly(coord_triangle, 3, WHITE);
+        drawPoly(coord_triangle, 3, BLACK, 2);
+    }
+
+    else if (k == bouton_sauvegarder){
+        string s = "S";
+        drawString(x + int(0.2*taille_case_editeur), y + int(0.85*taille_case_editeur), s, BLACK, int (0.5*taille_case_editeur));
+    }
+
+    else if (k == bouton_quitter){
+        int d = int (0.2 * taille_case_editeur);
+        fillRect(x, y, taille_case_editeur, taille_case_editeur, RED);
+        drawLine(x + 4 + d, y + 4 + d, x + taille_case_editeur - 4 - d, y + taille_case_editeur - 4 - d, WHITE, 8);
+        drawLine(x + taille_case_editeur - 4 - d, y + 4 + d, x + 4 + d, y + taille_case_editeur - 4 - d, WHITE, 8);
+    }
+}
+
+void drawBouton(int x, int y, int k, int taille_case_editeur){
+    int marge = int (taille_case_editeur/8.0);
+    dessineCase(x + marge, y + marge, taille_case_editeur - 2*marge, k, neutre);
+}
+
 void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map){
+
     int x_dep = L * taille_case;
 
     // Lignes de separation
-    drawLine(x_dep, bande_texte, x_dep + 6.5 * taille_case_editeur, bande_texte, BLACK);
-    drawLine(x_dep, bande_texte + 2 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 2 * taille_case_editeur, BLACK);
-    drawLine(x_dep, bande_texte + 4 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 4 * taille_case_editeur, BLACK);
+    drawLine(x_dep, bande_texte, x_dep + 6.5 * taille_case_editeur, bande_texte, BLACK, 2);
+    drawLine(x_dep, bande_texte + 2 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 2 * taille_case_editeur, BLACK, 2);
+    drawLine(x_dep, bande_texte + 4 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 4 * taille_case_editeur, BLACK, 2);
 
     // Affichage du nom de la map
-
     int dx = int (3.25*taille_case_editeur - taille_case_editeur * 0.125 * nom_map.size() );
     int dy = int (0.5 * bande_texte - 0.125 * taille_case_editeur );
     drawString(x_dep + dx, bande_texte - dy, nom_map, BLACK, int (taille_case_editeur * 0.25));
@@ -63,20 +96,29 @@ void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_
     // Affichage des cases d'action
     int y_a = bande_texte + taille_case_editeur/2.0;
     for (int j = 0; j<3; j++){
-        drawRect(x_dep + (1.5*j + 0.5)*taille_case_editeur, y_a, taille_case_editeur, taille_case_editeur, BLACK);
+        int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
+        int y = y_a;
+        drawAction(x, y, j, taille_case_editeur);
+        drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
     }
 
     // Affichage des cases couleur
     int y_c = bande_texte + taille_case_editeur* (2.5);
     for (int j = 0; j<4; j++){
-        drawRect(x_dep + (1.5*j + 0.5)*taille_case_editeur, y_c, taille_case_editeur, taille_case_editeur, BLACK);
+        int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
+        int y = y_c;
+        fillRect(x, y, taille_case_editeur, taille_case_editeur, couleur_int_vers_color.at(j));
+        drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
     }
-    // Affichage des cases bloc
 
+    // Affichage des cases bloc
     int y_b = bande_texte + taille_case_editeur* (4);
     for (int j = 0; j<4; j++){
         for (int i = 0; i<3; i++){
-            drawRect(x_dep + (1.5*j + 0.5)*taille_case_editeur, y_b + (1.5*i + 0.5)*taille_case_editeur, taille_case_editeur, taille_case_editeur, BLACK);
+            int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
+            int y = y_b + (1.5*i + 0.5)*taille_case_editeur;
+            drawBouton(x, y, Liste_boutons[j + 4*i][0], taille_case_editeur);
+            drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
         }
     }
 }

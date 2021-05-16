@@ -30,3 +30,4 @@ public:
     void sauvegarder(Window w, string nom_map); // Sauvegarde une map
 };
 
+void dessineCase(int x, int y, int taille_case, int bloc, int couleur);
