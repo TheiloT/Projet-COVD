@@ -10,10 +10,12 @@
 const int vide = 0;
 const int mur_non_modif = 1;
 const int mur_modif = 2;
-const int porte_entree = 3;
-const int porte_sortie = 4;
+const int porte_entree_gauche = 3;
+const int porte_entree_droite = 4;
+const int porte_sortie = 5;
 
 const vector<int> murs = {mur_modif, mur_non_modif};
+const vector<int> porte_entree = {porte_entree_droite, porte_entree_gauche};
 
 // Les effets de couleur: de 30 a 49
 const int rend_rouge = 30;
@@ -57,3 +59,11 @@ const int bleu = 3;
 
 const vector<int> couleurs = {neutre, rouge, vert, bleu};
 
+// ========== associations couleut_int - couleur_Color ==========
+
+const map<int, Color> couleur_int_vers_color {
+    make_pair(neutre, BLACK), make_pair(rend_neutre, BLACK),
+    make_pair(rouge, RED), make_pair(rend_rouge, RED),
+    make_pair(vert, GREEN), make_pair(rend_vert, GREEN),
+    make_pair(bleu, BLUE), make_pair(rend_bleu, BLUE)
+};

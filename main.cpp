@@ -16,13 +16,14 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     setActiveWindow(w);
     affiche_grille(H, L, taille_case);
     Map map(H,L);
-    int N_case = 13;
+    int N_case = 100;
     int i, j;
     while( getMouse(j, i) != 3 ){
         int x = floor(j/taille_case);
         int y = floor(i/taille_case);
         map.set_case(x, y, (map.get_case(x, y) + 1) % N_case);
         map.drawCase(x, y, taille_case);
+        affiche_grille(H, L, taille_case);
     }
 
     if ( getMouse(j, i) == 3 ){ // On sauvegarde
@@ -61,7 +62,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
 
 void run (const Map &map, int taille_case){ // Joue le niveau
 
-    int deltat = 20; // Regle la vitesse d'affichage
+    int deltat = 10; // Regle la vitesse d'affichage
 
     Personnage perso (map);
 
@@ -120,12 +121,14 @@ void construire_map_a_la_main(Map map, int H, int L){
     map.set_case(43, 16, vide); // Trou
     map.set_case(44, 16, vide); // Trou
     map.set_case(49, 16, retour_arriere); // Case de retour arrière
-    // Position initiale du joueur
-    map.set_case(0, 19, porte_entree);
+    // Position et couleur initiale du joueur
+    map.set_case(0, 19, porte_entree_droite);
+    map.set_couleur(0, 19, bleu);
     map.set_case(3, 15, pic_bas); // pic vert
     map.set_couleur(3, 15, vert);
     // Case de fin
     map.set_case(3, 17, porte_sortie);
+    map.set_couleur(3, 17, vert);
     // Rend vert
     map.set_case(20, 16, rend_vert);
     // Blocs verts
