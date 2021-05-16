@@ -21,3 +21,4 @@ bool est_dans (IntPoint2 p, vector<IntPoint2> liste){
     }
     return *find(liste.begin(), liste.end()-1, p) == p;
 }
+

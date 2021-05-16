@@ -179,6 +179,10 @@ void Map::drawCase(int x, int y, int taille_case) const{
     else if ( est_dans(bloc, laves) ){
         drawLave(x, y, taille_case, bloc);
     }
+
+    else if (bloc == etoile){
+        drawEtoile(x, y, taille_case);
+    }
 }
 
 void Map::drawEtoiles(int x, int y, int taille_case, const Personnage &perso) const{
@@ -286,7 +290,35 @@ void Map::load(int k){
     }
 }
 
+void Map::sauvegarder(Window w, string nom_map){
 
+    closeWindow(w);
+    string const nomFichier(srcPath("Niveaux.txt"));
+    ofstream flux(nomFichier.c_str(), ios::app); // flux d'ajout en fin de fichier
+
+    if(flux)
+    {
+        flux << nom_map << endl;
+        flux << H << " ";
+        flux << L << endl;
+        for (int x=0; x<L; x++){
+            for (int y=0; y<H; y++){
+                flux << grille_blocs(x, y) << " "; // Ecriture de grille_blocs
+            }
+        }
+        flux << endl;
+        for (int x=0; x<L; x++){
+            for (int y=0; y<H; y++){
+                flux << grille_couleurs(x, y) << " "; // Ecriture de grille_couleurs
+            }
+        }
+        flux << endl;
+    }
+    else
+    {
+        cout << "ERREUR: Impossible d'ouvrir le fichier." << endl;
+    }
+}
 
 
 

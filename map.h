@@ -26,5 +26,6 @@ public:
     int get_couleur(int x, int y) const; // Donne la valeur de la case couleur (x,y)
 
     void load(int k); // Charge une map
+    void sauvegarder(Window w, string nom_map); // Sauvegarde une map
 };
 

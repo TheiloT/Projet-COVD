@@ -3,63 +3,6 @@
 #include "correspondance.h"
 #include "outils.h"
 
-void affiche_grille(int H, int L, int taille_case){ // Affiche une grille_blocs de la bonne dimension pour la creation de niveau
-    for (int i=0; i<=H; i++){
-        drawLine(0, i*taille_case, L*taille_case, i*taille_case, BLACK);
-    }
-    for (int j=0; j<=L; j++){
-        drawLine(j*taille_case, 0, j*taille_case, H*taille_case, BLACK);
-    }
-}
-
-void creer_map(string nom_map, int L, int H, int taille_case){
-    Window w = openWindow(L*taille_case, H*taille_case);
-    setActiveWindow(w);
-    affiche_grille(H, L, taille_case);
-    Map map(H,L);
-    int N_case = 13;
-    int i, j;
-    while( getMouse(j, i) != 3 ){
-        int x = floor(j/taille_case);
-        int y = floor(i/taille_case);
-        map.set_case(x, y, (map.get_case(x, y) + 1) % N_case);
-        map.drawCase(x, y, taille_case);
-    }
-
-    if ( getMouse(j, i) == 3 ){ // On sauvegarde
-        closeWindow(w);
-        string const nomFichier(srcPath("Niveaux.txt"));
-        ofstream flux(nomFichier.c_str(), ios::app); // flux d'ajout en fin de fichier
-
-        if(flux)
-        {
-            flux << nom_map << endl;
-            flux << H << " ";
-            flux << L << endl;
-            for (int x=0; x<L; x++){
-                for (int y=0; y<H; y++){
-                    flux << map.get_case(x, y) << " "; // Ecriture de grille_blocs
-                }
-            }
-            flux << endl;
-            for (int x=0; x<L; x++){
-                for (int y=0; y<H; y++){
-                    flux << map.get_couleur(x, y) << " "; // Ecriture de grille_couleurs
-                }
-            }
-            flux << endl;
-        }
-        else
-        {
-            cout << "ERREUR: Impossible d'ouvrir le fichier." << endl;
-        }
-        return;
-        }
-
-    else // On ne sauvegarde pas
-        return;
-}
-
 void run (const Map &map, int taille_case){ // Joue le niveau
 
     int deltat = 20; // Regle la vitesse d'affichage
@@ -88,6 +31,179 @@ void run (const Map &map, int taille_case){ // Joue le niveau
         perso.interragit(map); // Gere les interractions avec les blocs en dessous
 
         while (clock() - t < deltat){  // On attend deltat
+        }
+    }
+    map.affiche_tout(taille_case, perso); // On affiche la map a la fin
+}
+
+void affiche_grille(int H, int L, int taille_case){ // Affiche une grille_blocs de la bonne dimension pour la creation de niveau
+    for (int i=0; i<=H; i++){
+        drawLine(0, i*taille_case, L*taille_case, i*taille_case, BLACK);
+    }
+    for (int j=0; j<=L; j++){
+        drawLine(j*taille_case, 0, j*taille_case, H*taille_case, BLACK);
+    }
+}
+
+void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_texte){
+    int x_dep = L * taille_case;
+
+    // Lignes de separation
+    drawLine(x_dep, bande_texte, x_dep + 6.5 * taille_case_editeur, bande_texte, BLACK);
+    drawLine(x_dep, bande_texte + 2 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 2 * taille_case_editeur, BLACK);
+    drawLine(x_dep, bande_texte + 4 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 4 * taille_case_editeur, BLACK);
+
+    // Affichage du nom de la map
+
+    // Affichage des cases d'action
+    int y_a = bande_texte + taille_case_editeur/2.0;
+    for (int j = 0; j<3; j++){
+        drawRect(x_dep + (1.5*j + 0.5)*taille_case_editeur, y_a, taille_case_editeur, taille_case_editeur, BLACK);
+    }
+
+    // Affichage des cases couleur
+    int y_c = bande_texte + taille_case_editeur* (2.5);
+    for (int j = 0; j<4; j++){
+        drawRect(x_dep + (1.5*j + 0.5)*taille_case_editeur, y_c, taille_case_editeur, taille_case_editeur, BLACK);
+    }
+    // Affichage des cases bloc
+
+    int y_b = bande_texte + taille_case_editeur* (4);
+    for (int j = 0; j<4; j++){
+        for (int i = 0; i<3; i++){
+            drawRect(x_dep + (1.5*j + 0.5)*taille_case_editeur, y_b + (1.5*i + 0.5)*taille_case_editeur, taille_case_editeur, taille_case_editeur, BLACK);
+        }
+    }
+}
+
+bool getAction(int x, int y, int &bouton_action, int bande_texte, int L, int taille_case, int taille_case_editeur){
+    int x_dep = L*taille_case;
+    if ( y < bande_texte + 1.5*taille_case_editeur && y > bande_texte + 0.5*taille_case_editeur){
+        float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
+        if (num_x - floor(num_x) > 1/3.0
+                && floor(num_x >= 0 && floor(num_x) < 4)){
+            bouton_action = floor (num_x);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool getCouleur(int x, int y, int &bouton_couleur, int bande_texte, int L, int taille_case, int taille_case_editeur){
+    int x_dep = L*taille_case;
+    if ( y < bande_texte + 3.5*taille_case_editeur && y > bande_texte + 2.5*taille_case_editeur){
+        float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
+        if (       num_x - floor(num_x) > 1/3.0
+                && floor(num_x >= 0 && floor(num_x) < 4) ){
+            bouton_couleur = floor (num_x);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool getBloc(int x, int y, int &bouton_bloc, int bande_texte, int L, int taille_case, int taille_case_editeur, int nb_lignes){
+    int x_dep = L*taille_case;
+    int y_dep = bande_texte + 4*taille_case_editeur;
+    float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
+    float num_y = (2.0 *(y - y_dep) / float(taille_case_editeur)) / 3.0;
+    if (       num_x - floor(num_x) > 1/3.0 && num_y - floor(num_y) > 1/3.0
+            && floor(num_x >= 0 && floor(num_x) < 4
+            && floor(num_y >= 0 && floor(num_y) < nb_lignes  ))){
+        bouton_bloc = floor (num_x) + 4 * floor(num_y);
+        return true;
+    }
+    return false;
+}
+
+bool placeBloc(int x, int y, int L, int H, int taille_case){
+    return ( x>0 && x<L*taille_case && y>0 && y<H*taille_case);
+}
+
+void creer_map(string nom_map, int L, int H, int taille_case){
+    const int taille_case_editeur = 48;
+    const int bande_texte = 48;
+    const int nb_lignes = 3;
+
+    // Ouverture de la fenetre
+    Window w = openWindow(L*taille_case + 6.5 * taille_case_editeur, max( H*taille_case, int(bande_texte + (9.0 * taille_case_editeur)) ) );
+    setActiveWindow(w);
+    // Affichage de la grille et des boutons
+    affiche_grille(H, L, taille_case);
+    affiche_boutons(L, taille_case, taille_case_editeur, bande_texte);
+    // Creation de la map
+    Map map(H,L);
+
+    int bouton_couleur = bouton_neutre; // Initialisation de la couleur a neutre
+    int n_item = 0; // Correspond au premier item d'un vecteur bouton
+    int bouton_bloc = 3; // Correspond au bloc vide
+    int bouton_action = 3; // Correspond a aucune action
+
+    // Coordonnees de la souris
+    int x;
+    int y;
+
+    // Memoire de la derniere case visitee
+    int dernier_x_case = -1;
+    int dernier_y_case = -1;
+
+    // Mode de saisi
+    bool set_bloc = false;
+    bool set_couleur = false;
+
+    bool fin = false;
+    while ( ! fin ){
+
+        getMouse(x, y);
+
+        if ( getAction(x, y, bouton_action, bande_texte, L, taille_case, taille_case_editeur) ){
+            if (bouton_action == bouton_play){
+                run(map, taille_case);
+                affiche_grille(H, L, taille_case);
+            }
+            else if (bouton_action == bouton_sauvegarder){
+                map.sauvegarder(w, nom_map);
+                fin = true;
+            }
+            else if (bouton_action == bouton_quitter){
+                closeWindow(w);
+                fin = true;
+            }
+        }
+
+        else if (getCouleur(x, y, bouton_couleur, bande_texte, L, taille_case, taille_case_editeur)){
+            set_couleur = true;
+            set_bloc = false;
+        }
+
+        else if (getBloc(x, y, bouton_bloc, bande_texte, L, taille_case, taille_case_editeur, nb_lignes)){
+            n_item = 0;
+            set_bloc = true;
+            set_couleur = false;
+            bouton_couleur = bouton_neutre;
+        }
+
+        else if (placeBloc(x, y, L, H, taille_case)){
+            int x_case = floor(x/taille_case);
+            int y_case = floor(y/taille_case);
+
+            // On modifie la map
+            if (set_bloc){
+                if (x_case == dernier_x_case && y_case == dernier_y_case){
+                    n_item = (n_item + 1) % Liste_boutons[bouton_bloc].size(); // On passe a l'item suivant si on reclique sur la meme case
+                }
+                map.set_case(x_case, y_case, Liste_boutons[bouton_bloc][n_item]);
+                dernier_x_case = x_case;
+                dernier_y_case = y_case;
+            }
+
+            if (set_couleur){
+                map.set_couleur(x_case, y_case, bouton_couleur);
+            }
+
+            // Dessin de la case
+            map.drawCase(x_case, y_case, taille_case);
+            affiche_grille(H, L, taille_case);
         }
     }
 }
@@ -152,13 +268,13 @@ int main()
     int H = 30;
     int L = 55;
     int taille_case = 24;
-    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 
-    Map map(H, L);
-    construire_map_a_la_main(map, H, L);
-    run (map, taille_case);
+//    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
+//    Map map(H, L);
+//    construire_map_a_la_main(map, H, L);
+//    run (map, taille_case);
 
-//    creer_map("test_graphismes", L, H, taille_case); // Cree et enregistre la map dans le fichier Niveaux.txt
+    creer_map("test_graphismes", L, H, taille_case); // Cree une map
 
 //    Map map(H, L);
 //    map.load(0); // Charge la map dans le fichier Niveaux.txt
