@@ -4,12 +4,12 @@
 
 Personnage::Personnage(const Map &map){
 
-    float vitesse = 0.125; // Regle la vitesse du perso
+    float vitesse = 0.125; // Regle la norme de la vitesse du perso
 
-    int x0, y0; // Coordonnee de depart
+    int x0, y0; // Coordonnees de depart
     for (int j=0; j<map.L; j++){
         for (int i=0; i<map.H; i++){
-            if ( map.get_case(j,i) == porte_entree ){
+            if ( est_dans(map.get_case(j, i), portes_entree) ){
                 x0 = j;
                 y0 = i;
             }
@@ -17,11 +17,11 @@ Personnage::Personnage(const Map &map){
     }
     x = x0;
     y = y0;
-    vx = vitesse;
+    vx = (map.get_case(x0, y0)==porte_entree_droite) ? vitesse : -vitesse;
     vy = 0;
     vivant = true;
     arrive = false;
-    couleur = neutre;
+    couleur = map.get_couleur(x0, y0);
     actualiser_coins();
     actualiser_detecteurs();
     x_change_dir = -1;
@@ -180,7 +180,8 @@ void Personnage::cherche_sortie(const Map &map){
         int x_c = floor(coin.x);
         int y_c = floor(coin.y);
         int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
-        if (k == porte_sortie){
+        int map_couleur = map.get_couleur(x_c, y_c);
+        if (k == porte_sortie && (map_couleur == neutre || map_couleur == couleur)){
                     arrive = true; // Arrive à la case d'arrivee
         }
         i += 1;
@@ -188,17 +189,15 @@ void Personnage::cherche_sortie(const Map &map){
 }
 
 void Personnage::affiche(int taille_case) const{
-    if (couleur == neutre) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLACK);
+    int u = x*taille_case;
+    int v = y*taille_case;
+    int epaisseur = taille_case/15;
 
-    else if (couleur == rouge) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, RED);
+    fillRect(u, v, taille_case, taille_case, couleur_int_vers_color.at(couleur));
 
-    else if (couleur == vert) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, GREEN);
-
-    else if (couleur == bleu) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, BLUE);
-
-    drawLine(x*taille_case+1, y*taille_case+1, x*taille_case+taille_case-1, y*taille_case+taille_case-1, WHITE, 2);
-
-    drawLine(x*taille_case+1, y*taille_case+taille_case-1, x*taille_case+taille_case-1, y*taille_case+1, WHITE, 2);
+    drawRect(u, v, taille_case-1, taille_case-1, WHITE, epaisseur);
+    drawLine(u, v, u + taille_case - 1, v + taille_case - 1, WHITE, epaisseur);
+    drawLine(u, v + taille_case - 1, u + taille_case - 1, v, WHITE, epaisseur);
 }
 
 void Personnage::gravite(){

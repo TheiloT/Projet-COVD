@@ -3,9 +3,10 @@
 #include "correspondance.h"
 #include "outils.h"
 
+
 void run (const Map &map, int taille_case){ // Joue le niveau
 
-    int deltat = 20; // Regle la vitesse d'affichage
+    int deltat = 10; // Regle la vitesse d'affichage
 
     Personnage perso (map);
     map.affiche_tout(taille_case, perso); // Affichage de la map en entier
@@ -239,12 +240,14 @@ void construire_map_a_la_main(Map map, int H, int L){
     map.set_case(43, 16, vide); // Trou
     map.set_case(44, 16, vide); // Trou
     map.set_case(49, 16, retour_arriere); // Case de retour arrière
-    // Position initiale du joueur
-    map.set_case(0, 19, porte_entree);
+    // Position et couleur initiale du joueur
+    map.set_case(0, 19, porte_entree_droite);
+    map.set_couleur(0, 19, bleu);
     map.set_case(3, 15, pic_bas); // pic vert
     map.set_couleur(3, 15, vert);
     // Case de fin
     map.set_case(3, 17, porte_sortie);
+    map.set_couleur(3, 17, vert);
     // Rend vert
     map.set_case(20, 16, rend_vert);
     // Blocs verts
@@ -276,6 +279,7 @@ int main()
 
     creer_map("test_graphismes", L, H, taille_case); // Cree une map
 
+//    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 //    Map map(H, L);
 //    map.load(0); // Charge la map dans le fichier Niveaux.txt
 //    run (map, Liste_etoiles, taille_case); // Joue le niveau

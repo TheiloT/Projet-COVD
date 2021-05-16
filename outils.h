@@ -8,7 +8,9 @@ using namespace Imagine;
 
 #include "algorithm"
 #include <vector>
+#include <map>
 using namespace std;
+
 
 #include <time.h>
 
