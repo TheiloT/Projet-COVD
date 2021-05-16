@@ -24,4 +24,4 @@ public:
 };
 
 bool est_dans (int num, vector<int> liste); // Renvoie true si num est dans la liste false sinon
-
+bool est_dans (IntPoint2 p, vector<IntPoint2> liste);

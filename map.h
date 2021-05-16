@@ -1,6 +1,7 @@
 #pragma once
 
 #include "outils.h"
+class Personnage;
 
 
 class Map
@@ -12,9 +13,11 @@ public:
     MultiArray<int, 2> grille_couleurs; // grille_blocs des couleurs
 
     void drawCase(int x, int y, int taille_case) const;
+    void drawEtoiles(int x, int y, int taille_case, const Personnage &perso) const; // Affiche les etoiles
 
     Map(int h, int l);
-    void affiche(int taille_case) const; // Affiche la map
+    void affiche(int taille_case, const Personnage &perso) const; // Affiche la map
+    void affiche_tout(int taille_case, const Personnage &perso) const; // Affiche toute la map
 
     void set_case(int x, int y, int k); // Attribut la valeur k à la case type (x,y)
     int get_case(int x, int y) const; // Donne la valeur de la case type (x,y)
