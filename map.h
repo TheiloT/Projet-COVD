@@ -13,9 +13,11 @@ public:
     MultiArray<int, 2> grille_couleurs; // grille_blocs des couleurs
 
     void drawCase(int x, int y, int taille_case) const;
-    void drawEtoiles(int x, int y, int taille_case, const Personnage &perso) const; // Affiche les etoiles
+    void efface_etoiles_collectees(int x, int y, int taille_case, const Personnage &perso) const; // Affiche les etoiles
 
     Map(int h, int l);
+    Map();
+
     void affiche(int taille_case, const Personnage &perso) const; // Affiche la map
     void affiche_tout(int taille_case) const; // Affiche toute la map
     void affiche_tout(int taille_case, const Personnage &perso) const; // Affiche toute la map en prenant en compte le passage du perso

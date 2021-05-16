@@ -256,9 +256,9 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     }
 }
 
-void construire_map_a_la_main(Map map, int H, int L){
+void construire_map_a_la_main(Map map){
     // Construction d'une map à la main
-    for (int x=0; x<L; x++){
+    for (int x=0; x<55; x++){
             map.set_case(x, 20, mur_non_modif); // Murs
             map.set_case(x, 16, mur_non_modif);
     }
@@ -315,20 +315,20 @@ void construire_map_a_la_main(Map map, int H, int L){
 
 int main()
 {
-    int H = 20;
-    int L = 34;
     int taille_case = 30;
+    int L = 30;
+    int H = 20;
 
-//    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-//    Map map(H, L);
-//    construire_map_a_la_main(map, H, L);
+//    openWindow(taille_case*55, taille_case*22); // Ouverture d'une fenetre de bonne dimension pour afficher la map
+//    Map map(21, 55);
+//    construire_map_a_la_main(map);
 //    run (map, taille_case);
 
     creer_map("Ma_map", L, H, taille_case); // Cree une map
 
-//    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-//    Map map(H, L);
+//    Map map;
 //    map.load(0); // Charge la map dans le fichier Niveaux.txt
+//    openWindow(taille_case*map.L, taille_case*map.H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 //    run (map, taille_case); // Joue le niveau
 
     endGraphics();

@@ -2,6 +2,8 @@
 #include "personnage.h"
 #include "correspondance.h"
 
+Map::Map(){
+}
 
 Map::Map(int h, int l)
 {
@@ -301,16 +303,15 @@ void Map::drawCase(int x, int y, int taille_case) const{
 
 }
 
-void Map::drawEtoiles(int x, int y, int taille_case, const Personnage &perso) const{
+void Map::efface_etoiles_collectees(int j, int i, int taille_case, const Personnage &perso) const{
 
-    int bloc = grille_blocs(x,y);
+    int bloc = grille_blocs(j,i);
+    IntPoint2 point = {j, i};
 
-    if (bloc == etoile){
-        efface_bloc(x, y, taille_case);
-        IntPoint2 point = {x, y};
-        if( ! est_dans(point, perso.Liste_etoiles_collectees)){
-            trace_etoile(x, y, taille_case);
-        }
+    if (       bloc == etoile
+            && est_dans(point, perso.Liste_etoiles_collectees) ){
+
+        efface_bloc(j*taille_case, i*taille_case, taille_case);
     }
 }
 
@@ -322,11 +323,11 @@ void Map::affiche_tout(int taille_case) const{ // Affiche la map partout
     }
 }
 
-void Map::affiche_tout(int taille_case, const Personnage &perso) const{ // Affiche la map partout
+void Map::affiche_tout(int taille_case, const Personnage &perso) const{ // Affiche la map partout en tenant en compte du passage du personnage
     for (int j=0; j<L; j++){
         for (int i=0; i<H; i++){
             drawCase(j, i, taille_case);
-            drawEtoiles(j, i, taille_case, perso);
+            efface_etoiles_collectees(j, i, taille_case, perso);
         }
     }
 }
@@ -338,7 +339,7 @@ void Map::affiche(int taille_case, const Personnage &perso) const{ // Rafraichit
     for (int j=x_p - 1; j<x_p + 3  && j<L && j>-1; j++){
         for (int i=y_p - 1; i<y_p + 3 && i<H && i>-1; i++){
             drawCase(j, i, taille_case);
-            drawEtoiles(j, i, taille_case, perso);
+            efface_etoiles_collectees(j, i, taille_case, perso);
         }
     }
 }
@@ -369,9 +370,9 @@ void Map::load(int k){
         for(int n=0; n<k; n++){ // Boucle: on lit tous les niveaux avant le niveau k
             string map_name;
             flux >> map_name;
-            int h,l;
-            flux >> h;
-            flux >> l;
+            int a,b;
+            flux >> a;
+            flux >> b;
             for (int x=0; x<L; x++){
                 for (int y=0; y<H; y++){
                     int valeur = get_case(x, y);
@@ -388,11 +389,15 @@ void Map::load(int k){
 
         string map_name;
         flux >> map_name;
-        int h,l;
-        flux >> h;
-        H = h;
-        flux >> l;
-        L = l;
+        flux >> H;
+        flux >> L;
+
+        // Initialisation de la map
+        grille_blocs = MultiArray<int, 2> (L, H);
+        grille_blocs.fill(vide);
+        grille_couleurs = MultiArray<int, 2> (L, H);
+        grille_couleurs.fill(neutre);
+
         for (int x=0; x<L; x++){
             for (int y=0; y<H; y++){
                 int valeur = get_case(x, y);
