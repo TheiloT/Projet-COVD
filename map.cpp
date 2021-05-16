@@ -302,10 +302,18 @@ void Map::drawEtoiles(int x, int y, int taille_case, const Personnage &perso) co
     int bloc = grille_blocs(x,y);
 
     if (bloc == etoile){
-        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        efface_bloc(x, y, taille_case);
         IntPoint2 point = {x, y};
         if( ! est_dans(point, perso.Liste_etoiles_collectees)){
             trace_etoile(x, y, taille_case);
+        }
+    }
+}
+
+void Map::affiche_tout(int taille_case) const{ // Affiche la map partout
+    for (int j=0; j<L; j++){
+        for (int i=0; i<H; i++){
+            drawCase(j, i, taille_case);
         }
     }
 }

@@ -17,7 +17,8 @@ public:
 
     Map(int h, int l);
     void affiche(int taille_case, const Personnage &perso) const; // Affiche la map
-    void affiche_tout(int taille_case, const Personnage &perso) const; // Affiche toute la map
+    void affiche_tout(int taille_case) const; // Affiche toute la map
+    void affiche_tout(int taille_case, const Personnage &perso) const; // Affiche toute la map en prenant en compte le passage du perso
 
     void set_case(int x, int y, int k); // Attribut la valeur k à la case type (x,y)
     int get_case(int x, int y) const; // Donne la valeur de la case type (x,y)

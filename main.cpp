@@ -9,7 +9,7 @@ void run (const Map &map, int taille_case){ // Joue le niveau
     int deltat = 10; // Regle la vitesse d'affichage
 
     Personnage perso (map);
-    map.affiche_tout(taille_case, perso); // Affichage de la map en entier
+    map.affiche_tout(taille_case); // Affichage de la map en entier
 
     while (    perso.est_vivant()
             && !perso.est_arrive() ){
@@ -160,6 +160,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
         if ( getAction(x, y, bouton_action, bande_texte, L, taille_case, taille_case_editeur) ){
             if (bouton_action == bouton_play){
                 run(map, taille_case);
+                map.affiche_tout(taille_case);
                 affiche_grille(H, L, taille_case);
             }
             else if (bouton_action == bouton_sauvegarder){
@@ -277,12 +278,12 @@ int main()
 //    construire_map_a_la_main(map, H, L);
 //    run (map, taille_case);
 
-    creer_map("test_graphismes", L, H, taille_case); // Cree une map
+//    creer_map("test_graphismes", L, H, taille_case); // Cree une map
 
-//    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-//    Map map(H, L);
-//    map.load(0); // Charge la map dans le fichier Niveaux.txt
-//    run (map, Liste_etoiles, taille_case); // Joue le niveau
+    openWindow(taille_case*L, taille_case*H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
+    Map map(H, L);
+    map.load(0); // Charge la map dans le fichier Niveaux.txt
+    run (map, taille_case); // Joue le niveau
 
     endGraphics();
     return 0;
