@@ -1,5 +1,6 @@
 #include "personnage.h"
 #include "correspondance.h"
+#include "outils.h"
 
 Personnage::Personnage(const Map &map){
 
@@ -25,6 +26,16 @@ Personnage::Personnage(const Map &map){
     actualiser_detecteurs();
     x_change_dir = -1;
     y_change_dir = -1;
+    nb_etoile = 0;
+    Liste_etoiles_collectees = {};
+}
+
+float Personnage::get_x() const{
+    return x;
+}
+
+float Personnage::get_y() const{
+    return y;
 }
 
 int Personnage:: get_couleur() const{
@@ -311,7 +322,30 @@ void Personnage::collision_obstacle(const Map &map){ // gere les collisions avec
     }
 }
 
+void Personnage::cherche_etoile(const Map &map){
 
+    int i =0;
+    while (i<4){
+        Point coin = Coins[i];
+        int x_c = floor(coin.x);
+        int y_c = floor(coin.y);
+        IntPoint2 point = {x_c, y_c};
+        int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
+
+        if (       k == etoile
+                && ! est_dans(point, Liste_etoiles_collectees) ){
+
+                    nb_etoile += 1;
+                    Liste_etoiles_collectees.push_back(point);
+        }
+
+        i += 1;
+    }
+}
+
+int Personnage::get_nb_etoile(){
+    return nb_etoile;
+}
 
 
 

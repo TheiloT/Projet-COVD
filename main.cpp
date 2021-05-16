@@ -1,6 +1,7 @@
 #include "map.h"
 #include "personnage.h"
 #include "correspondance.h"
+#include "outils.h"
 
 void affiche_grille(int H, int L, int taille_case){ // Affiche une grille_blocs de la bonne dimension pour la creation de niveau
     for (int i=0; i<=H; i++){
@@ -65,6 +66,7 @@ void run (const Map &map, int taille_case){ // Joue le niveau
     int deltat = 10; // Regle la vitesse d'affichage
 
     Personnage perso (map);
+    map.affiche_tout(taille_case, perso); // Affichage de la map en entier
 
     while (    perso.est_vivant()
             && !perso.est_arrive() ){
@@ -72,7 +74,7 @@ void run (const Map &map, int taille_case){ // Joue le niveau
         clock_t t = clock(); // Debut du timer
 
         noRefreshBegin();
-        map.affiche(taille_case); // Affichage de la map
+        map.affiche(taille_case, perso); // Affichage de la map
         perso.affiche(taille_case); // Affichage du perso
         noRefreshEnd();
 
@@ -82,6 +84,7 @@ void run (const Map &map, int taille_case){ // Joue le niveau
         perso.actualise_position(); // Modifie la position grace a la vitesse
         perso.collision(map); // Gere les collisions
         perso.collision_obstacle(map); // Gere les collisions avec les obstacles
+        perso.cherche_etoile(map); // Collecte les etoiles
         perso.cherche_sortie(map); // Sort si touche la porte de sortie
         perso.interragit(map); // Gere les interractions avec les blocs en dessous
 
@@ -141,6 +144,9 @@ void construire_map_a_la_main(Map map, int H, int L){
     map.set_case(47, 19, lave_partiel);
     map.set_case(48, 19, lave_partiel);
     map.set_case(49, 19, mur_non_modif);
+    // Etoiles
+    map.set_case(42, 13, etoile);
+    map.set_case(43, 14, etoile);
 
 }
 
@@ -159,7 +165,7 @@ int main()
 
 //    Map map(H, L);
 //    map.load(0); // Charge la map dans le fichier Niveaux.txt
-//    run (map, taille_case); // Joue le niveau
+//    run (map, Liste_etoiles, taille_case); // Joue le niveau
 
     endGraphics();
     return 0;

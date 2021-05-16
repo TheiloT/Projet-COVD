@@ -1,5 +1,7 @@
 #include "map.h"
+#include "personnage.h"
 #include "correspondance.h"
+
 
 Map::Map(int h, int l)
 {
@@ -169,7 +171,7 @@ void trace_retour_arriere(int x, int y, int taille_case) {
     fillPoly(coord_triangle2, 3, PURPLE);
 }
 
-void drawTriangle(int x, int y, int k, int taille_case, int couleur){
+void trace_triangle(int x, int y, int k, int taille_case, int couleur){
 
     int u = x*taille_case;
     int v = y*taille_case;
@@ -218,12 +220,26 @@ void drawTriangle(int x, int y, int k, int taille_case, int couleur){
 
 }
 
-void drawLave(int x, int y, int taille_case, int bloc){
+void trace_lave(int x, int y, int taille_case, int bloc){
     if (bloc == lave_totale) fillRect(x*taille_case, y*taille_case, taille_case, taille_case, ORANGE);
     else{
         fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
         fillRect(x*taille_case, (y+1)*taille_case, taille_case, -0.6666 * taille_case, ORANGE);
     }
+}
+
+void trace_etoile(int j, int i, int taille_case){
+
+    int x = j * taille_case;
+    int y = i * taille_case;
+    int demi = taille_case/2;
+    int h = int (0.75*float(taille_case));
+
+    int liste_1[6] = {x + demi, y, x, y + h, x + taille_case, y + h};
+    fillPoly(liste_1, 3, YELLOW); // Premier triangle
+
+    int liste_2[6] = {x, y + taille_case - h, x + demi, y + taille_case, x + taille_case, y + taille_case - h};
+    fillPoly(liste_2, 3, YELLOW); // Deuxieme triangle
 }
 
 // ========== Fin gaphismes ==========
@@ -269,18 +285,44 @@ void Map::drawCase(int x, int y, int taille_case) const{
 
     else if ( est_dans(bloc, pics) ){
         efface_bloc(x, y, taille_case);
-        drawTriangle (x, y, bloc, taille_case, couleur);
+        trace_triangle (x, y, bloc, taille_case, couleur);
     }
 
     else if ( est_dans(bloc, laves) ){
-        drawLave(x, y, taille_case, bloc);
+        trace_lave(x, y, taille_case, bloc);
     }
 }
 
-void Map::affiche(int taille_case) const{
-    for (int x=0; x<L; x++){
-        for (int y=0; y<H; y++){
-            drawCase(x, y, taille_case);
+void Map::drawEtoiles(int x, int y, int taille_case, const Personnage &perso) const{
+
+    int bloc = grille_blocs(x,y);
+
+    if (bloc == etoile){
+        fillRect(x*taille_case, y*taille_case, taille_case, taille_case, WHITE);
+        IntPoint2 point = {x, y};
+        if( ! est_dans(point, perso.Liste_etoiles_collectees)){
+            trace_etoile(x, y, taille_case);
+        }
+    }
+}
+
+void Map::affiche_tout(int taille_case, const Personnage &perso) const{ // Affiche la map partout
+    for (int j=0; j<L; j++){
+        for (int i=0; i<H; i++){
+            drawCase(j, i, taille_case);
+            drawEtoiles(j, i, taille_case, perso);
+        }
+    }
+}
+
+void Map::affiche(int taille_case, const Personnage &perso) const{ // Rafraichit la map autour du joueur seulement
+    int x_p = floor(perso.get_x());
+    int y_p = floor(perso.get_y());
+
+    for (int j=x_p - 1; j<x_p + 3  && j<L && j>-1; j++){
+        for (int i=y_p - 1; i<y_p + 3 && i<H && i>-1; i++){
+            drawCase(j, i, taille_case);
+            drawEtoiles(j, i, taille_case, perso);
         }
     }
 }
@@ -355,3 +397,10 @@ void Map::load(int k){
         cout << "ERREUR: Impossible d'ouvrir le fichier." << endl;
     }
 }
+
+
+
+
+
+
+

@@ -48,7 +48,8 @@ const vector<int> laves = {lave_partiel, lave_totale};
 // generateur ennemi: apres 90
 const int gen_ennemi = 90;
 
-// etoile : a voir
+// Etoile
+const int etoile = 100;
 
 // ========== couleurs ==========
 
