@@ -5,8 +5,9 @@
 Map::Map(){
 }
 
-Map::Map(int h, int l)
+Map::Map(string nom_map, int h, int l)
 {
+    nom = nom_map;
     H = h; // Hauteur
     L = l; // Longueur
     grille_blocs = MultiArray<int, 2> (L, H);
@@ -360,7 +361,7 @@ int Map::get_couleur(int x, int y) const{
     return grille_couleurs(x, y);
 }
 
-void Map::load(int k){
+void Map::charger(int k){
 
     string const nomFichier(srcPath("Niveaux.txt"));
     ifstream flux(nomFichier.c_str());
@@ -370,25 +371,24 @@ void Map::load(int k){
         for(int n=0; n<k; n++){ // Boucle: on lit tous les niveaux avant le niveau k
             string map_name;
             flux >> map_name;
-            int a,b;
-            flux >> a;
-            flux >> b;
-            for (int x=0; x<L; x++){
-                for (int y=0; y<H; y++){
-                    int valeur = get_case(x, y);
+            int h,l;
+            flux >> h;
+            flux >> l;
+            for (int x=0; x<l; x++){
+                for (int y=0; y<h; y++){
+                    int valeur;
                     flux >> valeur;
                 }
             }
-            for (int x=0; x<L; x++){
-                for (int y=0; y<H; y++){
-                    int valeur = get_couleur(x, y);
+            for (int x=0; x<l; x++){
+                for (int y=0; y<h; y++){
+                    int valeur;
                     flux >> valeur;
                 }
             }
         }
 
-        string map_name;
-        flux >> map_name;
+        flux >> nom;
         flux >> H;
         flux >> L;
 
@@ -400,14 +400,14 @@ void Map::load(int k){
 
         for (int x=0; x<L; x++){
             for (int y=0; y<H; y++){
-                int valeur = get_case(x, y);
+                int valeur;
                 flux >> valeur;
                 grille_blocs(x, y) = valeur;
             }
         }
         for (int x=0; x<L; x++){
             for (int y=0; y<H; y++){
-                int valeur = get_couleur(x, y);
+                int valeur;
                 flux >> valeur;
                 grille_couleurs(x, y) = valeur;
             }
@@ -419,15 +419,14 @@ void Map::load(int k){
     }
 }
 
-void Map::sauvegarder(Window w, string nom_map){
+void Map::sauvegarder(){
 
-    closeWindow(w);
     string const nomFichier(srcPath("Niveaux.txt"));
     ofstream flux(nomFichier.c_str(), ios::app); // flux d'ajout en fin de fichier
 
     if(flux)
     {
-        flux << nom_map << endl;
+        flux << nom << endl;
         flux << H << " ";
         flux << L << endl;
         for (int x=0; x<L; x++){

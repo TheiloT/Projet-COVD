@@ -11,11 +11,12 @@ public:
     int L; // Longueur
     MultiArray<int, 2> grille_blocs; // grille_blocs des types de blocs
     MultiArray<int, 2> grille_couleurs; // grille_blocs des couleurs
+    string nom;
 
     void drawCase(int x, int y, int taille_case) const;
     void efface_etoiles_collectees(int x, int y, int taille_case, const Personnage &perso) const; // Affiche les etoiles
 
-    Map(int h, int l);
+    Map(string nom_map, int h, int l);
     Map();
 
     void affiche(int taille_case, const Personnage &perso) const; // Affiche la map
@@ -28,8 +29,8 @@ public:
     void set_couleur(int x, int y, int k); // Attribut la valeur k à la case couleur (x,y)
     int get_couleur(int x, int y) const; // Donne la valeur de la case couleur (x,y)
 
-    void load(int k); // Charge une map
-    void sauvegarder(Window w, string nom_map); // Sauvegarde une map
+    void charger(int k); // Charge une map
+    void sauvegarder(); // Sauvegarde une map
 };
 
 void dessineCase(int x, int y, int taille_case, int bloc, int couleur);
