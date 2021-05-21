@@ -222,7 +222,4 @@ void Map::sauvegarder(){
     }
 }
 
-void Map::jouer(int taille_case) {
-
-}
 

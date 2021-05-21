@@ -1,6 +1,5 @@
 #include "map.h"
 #include "personnage.h"
-#include "map.h"
 #include "correspondance.h"
 #include "outils.h"
 
@@ -343,6 +342,121 @@ void construire_map_a_la_main(Map map){
 
 }
 
+void jouer(Map map, int taille_case) {
+    const int L = map.L;
+    const int H = map.H;
+    const string nom = map.nom;
+
+    std::map<int, int> blocs_disponibles;
+    for (int k=0; k<int(effets.size()); k++)
+        blocs_disponibles[effets[k]] = 0;
+
+    // Préparation de la map pour le joueur
+
+    int k; // case courante
+    for (int i=0; i<H; i++) {
+        for (int j=0; j<L; j++) {
+            k = map.get_case(i, j);
+            if (est_dans(k, effets)) {
+                map.set_case(i, j, mur_modif);
+                blocs_disponibles[k] ++;
+            }
+        }
+    }
+
+    // Le jeu
+
+    const int taille_case_editeur = 2*taille_case;
+    const int bande_texte = taille_case_editeur;
+    const int nb_lignes = 3;
+
+    // Ouverture de la fenetre
+    Window w = openWindow(L*taille_case + 6.5 * taille_case_editeur, max( H*taille_case, int(bande_texte + (9.0 * taille_case_editeur)) ) );
+    setActiveWindow(w);
+    // Affichage de la grille et des boutons
+    affiche_grille(H, L, taille_case);
+    affiche_boutons(L, taille_case, taille_case_editeur, bande_texte, nom);
+
+    int bouton_couleur = bouton_neutre; // Initialisation de la couleur a neutre
+    int n_item = 0; // Correspond au premier item d'un vecteur bouton
+    int bouton_bloc = 3; // Correspond au bloc vide
+    int bouton_action = 3; // Correspond a aucune action
+
+    // Coordonnees de la souris
+    int x;
+    int y;
+
+    // Memoire de la derniere case visitee
+    int dernier_x_case = -1;
+    int dernier_y_case = -1;
+
+    // Mode de saisi
+    bool set_bloc = false;
+    bool set_couleur = false;
+
+    bool fin = false;
+    while ( ! fin ){
+
+        getMouse(x, y);
+
+        if ( getAction(x, y, bouton_action, bande_texte, L, taille_case, taille_case_editeur) ){
+            if (bouton_action == bouton_play){
+                run(map, taille_case);
+                map.affiche_tout(taille_case);
+                affiche_grille(H, L, taille_case);
+            }
+            else if (bouton_action == bouton_sauvegarder){
+                map.sauvegarder();
+                closeWindow(w);
+                fin = true;
+            }
+            else if (bouton_action == bouton_quitter){
+                closeWindow(w);
+                fin = true;
+            }
+        }
+
+        else if (getCouleur(x, y, bouton_couleur, bande_texte, L, taille_case, taille_case_editeur)){
+            set_couleur = true;
+            set_bloc = false;
+        }
+
+        else if (getBloc(x, y, bouton_bloc, bande_texte, L, taille_case, taille_case_editeur, nb_lignes)){
+            n_item = 0;
+            set_bloc = true;
+            set_couleur = false;
+            bouton_couleur = bouton_neutre;
+        }
+
+        else if (placeBloc(x, y, L, H, taille_case)){
+            int x_case = floor(x/taille_case);
+            int y_case = floor(y/taille_case);
+
+            // On modifie la map
+            if (set_bloc){
+                if (x_case == dernier_x_case && y_case == dernier_y_case){
+                    n_item = (n_item + 1) % Liste_boutons[bouton_bloc].size(); // On passe a l'item suivant si on reclique sur la meme case
+                }
+            else{
+                    n_item = 0; // On repasse au premier item si on ne reclique pas sur la même case
+                }
+
+            map.set_case(x_case, y_case, Liste_boutons[bouton_bloc][n_item]);
+            dernier_x_case = x_case;
+            dernier_y_case = y_case;
+            }
+
+            if (set_couleur){
+                map.set_couleur(x_case, y_case, bouton_couleur);
+            }
+
+            // Dessin de la case
+            map.drawCase(x_case, y_case, taille_case);
+            affiche_grille(H, L, taille_case);
+        }
+    }
+}
+
 // ========== Fonctions du menu ==========
 
 void lancer_menu() {
@@ -381,14 +495,14 @@ int main()
 
       lancer_menu();
 
-//    int L = 30;
-//    int H = 20;
-//    creer_map("Ma_map_nulle", L, H, taille_case); // Cree une map
+    int L = 30;
+    int H = 20;
+    creer_map("Ma_map_nulle", L, H, taille_case); // Cree une map
 
-    Map map;
-    map.charger(0); // Charge la map dans le fichier Niveaux.txt
-    openWindow(taille_case*map.L, taille_case*map.H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-    run (map, taille_case); // Joue le niveau
+//    Map map;
+//    map.charger(0); // Charge la map dans le fichier Niveaux.txt
+//    openWindow(taille_case*map.L, taille_case*map.H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
+//    run (map, taille_case); // Joue le niveau
 
 //    int nb_niveau = 2;
 //    efface_niveau(1, nb_niveau);
