@@ -315,7 +315,7 @@ void construire_map_a_la_main(Map map){
 
 int main()
 {
-    int taille_case = 30;
+    int taille_case = 20;
     int L = 30;
     int H = 20;
 
