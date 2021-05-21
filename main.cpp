@@ -343,6 +343,32 @@ void construire_map_a_la_main(Map map){
 
 }
 
+// ========== Fonctions du menu ==========
+
+void lancer_menu() {
+
+}
+
+void menu_categorie_niveau(){
+
+}
+
+void menu_creation_niveau(){
+
+}
+
+void menu_options(){}
+
+void menu_quitter(){}
+
+// ========================================
+
+void selection_niveau(bool mode_aventure) {} // reminder : le nombre de niveau est recompter en parcourant le .txt
+
+
+
+
+
 int main()
 {
     int taille_case = 30;
@@ -353,14 +379,16 @@ int main()
 //    construire_map_a_la_main(map);
 //    run (map, taille_case);
 
+      lancer_menu();
+
 //    int L = 30;
 //    int H = 20;
 //    creer_map("Ma_map_nulle", L, H, taille_case); // Cree une map
 
-//    Map map;
-//    map.charger(0); // Charge la map dans le fichier Niveaux.txt
-//    openWindow(taille_case*map.L, taille_case*map.H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-//    run (map, taille_case); // Joue le niveau
+    Map map;
+    map.charger(0); // Charge la map dans le fichier Niveaux.txt
+    openWindow(taille_case*map.L, taille_case*map.H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
+    run (map, taille_case); // Joue le niveau
 
 //    int nb_niveau = 2;
 //    efface_niveau(1, nb_niveau);

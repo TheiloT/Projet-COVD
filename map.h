@@ -31,6 +31,8 @@ public:
 
     void charger(int k); // Charge une map
     void sauvegarder(); // Sauvegarde une map
+
+    void jouer(int taille_case);
 };
 
 void dessineCase(int x, int y, int taille_case, int bloc, int couleur);
