@@ -5,6 +5,7 @@ using namespace Imagine;
 
 #include<iostream>
 #include <fstream>
+#include <stdio.h>
 
 #include "algorithm"
 #include <vector>

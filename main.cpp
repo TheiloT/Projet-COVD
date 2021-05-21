@@ -167,6 +167,30 @@ bool placeBloc(int x, int y, int L, int H, int taille_case){
     return ( x>0 && x<L*taille_case && y>0 && y<H*taille_case);
 }
 
+void efface_tous_niveaux(){ // Efface le Niveaux.txt
+
+    string const nomFichier(srcPath("Niveaux.txt"));
+    ofstream fichier(nomFichier.c_str() ); // flux d'ajout en fin de fichier
+}
+
+void efface_niveau (int k, int nb_niveaux){
+    vector <Map> Liste_maps;
+
+    for (int i=0; i<nb_niveaux && i!=k; i++){
+        Map map;
+        map.charger(i);
+        Liste_maps.push_back(map);
+    }
+
+    efface_tous_niveaux();
+
+    for (int i=0; i<nb_niveaux-1; i++){
+        Map map = Liste_maps[i];
+        map.sauvegarder();
+    }
+
+}
+
 void creer_map(string nom_map, int L, int H, int taille_case){
     const int taille_case_editeur = 2*taille_case;
     const int bande_texte = taille_case_editeur;
@@ -179,7 +203,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     affiche_grille(H, L, taille_case);
     affiche_boutons(L, taille_case, taille_case_editeur, bande_texte, nom_map);
     // Creation de la map
-    Map map(H,L);
+    Map map(nom_map, H,L);
 
     int bouton_couleur = bouton_neutre; // Initialisation de la couleur a neutre
     int n_item = 0; // Correspond au premier item d'un vecteur bouton
@@ -210,7 +234,8 @@ void creer_map(string nom_map, int L, int H, int taille_case){
                 affiche_grille(H, L, taille_case);
             }
             else if (bouton_action == bouton_sauvegarder){
-                map.sauvegarder(w, nom_map);
+                map.sauvegarder();
+                closeWindow(w);
                 fin = true;
             }
             else if (bouton_action == bouton_quitter){
@@ -240,9 +265,13 @@ void creer_map(string nom_map, int L, int H, int taille_case){
                 if (x_case == dernier_x_case && y_case == dernier_y_case){
                     n_item = (n_item + 1) % Liste_boutons[bouton_bloc].size(); // On passe a l'item suivant si on reclique sur la meme case
                 }
-                map.set_case(x_case, y_case, Liste_boutons[bouton_bloc][n_item]);
-                dernier_x_case = x_case;
-                dernier_y_case = y_case;
+            else{
+                    n_item = 0; // On repasse au premier item si on ne reclique pas sur la même case
+                }
+
+            map.set_case(x_case, y_case, Liste_boutons[bouton_bloc][n_item]);
+            dernier_x_case = x_case;
+            dernier_y_case = y_case;
             }
 
             if (set_couleur){
@@ -257,6 +286,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
 }
 
 void construire_map_a_la_main(Map map){
+
     // Construction d'une map à la main
     for (int x=0; x<55; x++){
             map.set_case(x, 20, mur_non_modif); // Murs
@@ -315,21 +345,25 @@ void construire_map_a_la_main(Map map){
 
 int main()
 {
-    int taille_case = 20;
-    int L = 30;
-    int H = 20;
+    int taille_case = 30;
 
 //    openWindow(taille_case*55, taille_case*22); // Ouverture d'une fenetre de bonne dimension pour afficher la map
-//    Map map(21, 55);
+//    string nom_map = "Map_a_la_mano";
+//    Map map(nom_map, 21, 55);
 //    construire_map_a_la_main(map);
 //    run (map, taille_case);
 
-    creer_map("Ma_map", L, H, taille_case); // Cree une map
+//    int L = 30;
+//    int H = 20;
+//    creer_map("Ma_map_nulle", L, H, taille_case); // Cree une map
 
 //    Map map;
-//    map.load(0); // Charge la map dans le fichier Niveaux.txt
+//    map.charger(0); // Charge la map dans le fichier Niveaux.txt
 //    openWindow(taille_case*map.L, taille_case*map.H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 //    run (map, taille_case); // Joue le niveau
+
+//    int nb_niveau = 2;
+//    efface_niveau(1, nb_niveau);
 
     endGraphics();
     return 0;
