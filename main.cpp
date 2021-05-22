@@ -534,20 +534,179 @@ void jouer(Map map, int taille_case) {
 
 // ========== Fonctions du menu ==========
 
+
+void selection_niveau(bool mode_aventure) {} // reminder : le nombre de niveau est recompter en parcourant le .txt
+
+void draw_categorie_niveau(int W_menu, int marge_menu_x, int marge_menu_y){
+    vector <string> Liste_categories = {"Niveaux classiques", "Mes niveaux", "Retour au menu"};
+    // Dessin des boutons
+    for (int k=0; k<3; k++){
+        int x = marge_menu_x;
+        int y = (3*k+1)*marge_menu_y;
+        int w = W_menu - 2*marge_menu_x;
+        int h = 2*marge_menu_y;
+        drawRect(x, y, w, h, BLACK, 2);
+
+        ecris_dans_la_case (x, y, w, h, Liste_categories[k], 18);
+    }
+}
+
 void menu_categorie_niveau(){
+    const int W_menu = 600;
+    const int marge_menu_x = int(W_menu/6);
+    const int marge_menu_y = 70;
+    const int H_menu = 10*marge_menu_y;
+
+    const string selection = "Selection de la catégorie de niveau";
+    Window menu_Window = openWindow(W_menu, H_menu, selection);
+
+    draw_categorie_niveau(W_menu, marge_menu_x, marge_menu_y);
+
+    // Coordonnees de la souris
+    int x;
+    int y;
+
+    bool fin = false;
+    while ( ! fin ){
+
+        getMouse(x, y);
+
+        if ( x > marge_menu_x && x < W_menu - marge_menu_x){ // Zonne de x dans laquelle se trouve les boutons
+            float num_y = y/(3.0*marge_menu_y);
+            if (num_y - floor(num_y) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
+
+                int k = floor(num_y); // Numero du bouton clique
+
+                closeWindow(menu_Window);
+                if (k==0){
+                    selection_niveau(true);
+                    menu_Window = openWindow(W_menu, H_menu, selection);
+                    draw_categorie_niveau(W_menu, marge_menu_x, marge_menu_y);
+                }
+                else if (k==1){
+                    selection_niveau(false);
+                    menu_Window = openWindow(W_menu, H_menu, selection);
+                    draw_categorie_niveau(W_menu, marge_menu_x, marge_menu_y);
+                }
+
+                else if (k==2){
+                    fin = true;
+                }
+            }
+        }
+    }
+
+}
+
+void draw_caracteristiques_niveau(int h, int hauteur, int largueur, string nom_map){
+    int taille_police = 12;
+
+    drawRect(h, h, 5*h, h, BLACK, 2);
+    drawRect(h, 2*h, 5*h, h, BLACK, 2);
+    ecris_dans_la_case(h, h, 5*h, h, "Nom du niveau", taille_police);
+    ecris_dans_la_case(h, 2*h, 5*h, h, nom_map, taille_police);
+
+    vector<string> Liste_boutons = {"H", "L", "Retour", "Créer"};
+    vector<string> Liste_dim = {to_string(hauteur), to_string(largueur)};
+
+    int y_dep = 3*h;
+    for (int i=0; i<2; i++){
+        for (int j=0; j<2; j++){
+            int x = (3*j+1)*h;
+            int y = y_dep + (3*i+1)*h;
+            int k = j + 2*i;
+            drawRect(x, y, 2*h, 2*h, BLACK, 2);
+            if (i == 0){ // Boutons H et L
+                drawLine( (3*j+1)*h, y_dep + (3*i+2)*h, (3*j+3)*h, y_dep + (3*i+2)*h, BLACK, 2);
+                ecris_dans_la_case(x, y, 2*h, h, Liste_boutons[k], taille_police);
+                ecris_dans_la_case(x, y+h, 2*h, h, Liste_dim[k], taille_police);
+            }
+            else{ // Boutons retour et creer
+                ecris_dans_la_case(x, y, 2*h, 2*h, Liste_boutons[k], taille_police);
+            }
+        }
+    }
+}
+
+void attribuer_nom(string &nom){
+
+}
+
+void attribuer_nombre(int &k){
 
 }
 
 void menu_creation_niveau(){
+    const int h = 60;
+    const int W = 7*h;
+    const int H = 10*h;
 
+    const string niveau = "Sélection des caractéristiques du niveau";
+    Window w = openWindow(W, H, niveau);
+
+    int hauteur = 20;
+    int largueur = 40;
+    string nom_map = "Mon niveau";
+    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+
+    // Coordonnees de la souris
+    int x;
+    int y;
+
+    int taille_case = 20; // A regler
+
+    bool fin = false;
+    while ( ! fin ){
+
+        getMouse(x, y);
+
+        if (x > h && x < W-h){ // Zonne de x dans laquelle se trouve les boutons
+
+            if (y > h && y < 3*h ){
+                nom_map = "";
+                attribuer_nom(nom_map); // Acquisition du nom du niveau
+                clearWindow();
+                draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+            }
+
+            int y_dep = 3*h;
+
+            float num_x = x/(3.0*h);
+            float num_y = (y-y_dep)/(3.0*h);
+
+            if (num_y - floor(num_y) > 0.3333 && num_x - floor(num_x) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
+                int k = floor(num_x) + 2*floor(num_y); // Numero du bouton
+
+                if ( k == 0){
+                    attribuer_nombre (hauteur);
+                    clearWindow();
+                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+                }
+
+                else if ( k == 1){
+                    attribuer_nombre (largueur);
+                    clearWindow();
+                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+                }
+
+                else if ( k == 2){
+                    closeWindow(w);
+                    fin = true;
+                }
+
+                else if ( k == 3){
+                    closeWindow(w);
+                    creer_map(nom_map, largueur, hauteur, taille_case);
+                    w = openWindow(W, H, niveau);
+                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+                }
+            }
+        }
+    }
 }
 
 void menu_options(){
 
-}
-
-void menu_quitter(Window w){
-    closeWindow(w);
 }
 
 void draw_menu(int W_menu, int marge_menu_x, int marge_menu_y){
@@ -590,22 +749,21 @@ void lancer_menu() {
 
                 int k = floor(num_y); // Numero du bouton clique
 
+                closeWindow(menu_Window);
+
                 if (k==0){
-                    closeWindow(menu_Window);
                     menu_categorie_niveau();
                     menu_Window = openWindow(W_menu, H_menu, menu);
                     draw_menu(W_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==1){
-                    closeWindow(menu_Window);
                     menu_creation_niveau();
                     menu_Window = openWindow(W_menu, H_menu, menu);
                     draw_menu(W_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==2){
-                    closeWindow(menu_Window);
                     menu_options();
                     menu_Window = openWindow(W_menu, H_menu, menu);
                     draw_menu(W_menu, marge_menu_x, marge_menu_y);
@@ -613,8 +771,6 @@ void lancer_menu() {
 
                 else if (k==3){
                     fin = true;
-                    closeWindow(menu_Window);
-                    menu_quitter(menu_Window);
                 }
 
             }
@@ -626,7 +782,6 @@ void lancer_menu() {
 
 // ========================================
 
-void selection_niveau(bool mode_aventure) {} // reminder : le nombre de niveau est recompter en parcourant le .txt
 
 
 
