@@ -78,8 +78,8 @@ void drawAction(int x, int y, int k, int taille_case_editeur){
         drawLine(x + taille_case_editeur - 4 - d, y + 4 + d, x + 4 + d, y + taille_case_editeur - 4 - d, WHITE, 8);
     }
     else if (k == bouton_reset){
-        string s = "R";
-        drawString(x + int(0.25*taille_case_editeur), y + int(0.8*taille_case_editeur), s, BLACK, int (0.5*taille_case_editeur));
+        string r = "R";
+        drawString(x + int(0.2*taille_case_editeur), y + int(0.85*taille_case_editeur), r, BLACK, int (0.5*taille_case_editeur));
     }
 }
 
@@ -88,7 +88,7 @@ void drawBouton(int x, int y, int k, int taille_case_editeur){
     dessineCase(x + marge, y + marge, taille_case_editeur - 2*marge, k, neutre);
 }
 
-void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map){
+void affiche_boutons(int H, int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map){
 
     int x_dep = L * taille_case;
 
@@ -140,7 +140,7 @@ void affiche_boutons_joueur(int L, int H, int taille_case, int taille_case_edite
     // Lignes de separation
     drawLine(x_dep, bande_texte, x_dep + 6.5 * taille_case_editeur, bande_texte, BLACK, 2);
     drawLine(x_dep, bande_texte + 2 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 2 * taille_case_editeur, BLACK, 2);
-    drawLine(x_dep, 0, x_dep, H*taille_case,BLACK, 2);
+    drawLine(x_dep+1, 0, x_dep+1, H*taille_case,BLACK, 2);
 
     // Affichage du nom de la map
     int dx = int (3.25*taille_case_editeur - taille_case_editeur * 0.125 * nom_map.size() );
@@ -293,7 +293,7 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     setActiveWindow(w);
     // Affichage de la grille et des boutons
     affiche_grille(H, L, taille_case);
-    affiche_boutons(L, taille_case, taille_case_editeur, bande_texte, nom_map);
+    affiche_boutons(H, L, taille_case, taille_case_editeur, bande_texte, nom_map);
     // Creation de la map
     Map map(nom_map, H,L);
 
@@ -321,8 +321,10 @@ void creer_map(string nom_map, int L, int H, int taille_case){
 
         if ( getAction(x, y, bouton_action, bande_texte, L, taille_case, taille_case_editeur) ){
             if (bouton_action == bouton_play){
+                drawLine(L * taille_case+1, 0, L * taille_case+1, H*taille_case,BLACK, 1); // Correction bug affichage
                 run(map, taille_case);
                 map.affiche_tout(taille_case);
+                drawLine(L * taille_case+1, 0, L * taille_case+1, H*taille_case,WHITE, 1); // Correction bug affichage
                 affiche_grille(H, L, taille_case);
             }
             else if (bouton_action == bouton_sauvegarder){
@@ -473,7 +475,7 @@ void jouer(Map map, int taille_case) {
     setActiveWindow(w);
     // Affichage de la map, de la grille et des boutons
     map.affiche_tout(taille_case);
-//    affiche_grille(H, L, taille_case);
+    // affiche_grille(H, L, taille_case);
     affiche_boutons_joueur(L, H, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
 
     int bouton_action = 4; // Correspond a aucune action
