@@ -3,7 +3,7 @@
 #include "correspondance.h"
 #include "outils.h"
 
-void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur){
+void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur=BLACK){
     int dx = int ( (w - taille_police * 0.88*message.size()) /2 );
     int dy = int ( (h - taille_police) /2 );
     drawString(x + dx, y + h - dy, message, couleur, taille_police);
@@ -166,15 +166,15 @@ void affiche_boutons_joueur(int L, int H, int taille_case, int taille_case_edite
             drawBouton(x, y, effets[j + 4*i], taille_case_editeur);
             drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
             // Affichage du "stock" : le nombre d'effets de ce type disponibles
-            int xs = x + 3*taille_case_editeur/4;
-            int ys = y + 3*taille_case_editeur/4;
-            int w = taille_case_editeur/4;
-            int h = taille_case_editeur/4;
+            int xs = x + 2*taille_case_editeur/3;
+            int ys = y + 2*taille_case_editeur/3;
+            int w = taille_case_editeur/3;
+            int h = taille_case_editeur/3;
             int stock = blocs_disponibles[effets[j + 4*i]];
             fillRect(xs, ys, w, h, WHITE);
             drawRect(xs, ys, w-1, h-1, BLACK);
-            if (stock==0) ecris_dans_la_case(xs, ys, w, h, to_string(stock), taille_case_editeur/10, RED);
-            else ecris_dans_la_case(xs, ys, w, h, to_string(stock), taille_case_editeur/10, BLACK);
+            if (stock==0) ecris_dans_la_case(xs, ys, w, h, to_string(stock), taille_case_editeur/8, RED);
+            else ecris_dans_la_case(xs, ys, w, h, to_string(stock), taille_case_editeur/8);
         }
     }
     // Affichage du mur non modifiable
@@ -719,7 +719,7 @@ void draw_menu(int W_menu, int marge_menu_x, int marge_menu_y){
         int h = 2*marge_menu_y;
         drawRect(x, y, w, h, BLACK, 2);
 
-        ecris_dans_la_case (x, y, w, h, Liste_menu[k], 18, BLACK);
+        ecris_dans_la_case (x, y, w, h, Liste_menu[k], 18);
     }
 }
 
