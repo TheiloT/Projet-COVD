@@ -31,7 +31,7 @@ const int retour_arriere = 51;
 const int accelerateur = 52;
 
 const vector<int> effets_action = {saut, retour_arriere, accelerateur};
-const vector<int> effets = {saut, retour_arriere, accelerateur, rend_neutre, rend_rouge, rend_vert, rend_bleu};
+const vector<int> effets = {rend_neutre, rend_rouge, rend_vert, rend_bleu, saut, retour_arriere, accelerateur};
 
 // Les obstacles: de 70 a 89
 const int pic_bas = 70;
@@ -66,6 +66,7 @@ const vector<int> couleurs = {neutre, rouge, vert, bleu};
 const int bouton_play = 0;
 const int bouton_sauvegarder = 1;
 const int bouton_quitter = 2;
+const int bouton_reset = 3;
 
 // ========== Correspondances bouton - couleur ==========
 
@@ -96,7 +97,6 @@ const vector<int> bouton_etoile = {etoile};
 const vector<vector<int>> Liste_boutons = { bouton_mur, bouton_porte_entree, bouton_porte_sortie, bouton_vide,
                                             bouton_saut, bouton_retour_arriere, bouton_accelerateur, bouton_rend_couleur,
                                             bouton_pic, bouton_lave, bouton_gen_ennemi, bouton_etoile};
-
 
 
 // ========== associations couleut_int - couleur_Color ==========
