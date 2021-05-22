@@ -3,6 +3,11 @@
 #include "correspondance.h"
 #include "outils.h"
 
+void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police){
+    int dx = int ( (w - taille_police * 0.88*message.size()) /2 );
+    int dy = int ( (h - taille_police) /2 );
+    drawString(x + dx, y + h - dy, message, BLACK, taille_police);
+}
 
 void run (const Map &map, int taille_case){ // Joue le niveau
 
@@ -492,10 +497,6 @@ void jouer(Map map, int taille_case) {
 
 // ========== Fonctions du menu ==========
 
-void lancer_menu() {
-
-}
-
 void menu_categorie_niveau(){
 
 }
@@ -504,9 +505,87 @@ void menu_creation_niveau(){
 
 }
 
-void menu_options(){}
+void menu_options(){
 
-void menu_quitter(){}
+}
+
+void menu_quitter(Window w){
+    closeWindow(w);
+}
+
+void draw_menu(int W_menu, int marge_menu_x, int marge_menu_y){
+    vector <string> Liste_menu = {"Sélectionner un niveau", "Créer un niveau", "Options", "Quitter"};
+    // Dessin des boutons
+    for (int k=0; k<4; k++){
+        int x = marge_menu_x;
+        int y = (3*k+1)*marge_menu_y;
+        int w = W_menu - 2*marge_menu_x;
+        int h = 2*marge_menu_y;
+        drawRect(x, y, w, h, BLACK, 2);
+
+        ecris_dans_la_case (x, y, w, h, Liste_menu[k], 18);
+    }
+}
+
+void lancer_menu() {
+    const int W_menu = 600;
+    const int marge_menu_x = int(W_menu/6);
+    const int marge_menu_y = 70;
+    const int H_menu = 13*marge_menu_y;
+
+    const string menu = "Menu";
+    Window menu_Window = openWindow(W_menu, H_menu, menu);
+
+    draw_menu(W_menu, marge_menu_x, marge_menu_y);
+
+    // Coordonnees de la souris
+    int x;
+    int y;
+
+    bool fin = false;
+    while ( ! fin ){
+
+        getMouse(x, y);
+
+        if ( x > marge_menu_x && x < W_menu - marge_menu_x){ // Zonne de x dans laquelle se trouve les boutons
+            float num_y = y/(3.0*marge_menu_y);
+            if (num_y - floor(num_y) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
+
+                int k = floor(num_y); // Numero du bouton clique
+
+                if (k==0){
+                    closeWindow(menu_Window);
+                    menu_categorie_niveau();
+                    menu_Window = openWindow(W_menu, H_menu, menu);
+                    draw_menu(W_menu, marge_menu_x, marge_menu_y);
+                }
+
+                else if (k==1){
+                    closeWindow(menu_Window);
+                    menu_creation_niveau();
+                    menu_Window = openWindow(W_menu, H_menu, menu);
+                    draw_menu(W_menu, marge_menu_x, marge_menu_y);
+                }
+
+                else if (k==2){
+                    closeWindow(menu_Window);
+                    menu_options();
+                    menu_Window = openWindow(W_menu, H_menu, menu);
+                    draw_menu(W_menu, marge_menu_x, marge_menu_y);
+                }
+
+                else if (k==3){
+                    fin = true;
+                    closeWindow(menu_Window);
+                    menu_quitter(menu_Window);
+                }
+
+            }
+        }
+    }
+}
+
+
 
 // ========================================
 
