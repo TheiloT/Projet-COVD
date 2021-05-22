@@ -78,6 +78,50 @@ void drawBouton(int x, int y, int k, int taille_case_editeur){
     dessineCase(x + marge, y + marge, taille_case_editeur - 2*marge, k, neutre);
 }
 
+//void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map){
+
+//    int x_dep = L * taille_case;
+
+//    // Lignes de separation
+//    drawLine(x_dep, bande_texte, x_dep + 6.5 * taille_case_editeur, bande_texte, BLACK, 2);
+//    drawLine(x_dep, bande_texte + 2 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 2 * taille_case_editeur, BLACK, 2);
+//    drawLine(x_dep, bande_texte + 4 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 4 * taille_case_editeur, BLACK, 2);
+
+//    // Affichage du nom de la map
+//    int dx = int (3.25*taille_case_editeur - taille_case_editeur * 0.125 * nom_map.size() );
+//    int dy = int (0.5 * bande_texte - 0.125 * taille_case_editeur );
+//    drawString(x_dep + dx, bande_texte - dy, nom_map, BLACK, int (taille_case_editeur * 0.25));
+
+//    // Affichage des cases d'action
+//    int y_a = bande_texte + taille_case_editeur/2.0;
+//    for (int j = 0; j<3; j++){
+//        int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
+//        int y = y_a;
+//        drawAction(x, y, j, taille_case_editeur);
+//        drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
+//    }
+
+//    // Affichage des cases couleur
+//    int y_c = bande_texte + taille_case_editeur* (2.5);
+//    for (int j = 0; j<4; j++){
+//        int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
+//        int y = y_c;
+//        fillRect(x, y, taille_case_editeur, taille_case_editeur, couleur_int_vers_color.at(j));
+//        drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
+//    }
+
+//    // Affichage des cases bloc
+//    int y_b = bande_texte + taille_case_editeur* (4);
+//    for (int j = 0; j<4; j++){
+//        for (int i = 0; i<3; i++){
+//            int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
+//            int y = y_b + (1.5*i + 0.5)*taille_case_editeur;
+//            drawBouton(x, y, Liste_boutons[j + 4*i][0], taille_case_editeur);
+//            drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
+//        }
+//    }
+//}
+
 void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map){
 
     int x_dep = L * taille_case;
@@ -85,7 +129,6 @@ void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_
     // Lignes de separation
     drawLine(x_dep, bande_texte, x_dep + 6.5 * taille_case_editeur, bande_texte, BLACK, 2);
     drawLine(x_dep, bande_texte + 2 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 2 * taille_case_editeur, BLACK, 2);
-    drawLine(x_dep, bande_texte + 4 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 4 * taille_case_editeur, BLACK, 2);
 
     // Affichage du nom de la map
     int dx = int (3.25*taille_case_editeur - taille_case_editeur * 0.125 * nom_map.size() );
@@ -94,24 +137,17 @@ void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_
 
     // Affichage des cases d'action
     int y_a = bande_texte + taille_case_editeur/2.0;
-    for (int j = 0; j<3; j++){
-        int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
-        int y = y_a;
-        drawAction(x, y, j, taille_case_editeur);
-        drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
-    }
-
-    // Affichage des cases couleur
-    int y_c = bande_texte + taille_case_editeur* (2.5);
-    for (int j = 0; j<4; j++){
-        int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
-        int y = y_c;
-        fillRect(x, y, taille_case_editeur, taille_case_editeur, couleur_int_vers_color.at(j));
-        drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
-    }
+    int x = x_dep + 0.5*taille_case_editeur;
+    int y = y_a;
+    drawAction(x, y, 0, taille_case_editeur);
+    drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
+    x = x_dep + (1.5 + 0.5)*taille_case_editeur;
+    y = y_a;
+    drawAction(x, y, 2, taille_case_editeur);
+    drawRect(x, y, taille_case_editeur, taille_case_editeur, BLACK, 2);
 
     // Affichage des cases bloc
-    int y_b = bande_texte + taille_case_editeur* (4);
+    int y_b = bande_texte + taille_case_editeur* (2);
     for (int j = 0; j<4; j++){
         for (int i = 0; i<3; i++){
             int x = x_dep + (1.5*j + 0.5)*taille_case_editeur;
@@ -123,6 +159,19 @@ void affiche_boutons(int L, int taille_case, int taille_case_editeur, int bande_
 }
 
 bool getAction(int x, int y, int &bouton_action, int bande_texte, int L, int taille_case, int taille_case_editeur){
+    int x_dep = L*taille_case;
+    if ( y < bande_texte + 1.5*taille_case_editeur && y > bande_texte + 0.5*taille_case_editeur){
+        float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
+        if (num_x - floor(num_x) > 1/3.0
+                && floor(num_x >= 0 && floor(num_x) < 4)){
+            bouton_action = floor (num_x);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool getAction_joueur(int x, int y, int &bouton_action, int bande_texte, int L, int taille_case, int taille_case_editeur){
     int x_dep = L*taille_case;
     if ( y < bande_texte + 1.5*taille_case_editeur && y > bande_texte + 0.5*taille_case_editeur){
         float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
@@ -377,9 +426,7 @@ void jouer(Map map, int taille_case) {
     affiche_grille(H, L, taille_case);
     affiche_boutons(L, taille_case, taille_case_editeur, bande_texte, nom);
 
-    int bouton_couleur = bouton_neutre; // Initialisation de la couleur a neutre
     int n_item = 0; // Correspond au premier item d'un vecteur bouton
-    int bouton_bloc = 3; // Correspond au bloc vide
     int bouton_action = 3; // Correspond a aucune action
 
     // Coordonnees de la souris
@@ -391,8 +438,6 @@ void jouer(Map map, int taille_case) {
     int dernier_y_case = -1;
 
     // Mode de saisi
-    bool set_bloc = false;
-    bool set_couleur = false;
 
     bool fin = false;
     while ( ! fin ){
@@ -414,18 +459,6 @@ void jouer(Map map, int taille_case) {
                 closeWindow(w);
                 fin = true;
             }
-        }
-
-        else if (getCouleur(x, y, bouton_couleur, bande_texte, L, taille_case, taille_case_editeur)){
-            set_couleur = true;
-            set_bloc = false;
-        }
-
-        else if (getBloc(x, y, bouton_bloc, bande_texte, L, taille_case, taille_case_editeur, nb_lignes)){
-            n_item = 0;
-            set_bloc = true;
-            set_couleur = false;
-            bouton_couleur = bouton_neutre;
         }
 
         else if (placeBloc(x, y, L, H, taille_case)){
