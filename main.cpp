@@ -630,14 +630,6 @@ void draw_caracteristiques_niveau(int h, int hauteur, int largueur, string nom_m
     }
 }
 
-void attribuer_nom(string &nom){
-
-}
-
-void attribuer_nombre(int &k){
-
-}
-
 void menu_creation_niveau(){
     const int h = 60;
     const int W = 7*h;
@@ -645,64 +637,112 @@ void menu_creation_niveau(){
 
     const string niveau = "Sélection des caractéristiques du niveau";
     Window w = openWindow(W, H, niveau);
+    setActiveWindow(w);
 
-    int hauteur = 20;
-    int largueur = 40;
+    string hauteur = "20";
+    string largueur = "40";
     string nom_map = "Mon niveau";
-    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+    draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
 
     // Coordonnees de la souris
     int x;
     int y;
+
+    // Case selectionnee
+    int k = -1;
+
+    //  Booleen qui indique si key correspond a un clic ou non
+    bool clic = false;
+    bool clav = false;
 
     int taille_case = 20; // A regler
 
     bool fin = false;
     while ( ! fin ){
 
-        getMouse(x, y);
+        int key = Clavier(x, y, clic, clav);
 
-        if (x > h && x < W-h){ // Zonne de x dans laquelle se trouve les boutons
+        if (clic){
+            if (x > h && x < W-h){ // Zonne de x dans laquelle se trouve les boutons
 
-            if (y > h && y < 3*h ){
-                nom_map = "";
-                attribuer_nom(nom_map); // Acquisition du nom du niveau
-                clearWindow();
-                draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+                if (y > h && y < 3*h ){
+                    k = -1;
+                    nom_map = "";
+                }
+
+                else{
+
+                    int y_dep = 3*h;
+
+                    float num_x = x/(3.0*h);
+                    float num_y = (y-y_dep)/(3.0*h);
+
+                    if (num_y - floor(num_y) > 0.3333 && num_x - floor(num_x) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
+                        k = floor(num_x) + 2*floor(num_y); // Numero du bouton
+
+                        if (k == 0){
+                            hauteur = "0";
+                            clearWindow();
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                        }
+                        else if (k == 1){
+                            largueur = "0";
+                            clearWindow();
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                        }
+
+                        else if ( k == 2){
+                            closeWindow(w);
+                            fin = true;
+                        }
+
+                        else if ( k == 3){
+                            closeWindow(w);
+                            creer_map(nom_map, stoi(largueur), stoi(hauteur), taille_case);
+                            w = openWindow(W, H, niveau);
+                            setActiveWindow(w);
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                        }
+                    }
+                }
+
+            }
+            clic = false;
+        }
+
+        else if (clav){
+
+            if (key == KEY_BACK){
+                if (k == -1 && nom_map.size() > 0)
+                    nom_map.pop_back();
+                else if (k == 0 && hauteur.size() > 0){
+                    hauteur.pop_back();
+                    if (hauteur.size() == 0)
+                        hauteur = "0";
+                }
+                else if (k == 1 && largueur.size() > 0){
+                    largueur.pop_back();
+                    if (largueur.size() == 0)
+                        largueur = "0";
+                    }
+            }
+            else if (   k == -1
+                     && ( (key<='z' && key>= 'a') | (key<='9' && key>='0') | (key<='Z' && key>= 'A') | (key == ' ') )){
+
+                string caractere(1, char(key));
+                nom_map.append(caractere);
             }
 
-            int y_dep = 3*h;
-
-            float num_x = x/(3.0*h);
-            float num_y = (y-y_dep)/(3.0*h);
-
-            if (num_y - floor(num_y) > 0.3333 && num_x - floor(num_x) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
-                int k = floor(num_x) + 2*floor(num_y); // Numero du bouton
-
-                if ( k == 0){
-                    attribuer_nombre (hauteur);
-                    clearWindow();
-                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
-                }
-
-                else if ( k == 1){
-                    attribuer_nombre (largueur);
-                    clearWindow();
-                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
-                }
-
-                else if ( k == 2){
-                    closeWindow(w);
-                    fin = true;
-                }
-
-                else if ( k == 3){
-                    closeWindow(w);
-                    creer_map(nom_map, largueur, hauteur, taille_case);
-                    w = openWindow(W, H, niveau);
-                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
-                }
+            else if (k == 0 && key<='9' && key>='0'){
+                hauteur.append(string (1, char(key)));
             }
+            else if (k == 1 && key<='9' && key>='0'){
+                largueur.append(string (1, char(key)));
+            }
+
+            clav = false;
+            clearWindow();
+            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
         }
     }
 }
@@ -733,6 +773,7 @@ void lancer_menu() {
 
     const string menu = "Menu";
     Window menu_Window = openWindow(W_menu, H_menu, menu);
+    setActiveWindow(menu_Window);
 
     draw_menu(W_menu, marge_menu_x, marge_menu_y);
 
@@ -756,18 +797,21 @@ void lancer_menu() {
                 if (k==0){
                     menu_categorie_niveau();
                     menu_Window = openWindow(W_menu, H_menu, menu);
+                    setActiveWindow(menu_Window);
                     draw_menu(W_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==1){
                     menu_creation_niveau();
                     menu_Window = openWindow(W_menu, H_menu, menu);
+                    setActiveWindow(menu_Window);
                     draw_menu(W_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==2){
                     menu_options();
                     menu_Window = openWindow(W_menu, H_menu, menu);
+                    setActiveWindow(menu_Window);
                     draw_menu(W_menu, marge_menu_x, marge_menu_y);
                 }
 
