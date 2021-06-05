@@ -666,7 +666,7 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
 
     string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
     string const nomFichier(stringSrcPath((txt_niveaux)));
-    ofstream flux(nomFichier, ios::app); // flux d'ajout en fin de fichier
+    ifstream flux(nomFichier, ios::app); // flux d'ajout en fin de fichier
 
     if(flux)
     {
@@ -689,6 +689,7 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
                 }
             }
         }
+        liste_niveaux.pop_back(); // Sans cela il reste un niveau artefact en fin de liste
     }
     else
     {
@@ -697,7 +698,7 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
     return liste_niveaux;
 }
 
-void selection_niveau(bool mode_perso) {
+void selection_niveau(bool mode_perso, int taille_case) {
     // Geometrie de la fenetre
     const int largeur_etiquette = 500;
     const int hauteur_etiquette = 100;
@@ -731,32 +732,49 @@ void selection_niveau(bool mode_perso) {
     int x;
     int y;
     bool rafraichir_affichage = true; // Determine s'il faut rafraichir l'affichage lors du tour de boucle
-    bool rafraichir_niveaux = false; // Determine s'il faut rafraichir la liste de niveau (utilise uniquement en mode perso)
     while (!fin) {
-        if (rafraichir_affichage) draw_selection_niveau(marge_x, marge_y, largeur_etiquette, hauteur_etiquette,
-                                                        largeur_texte_etiquette, taille_bouton, marge_bouton,
-                                                        taille_bouton_bas, marge_bouton_bas, nombre_niveaux,
-                                                        nombre_niveaux_affiches, page, liste_niveaux, mode_perso);; // a completer
-//        if (rafraichir_niveaux) {
-//            vector<tuple<string, int>> liste_niveaux = recuperer_niveaux(mode_perso);
-//            nombre_niveaux = liste_niveaux.size();
-//        }
+        if (rafraichir_affichage) {
+            clearWindow();
+            draw_selection_niveau(marge_x, marge_y, largeur_etiquette, hauteur_etiquette,
+                                  largeur_texte_etiquette, taille_bouton, marge_bouton,
+                                  taille_bouton_bas, marge_bouton_bas, nombre_niveaux,
+                                  nombre_niveaux_affiches, page, liste_niveaux, mode_perso);;
+            rafraichir_affichage = false;
+        }
+
         getMouse(x, y);
         if (y > marge_y && y < nombre_niveaux_affiches * (hauteur_etiquette + marge_y) + marge_y){ // si la souris est dans la zone des etiquette
             int num_etiquette = (y - marge_y) / (hauteur_etiquette + marge_y);
             int y_etiquette = (y - marge_y) % (hauteur_etiquette + marge_y);
             int num_niveau = page*nombre_niveaux_affiches + num_etiquette;
-            bool dans_hauteur_bouton = y_etiquette > marge_bouton && y_etiquette < marge_bouton + taille_bouton;
+            bool dans_hauteur_bouton = y_etiquette > marge_bouton && (y_etiquette < marge_bouton + taille_bouton);
             if (dans_hauteur_bouton) { // si la souris est dans la hauteur des boutons de l'etiquette
-                int num_bouton = (x - marge_x - largeur_texte_etiquette) % (taille_bouton + marge_bouton);
+                int num_bouton = (x - marge_x - largeur_texte_etiquette) / (taille_bouton + marge_bouton);
                 if (num_bouton == 0 && mode_perso) { // Lance l'editeur du niveau
+                    closeWindow(selection_niveau_Window);
                     Map map_selectionnee;
                     map_selectionnee.charger(num_niveau, "Niveaux_perso.txt");
-                    string nom_map, int L, int H, int taille_case, bool editer = false, Map map_a_editer = Map("",0,0), int num_map = -1, int nb_niveaux = -1, const string niveau = "Niveaux_perso.txt"
+                    creer_map(map_selectionnee.nom, map_selectionnee.L, map_selectionnee.H, taille_case, true, map_selectionnee, num_niveau, nombre_niveaux, "Niveaux_perso.txt");
+                    selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
+                    setActiveWindow(selection_niveau_Window);
+                    rafraichir_affichage = true;
                 }
-
                 if (num_bouton == 1 && mode_perso) { // supprime le niveau
-                    efface_niveau()
+                    efface_niveau(num_niveau, nombre_niveaux, "Niveaux_perso.txt");
+                    liste_niveaux = recuperer_niveaux(mode_perso);
+                    nombre_niveaux -= 1;
+                    page = min(page, nombre_niveaux/nombre_niveaux_affiches); // max entre la page atuel et le nouveau nombre de pages
+                    rafraichir_affichage = true;
+                }
+                if (num_bouton == 2) { // joue le niveau
+                    closeWindow(selection_niveau_Window);
+                    string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
+                    Map map_selectionnee;
+                    map_selectionnee.charger(num_niveau, txt_niveaux);
+                    jouer(map_selectionnee, taille_case);
+                    selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
+                    setActiveWindow(selection_niveau_Window);
+                    rafraichir_affichage = true;
                 }
             }
         }
@@ -765,7 +783,7 @@ void selection_niveau(bool mode_perso) {
     closeWindow(selection_niveau_Window);
 }
 
-void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
+void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y, int taille_case){
 
     fillRect(0,0,W_menu,H_menu,BLACK); // fond noir
     vector <string> Liste_categories = {"Niveaux classiques", "Mes niveaux", "Retour au menu"};
@@ -782,7 +800,7 @@ void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_m
     }
 }
 
-void menu_categorie_niveau(){
+void menu_categorie_niveau(int taille_case){
     const int W_menu = 600;
     const int H_menu = 700;
     const int marge_menu_x = int(W_menu/6);
@@ -791,7 +809,7 @@ void menu_categorie_niveau(){
     const string selection = "Selection de la catégorie de niveau";
     Window menu_Window = openWindow(W_menu, H_menu, selection);
 
-    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
+    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
 
     // Coordonnees de la souris
     int x;
@@ -810,14 +828,14 @@ void menu_categorie_niveau(){
 
                 closeWindow(menu_Window);
                 if (k==0){
-                    selection_niveau(true);
+                    selection_niveau(true, taille_case);
                     menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
                 }
                 else if (k==1){
-                    selection_niveau(false);
+                    selection_niveau(false, taille_case);
                     menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
                 }
 
                 else if (k==2){
@@ -1016,7 +1034,7 @@ void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
     }
 }
 
-void lancer_menu() {
+void lancer_menu(int taille_case) {
     const int W_menu = 600;
     const int H_menu = 721;
     const int marge_menu_x = int(W_menu/6);
@@ -1046,7 +1064,7 @@ void lancer_menu() {
                 closeWindow(menu_Window);
 
                 if (k==1){
-                    menu_categorie_niveau();
+                    menu_categorie_niveau(taille_case);
                     menu_Window = openWindow(W_menu, H_menu, menu);
                     setActiveWindow(menu_Window);
                     draw_menu(W_menu, H_menu, marge_menu_x, marge_menu_y);
@@ -1088,7 +1106,7 @@ int main()
 //    construire_map_a_la_main(map);
 //    run (map, taille_case);
 
-      lancer_menu();
+//      lancer_menu(taille_case);
 
 //    int L = 30;
 //    int H = 20;
@@ -1112,7 +1130,7 @@ int main()
 
 
 
-    selection_niveau(true);
+    selection_niveau(true, taille_case);
 
     endGraphics();
     return 0;
