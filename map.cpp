@@ -136,10 +136,10 @@ int Map::get_couleur(int x, int y) const{
     return grille_couleurs(x, y);
 }
 
-void Map::charger(int k, string niveau){
+void Map::charger(int k, const string niveau){
 
-    string const nomFichier(srcPath("Niveaux.txt"));
-    ifstream flux(nomFichier.c_str());
+    string const nomFichier(stringSrcPath( niveau ));
+    ifstream flux(nomFichier);
 
     if(flux)
     {
@@ -194,10 +194,10 @@ void Map::charger(int k, string niveau){
     }
 }
 
-void Map::sauvegarder(string niveau){
+void Map::sauvegarder(const string niveau) const{
 
-    string const nomFichier(srcPath("Niveaux.txt"));
-    ofstream flux(nomFichier.c_str(), ios::app); // flux d'ajout en fin de fichier
+    string const nomFichier(stringSrcPath((niveau)));
+    ofstream flux(nomFichier, ios::app); // flux d'ajout en fin de fichier
 
     if(flux)
     {
@@ -223,7 +223,7 @@ void Map::sauvegarder(string niveau){
     }
 }
 
-void Map::sauvegarder_et_ecraser(int num_map, string niveau, int nb_niveaux){
+void Map::sauvegarder_et_ecraser(int num_map, const string niveau, int nb_niveaux) const{
 
     if (num_map == nb_niveaux-1){
         efface_niveau (num_map, nb_niveaux, niveau);

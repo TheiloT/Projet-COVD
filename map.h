@@ -29,11 +29,11 @@ public:
     void set_couleur(int x, int y, int k); // Attribut la valeur k à la case couleur (x,y)
     int get_couleur(int x, int y) const; // Donne la valeur de la case couleur (x,y)
 
-    void charger(int k, string niveau); // Charge une map
-    void sauvegarder(string niveau); // Sauvegarde une map
-    void sauvegarder_et_ecraser(int num_map, string niveau, int nb_niveaux); // Sauvegarde la map en ecrasant la map en position k
+    void charger(int k, const string niveau); // Charge une map
+    void sauvegarder(const string niveau) const; // Sauvegarde une map
+    void sauvegarder_et_ecraser(int num_map, const string niveau, int nb_niveaux) const; // Sauvegarde la map en ecrasant la map en position k
 
-    void jouer(int taille_case);
+    void jouer(int taille_case) const;
 };
 
 void dessineCase(int x, int y, int taille_case, int bloc, int couleur);

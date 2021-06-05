@@ -40,3 +40,19 @@ int Clavier(int &x, int &y, bool &clic, bool &clav) {
     } while (e.type!=EVT_NONE);
     return 0;
 }
+
+void InitRandom()
+{
+    srand((unsigned int)time(0));
+    rand();
+}
+
+//Renvoit un entier au hasard entre a et b
+int hasard(int a, int b)
+{
+    return a+(rand()%(b-a+1));
+}
+
+Color couleur_au_hasard(){
+    return Color(hasard(0,255),hasard(0,255),hasard(0,255));
+}

@@ -9,6 +9,7 @@ void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_p
     int dy = int ( (h - taille_police) /2 );
     drawString(x + dx, y + h - dy, message, couleur, taille_police);
 }
+//taille_police * 0.88*message.size()
 
 bool run (const Map &map, int taille_case){ // Joue le niveau
 
@@ -260,7 +261,7 @@ bool placeBloc(int x, int y, int L, int H, int taille_case){
     return ( x>0 && x<L*taille_case && y>0 && y<H*taille_case);
 }
 
-void creer_map(string nom_map, int L, int H, int taille_case, bool editer = false, Map map_a_editer = Map("",0,0), int num_map = -1, int nb_niveaux = -1, string niveau = "Niveaux_perso.txt"){
+void creer_map(string nom_map, int L, int H, int taille_case, bool editer = false, Map map_a_editer = Map("",0,0), int num_map = -1, int nb_niveaux = -1, const string niveau = "Niveaux_perso.txt"){
     const int taille_case_editeur = 2*taille_case;
     const int bande_texte = taille_case_editeur;
     const int nb_lignes = 3;
@@ -311,12 +312,12 @@ void creer_map(string nom_map, int L, int H, int taille_case, bool editer = fals
             }
             else if (bouton_action == bouton_sauvegarder){
                 if (!editer){
-                    map_a_editer.sauvegarder("Niveaux_perso");
+                    map_a_editer.sauvegarder(niveau);
                     closeWindow(w);
                     fin = true;
                 }
                 else{
-                    map_a_editer.sauvegarder_et_ecraser(num_map, "Niveaux_perso", nb_niveaux);
+                    map_a_editer.sauvegarder_et_ecraser(num_map, niveau, nb_niveaux);
                     closeWindow(w);
                     fin = true;
                 }
@@ -490,6 +491,9 @@ void jouer(Map map, int taille_case) {
                 fin = run(map, taille_case);
                 map.affiche_tout(taille_case);
 //                affiche_grille(H, L, taille_case);
+                if (fin){
+                    closeWindow(w); // Fonction de fin a rajouter
+                }
             }
             else if (bouton_action == bouton_reset){
                 prepare_map(map, L, H, blocs_disponibles);
@@ -747,6 +751,20 @@ void menu_options(){
 
 }
 
+void draw_titre(int taille, int x, int y){ // Dessin du titre
+    string titre = "Paint Runner";
+    Color Liste_couleurs[12] = {Color(170,20,200), Color(169,27,176), Color(196,30,153), Color(207,0,99), Color(230,21,119), Color(243,77,154), Color(255,0,0), Color(223,40,35), Color(247,106,4), Color(206,156,72), Color(250,194,0), Color(254,221,39)};
+    for (unsigned int i=0; i<3; i++){
+        drawString(x + taille*i, y, {titre[i]}, Liste_couleurs[i], taille );
+    }
+    for (unsigned int i=3; i<5; i++){
+        drawString(x + taille*i - 0.6*taille, y, {titre[i]}, Liste_couleurs[i], taille );
+    }
+    for (unsigned int i=5; i<titre.size(); i++){
+        drawString(x + taille*i - 1.2*taille, y, {titre[i]}, Liste_couleurs[i], taille );
+    }
+}
+
 void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
 
     fillRect(0, 0, W_menu, H_menu, BLACK); // fond noir
@@ -755,8 +773,8 @@ void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
     int w = W_menu - 2*marge_menu_x; // largueur des boutons
     int h = 2*marge_menu_y; // hauteur des boutons
 
-    // Dessin du titre
-    ecris_dans_la_case (x, marge_menu_y, w, h, "Paint Runner", 40, ORANGE);
+    draw_titre(48, x/2, 2.5*marge_menu_y);
+    //ecris_dans_la_case (x, marge_menu_y, w, h, "Paint Runner", 40, Color(hasard(0, 255), hasard(0, 255), hasard(0, 255)));
 
     // Dessin des boutons
     vector <string> Liste_string = {"Jouer", "Options", "Quitter"}; // liste des noms des boutons
@@ -832,6 +850,7 @@ void lancer_menu() {
 
 int main()
 {
+    initRandom();
     int taille_case = 28;
 
 //    openWindow(taille_case*55, taille_case*22); // Ouverture d'une fenetre de bonne dimension pour afficher la map
@@ -847,7 +866,7 @@ int main()
 //    creer_map("Ma_map_nulle", L, H, taille_case); // Cree une map
 
 //    Map map;
-//    map.charger(0);
+//    map.charger(0, "Niveaux.txt");
 //    jouer(map, taille_case);
 
 //    Map map;
@@ -856,7 +875,7 @@ int main()
 //    run (map, taille_case); // Joue le niveau
 
 //    int nb_niveau = 3;
-//    efface_niveau(2, nb_niveau, "Niveaux.txt");
+//    efface_niveau(0, nb_niveau, "Niveaux.txt");
 
 //    Map map;
 //    map.charger(1, "Niveaux.txt"); // Charge la map dans le fichier Niveaux.txt

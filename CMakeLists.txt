@@ -17,7 +17,7 @@ add_executable(main
                outils.h
                graphismes.h
                graphismes.cpp
-               Niveaux.txt
-               Niveaux.h
+               niveaux.txt
+               niveaux.h
                Niveaux.cpp)
 ImagineUseModules(main Images)

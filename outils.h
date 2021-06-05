@@ -30,3 +30,10 @@ bool est_dans (int num, vector<int> liste); // Renvoie true si num est dans la l
 bool est_dans (IntPoint2 p, vector<IntPoint2> liste);
 
 int Clavier(int &x, int &y, bool &clic, bool &clav);
+
+void InitRandom();
+
+//Renvoit un entier au hasard entre a et b
+int hasard(int a, int b);
+
+Color couleur_au_hasard(); // Renvoit une couleur au hasard
