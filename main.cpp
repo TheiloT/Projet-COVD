@@ -1,6 +1,7 @@
 #include "map.h"
 #include "personnage.h"
 #include "correspondance.h"
+#include "Niveaux.h"
 #include "outils.h"
 
 void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur=BLACK){
@@ -8,6 +9,7 @@ void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_p
     int dy = int ( (h - taille_police) /2 );
     drawString(x + dx, y + h - dy, message, couleur, taille_police);
 }
+//taille_police * 0.88*message.size()
 
 bool run (const Map &map, int taille_case){ // Joue le niveau
 
@@ -36,7 +38,7 @@ bool run (const Map &map, int taille_case){ // Joue le niveau
         perso.cherche_sortie(map); // Sort si touche la porte de sortie
         perso.interragit(map); // Gere les interractions avec les blocs en dessous
 
-        while (clock() - t < deltat){  // On attend deltat
+        while (clock() - t < deltat){  // On attend que le temps passe dans la boucle soit deltat
         }
     }
     map.affiche_tout(taille_case, perso); // On affiche la map a la fin
@@ -259,31 +261,7 @@ bool placeBloc(int x, int y, int L, int H, int taille_case){
     return ( x>0 && x<L*taille_case && y>0 && y<H*taille_case);
 }
 
-void efface_tous_niveaux(){ // Efface le Niveaux_perso.txt
-
-    string const nomFichier(srcPath("Niveaux_perso.txt"));
-    ofstream fichier(nomFichier.c_str() ); // flux d'ajout en fin de fichier
-}
-
-void efface_niveau (int k, int nb_niveaux){
-    vector <Map> Liste_maps;
-
-    for (int i=0; i<nb_niveaux && i!=k; i++){
-        Map map;
-        map.charger(i);
-        Liste_maps.push_back(map);
-    }
-
-    efface_tous_niveaux();
-
-    for (int i=0; i<nb_niveaux-1; i++){
-        Map map = Liste_maps[i];
-        map.sauvegarder();
-    }
-
-}
-
-void creer_map(string nom_map, int L, int H, int taille_case){
+void creer_map(string nom_map, int L, int H, int taille_case, bool editer = false, Map map_a_editer = Map("",0,0), int num_map = -1, int nb_niveaux = -1, const string niveau = "Niveaux_perso.txt"){
     const int taille_case_editeur = 2*taille_case;
     const int bande_texte = taille_case_editeur;
     const int nb_lignes = 3;
@@ -291,11 +269,16 @@ void creer_map(string nom_map, int L, int H, int taille_case){
     // Ouverture de la fenetre
     Window w = openWindow(L*taille_case + 6.5 * taille_case_editeur, max( H*taille_case, int(bande_texte + (9.0 * taille_case_editeur)) ) );
     setActiveWindow(w);
+
+    if (!editer){ // Si on part de zero
+        // Creation de la map
+        map_a_editer = Map(nom_map, H,L);
+    }
+
+    map_a_editer.affiche_tout(taille_case); // Affichage de la map
     // Affichage de la grille et des boutons
-    affiche_grille(H, L, taille_case);
     affiche_boutons(H, L, taille_case, taille_case_editeur, bande_texte, nom_map);
-    // Creation de la map
-    Map map(nom_map, H,L);
+    affiche_grille(H, L, taille_case);
 
     int bouton_couleur = bouton_neutre; // Initialisation de la couleur a neutre
     int n_item = 0; // Correspond au premier item d'un vecteur bouton
@@ -322,15 +305,22 @@ void creer_map(string nom_map, int L, int H, int taille_case){
         if ( getAction(x, y, bouton_action, bande_texte, L, taille_case, taille_case_editeur) ){
             if (bouton_action == bouton_play){
                 drawLine(L * taille_case+1, 0, L * taille_case+1, H*taille_case,BLACK, 1); // Correction bug affichage
-                run(map, taille_case);
-                map.affiche_tout(taille_case);
+                run(map_a_editer, taille_case);
+                map_a_editer.affiche_tout(taille_case);
                 drawLine(L * taille_case+1, 0, L * taille_case+1, H*taille_case,WHITE, 1); // Correction bug affichage
                 affiche_grille(H, L, taille_case);
             }
             else if (bouton_action == bouton_sauvegarder){
-                map.sauvegarder();
-                closeWindow(w);
-                fin = true;
+                if (!editer){
+                    map_a_editer.sauvegarder(niveau);
+                    closeWindow(w);
+                    fin = true;
+                }
+                else{
+                    map_a_editer.sauvegarder_et_ecraser(num_map, niveau, nb_niveaux);
+                    closeWindow(w);
+                    fin = true;
+                }
             }
             else if (bouton_action == bouton_quitter){
                 closeWindow(w);
@@ -363,20 +353,24 @@ void creer_map(string nom_map, int L, int H, int taille_case){
                     n_item = 0; // On repasse au premier item si on ne reclique pas sur la même case
                 }
 
-            map.set_case(x_case, y_case, Liste_boutons[bouton_bloc][n_item]);
+            map_a_editer.set_case(x_case, y_case, Liste_boutons[bouton_bloc][n_item]);
             dernier_x_case = x_case;
             dernier_y_case = y_case;
             }
 
             if (set_couleur){
-                map.set_couleur(x_case, y_case, bouton_couleur);
+                map_a_editer.set_couleur(x_case, y_case, bouton_couleur);
             }
 
             // Dessin de la case
-            map.drawCase(x_case, y_case, taille_case);
+            map_a_editer.drawCase(x_case, y_case, taille_case);
             affiche_grille(H, L, taille_case);
         }
     }
+}
+
+void editer_map(Map map, int taille_case, int num_map, int nb_niveaux, string niveau = "Niveaux_perso"){
+    creer_map (map.nom, map.L, map.H, taille_case, true, map, num_map, nb_niveaux, niveau);
 }
 
 void construire_map_a_la_main(Map map){
@@ -497,6 +491,9 @@ void jouer(Map map, int taille_case) {
                 fin = run(map, taille_case);
                 map.affiche_tout(taille_case);
 //                affiche_grille(H, L, taille_case);
+                if (fin){
+                    closeWindow(w); // Fonction de fin a rajouter
+                }
             }
             else if (bouton_action == bouton_reset){
                 prepare_map(map, L, H, blocs_disponibles);
@@ -667,8 +664,9 @@ void draw_selection_niveau(int marge_x, int marge_y, int largeur_etiquette, int 
 vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
     vector<tuple<string, int>> liste_niveaux;
 
-    string const nomFichier = (mode_perso) ? srcPath("Niveaux_perso.txt") : srcPath("Niveaux_aventure.txt");
-    ifstream flux(nomFichier.c_str());
+    string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
+    string const nomFichier(stringSrcPath((txt_niveaux)));
+    ofstream flux(nomFichier, ios::app); // flux d'ajout en fin de fichier
 
     if(flux)
     {
@@ -747,18 +745,18 @@ void selection_niveau(bool mode_perso) {
         if (y > marge_y && y < nombre_niveaux_affiches * (hauteur_etiquette + marge_y) + marge_y){ // si la souris est dans la zone des etiquette
             int num_etiquette = (y - marge_y) / (hauteur_etiquette + marge_y);
             int y_etiquette = (y - marge_y) % (hauteur_etiquette + marge_y);
+            int num_niveau = page*nombre_niveaux_affiches + num_etiquette;
             bool dans_hauteur_bouton = y_etiquette > marge_bouton && y_etiquette < marge_bouton + taille_bouton;
             if (dans_hauteur_bouton) { // si la souris est dans la hauteur des boutons de l'etiquette
                 int num_bouton = (x - marge_x - largeur_texte_etiquette) % (taille_bouton + marge_bouton);
                 if (num_bouton == 0 && mode_perso) { // Lance l'editeur du niveau
                     Map map_selectionnee;
-                    map_selectionnee.charger(page*nombre_niveaux_affiches + num_etiquette);
-                    creer_map("edition_niveau", 30, 30, 28); // à remplacer par la nouvelle version
+                    map_selectionnee.charger(num_niveau, "Niveaux_perso.txt");
+                    string nom_map, int L, int H, int taille_case, bool editer = false, Map map_a_editer = Map("",0,0), int num_map = -1, int nb_niveaux = -1, const string niveau = "Niveaux_perso.txt"
                 }
 
                 if (num_bouton == 1 && mode_perso) { // supprime le niveau
-
-                    // Todo : regler bug quand nombre_niveaux_affiches > nombre_niveaux
+                    efface_niveau()
                 }
             }
         }
@@ -767,30 +765,33 @@ void selection_niveau(bool mode_perso) {
     closeWindow(selection_niveau_Window);
 }
 
-void draw_categorie_niveau(int W_menu, int marge_menu_x, int marge_menu_y){
+void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
+
+    fillRect(0,0,W_menu,H_menu,BLACK); // fond noir
     vector <string> Liste_categories = {"Niveaux classiques", "Mes niveaux", "Retour au menu"};
+    vector <Color> Liste_color = {RED, BLUE, GREEN};
     // Dessin des boutons
     for (int k=0; k<3; k++){
         int x = marge_menu_x;
         int y = (3*k+1)*marge_menu_y;
         int w = W_menu - 2*marge_menu_x;
         int h = 2*marge_menu_y;
-        drawRect(x, y, w, h, BLACK, 2);
+        drawRect(x, y, w, h, WHITE, 2);
 
-        ecris_dans_la_case (x, y, w, h, Liste_categories[k], 18);
+        ecris_dans_la_case (x, y, w, h, Liste_categories[k], 18, Liste_color[k]);
     }
 }
 
 void menu_categorie_niveau(){
     const int W_menu = 600;
+    const int H_menu = 700;
     const int marge_menu_x = int(W_menu/6);
-    const int marge_menu_y = 70;
-    const int H_menu = 10*marge_menu_y;
+    const int marge_menu_y = int(H_menu/10);
 
     const string selection = "Selection de la catégorie de niveau";
     Window menu_Window = openWindow(W_menu, H_menu, selection);
 
-    draw_categorie_niveau(W_menu, marge_menu_x, marge_menu_y);
+    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
 
     // Coordonnees de la souris
     int x;
@@ -811,12 +812,12 @@ void menu_categorie_niveau(){
                 if (k==0){
                     selection_niveau(true);
                     menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, marge_menu_x, marge_menu_y);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
                 }
                 else if (k==1){
                     selection_niveau(false);
                     menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, marge_menu_x, marge_menu_y);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==2){
@@ -858,14 +859,6 @@ void draw_caracteristiques_niveau(int h, int hauteur, int largueur, string nom_m
     }
 }
 
-void attribuer_nom(string &nom){
-
-}
-
-void attribuer_nombre(int &k){
-
-}
-
 void menu_creation_niveau(){
     const int h = 60;
     const int W = 7*h;
@@ -873,64 +866,112 @@ void menu_creation_niveau(){
 
     const string niveau = "Sélection des caractéristiques du niveau";
     Window w = openWindow(W, H, niveau);
+    setActiveWindow(w);
 
-    int hauteur = 20;
-    int largueur = 40;
+    string hauteur = "20";
+    string largueur = "40";
     string nom_map = "Mon niveau";
-    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+    draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
 
     // Coordonnees de la souris
     int x;
     int y;
+
+    // Case selectionnee
+    int k = -1;
+
+    //  Booleen qui indique si key correspond a un clic ou non
+    bool clic = false;
+    bool clav = false;
 
     int taille_case = 20; // A regler
 
     bool fin = false;
     while ( ! fin ){
 
-        getMouse(x, y);
+        int key = Clavier(x, y, clic, clav);
 
-        if (x > h && x < W-h){ // Zonne de x dans laquelle se trouve les boutons
+        if (clic){
+            if (x > h && x < W-h){ // Zonne de x dans laquelle se trouve les boutons
 
-            if (y > h && y < 3*h ){
-                nom_map = "";
-                attribuer_nom(nom_map); // Acquisition du nom du niveau
-                clearWindow();
-                draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
+                if (y > h && y < 3*h ){
+                    k = -1;
+                    nom_map = "";
+                }
+
+                else{
+
+                    int y_dep = 3*h;
+
+                    float num_x = x/(3.0*h);
+                    float num_y = (y-y_dep)/(3.0*h);
+
+                    if (num_y - floor(num_y) > 0.3333 && num_x - floor(num_x) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
+                        k = floor(num_x) + 2*floor(num_y); // Numero du bouton
+
+                        if (k == 0){
+                            hauteur = "0";
+                            clearWindow();
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                        }
+                        else if (k == 1){
+                            largueur = "0";
+                            clearWindow();
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                        }
+
+                        else if ( k == 2){
+                            closeWindow(w);
+                            fin = true;
+                        }
+
+                        else if ( k == 3){
+                            closeWindow(w);
+                            creer_map(nom_map, stoi(largueur), stoi(hauteur), taille_case);
+                            w = openWindow(W, H, niveau);
+                            setActiveWindow(w);
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                        }
+                    }
+                }
+
+            }
+            clic = false;
+        }
+
+        else if (clav){
+
+            if (key == KEY_BACK){
+                if (k == -1 && nom_map.size() > 0)
+                    nom_map.pop_back();
+                else if (k == 0 && hauteur.size() > 0){
+                    hauteur.pop_back();
+                    if (hauteur.size() == 0)
+                        hauteur = "0";
+                }
+                else if (k == 1 && largueur.size() > 0){
+                    largueur.pop_back();
+                    if (largueur.size() == 0)
+                        largueur = "0";
+                    }
+            }
+            else if (   k == -1
+                     && ( (key<='z' && key>= 'a') | (key<='9' && key>='0') | (key<='Z' && key>= 'A') | (key == ' ') )){
+
+                string caractere(1, char(key));
+                nom_map.append(caractere);
             }
 
-            int y_dep = 3*h;
-
-            float num_x = x/(3.0*h);
-            float num_y = (y-y_dep)/(3.0*h);
-
-            if (num_y - floor(num_y) > 0.3333 && num_x - floor(num_x) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
-                int k = floor(num_x) + 2*floor(num_y); // Numero du bouton
-
-                if ( k == 0){
-                    attribuer_nombre (hauteur);
-                    clearWindow();
-                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
-                }
-
-                else if ( k == 1){
-                    attribuer_nombre (largueur);
-                    clearWindow();
-                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
-                }
-
-                else if ( k == 2){
-                    closeWindow(w);
-                    fin = true;
-                }
-
-                else if ( k == 3){
-                    closeWindow(w);
-                    creer_map(nom_map, largueur, hauteur, taille_case);
-                    w = openWindow(W, H, niveau);
-                    draw_caracteristiques_niveau(h, hauteur, largueur, nom_map);
-                }
+            else if (k == 0 && key<='9' && key>='0'){
+                hauteur.append(string (1, char(key)));
             }
+            else if (k == 1 && key<='9' && key>='0'){
+                largueur.append(string (1, char(key)));
+            }
+
+            clav = false;
+            clearWindow();
+            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
         }
     }
 }
@@ -939,30 +980,53 @@ void menu_options(){
 
 }
 
-void draw_menu(int W_menu, int marge_menu_x, int marge_menu_y){
-    vector <string> Liste_menu = {"Sélectionner un niveau", "Créer un niveau", "Options", "Quitter"};
-    // Dessin des boutons
-    for (int k=0; k<4; k++){
-        int x = marge_menu_x;
-        int y = (3*k+1)*marge_menu_y;
-        int w = W_menu - 2*marge_menu_x;
-        int h = 2*marge_menu_y;
-        drawRect(x, y, w, h, BLACK, 2);
+void draw_titre(int taille, int x, int y){ // Dessin du titre
+    string titre = "Paint Runner";
+    Color Liste_couleurs[12] = {Color(170,20,200), Color(169,27,176), Color(196,30,153), Color(207,0,99), Color(230,21,119), Color(243,77,154), Color(255,0,0), Color(223,40,35), Color(247,106,4), Color(206,156,72), Color(250,194,0), Color(254,221,39)};
+    for (unsigned int i=0; i<3; i++){
+        drawString(x + taille*i, y, {titre[i]}, Liste_couleurs[i], taille );
+    }
+    for (unsigned int i=3; i<5; i++){
+        drawString(x + taille*i - 0.6*taille, y, {titre[i]}, Liste_couleurs[i], taille );
+    }
+    for (unsigned int i=5; i<titre.size(); i++){
+        drawString(x + taille*i - 1.2*taille, y, {titre[i]}, Liste_couleurs[i], taille );
+    }
+}
 
-        ecris_dans_la_case (x, y, w, h, Liste_menu[k], 18);
+void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
+
+    fillRect(0, 0, W_menu, H_menu, BLACK); // fond noir
+
+    int x = marge_menu_x;
+    int w = W_menu - 2*marge_menu_x; // largueur des boutons
+    int h = 2*marge_menu_y; // hauteur des boutons
+
+    draw_titre(48, x/2, 2.5*marge_menu_y);
+    //ecris_dans_la_case (x, marge_menu_y, w, h, "Paint Runner", 40, Color(hasard(0, 255), hasard(0, 255), hasard(0, 255)));
+
+    // Dessin des boutons
+    vector <string> Liste_string = {"Jouer", "Options", "Quitter"}; // liste des noms des boutons
+    vector <Color> Liste_color = {RED, BLUE, GREEN}; // liste des couleurs des boutons
+    for (int k=1; k<4; k++){
+        int y = (3*k+1)*marge_menu_y;
+        drawRect(x, y, w, h, WHITE, 2);
+
+        ecris_dans_la_case (x, y, w, h, Liste_string[k-1], 18, Liste_color[k-1]);
     }
 }
 
 void lancer_menu() {
     const int W_menu = 600;
+    const int H_menu = 721;
     const int marge_menu_x = int(W_menu/6);
-    const int marge_menu_y = 70;
-    const int H_menu = 13*marge_menu_y;
+    const int marge_menu_y = int(H_menu/13);
 
     const string menu = "Menu";
     Window menu_Window = openWindow(W_menu, H_menu, menu);
+    setActiveWindow(menu_Window);
 
-    draw_menu(W_menu, marge_menu_x, marge_menu_y);
+    draw_menu(W_menu, H_menu, marge_menu_x, marge_menu_y);
 
     // Coordonnees de la souris
     int x;
@@ -981,22 +1045,18 @@ void lancer_menu() {
 
                 closeWindow(menu_Window);
 
-                if (k==0){
+                if (k==1){
                     menu_categorie_niveau();
                     menu_Window = openWindow(W_menu, H_menu, menu);
-                    draw_menu(W_menu, marge_menu_x, marge_menu_y);
-                }
-
-                else if (k==1){
-                    menu_creation_niveau();
-                    menu_Window = openWindow(W_menu, H_menu, menu);
-                    draw_menu(W_menu, marge_menu_x, marge_menu_y);
+                    setActiveWindow(menu_Window);
+                    draw_menu(W_menu, H_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==2){
                     menu_options();
                     menu_Window = openWindow(W_menu, H_menu, menu);
-                    draw_menu(W_menu, marge_menu_x, marge_menu_y);
+                    setActiveWindow(menu_Window);
+                    draw_menu(W_menu, H_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==3){
@@ -1019,6 +1079,7 @@ void lancer_menu() {
 
 int main()
 {
+    initRandom();
     int taille_case = 28;
 
 //    openWindow(taille_case*55, taille_case*22); // Ouverture d'une fenetre de bonne dimension pour afficher la map
@@ -1027,14 +1088,14 @@ int main()
 //    construire_map_a_la_main(map);
 //    run (map, taille_case);
 
-//      lancer_menu();
+      lancer_menu();
 
 //    int L = 30;
 //    int H = 20;
 //    creer_map("Ma_map_nulle", L, H, taille_case); // Cree une map
 
 //    Map map;
-//    map.charger(0);
+//    map.charger(0, "Niveaux.txt");
 //    jouer(map, taille_case);
 
 //    Map map;
@@ -1042,8 +1103,14 @@ int main()
 //    openWindow(taille_case*map.L, taille_case*map.H); // Ouverture d'une fenetre de bonne dimension pour afficher la map
 //    run (map, taille_case); // Joue le niveau
 
-//    int nb_niveau = 2;
-//    efface_niveau(1, nb_niveau);
+//    int nb_niveau = 3;
+//    efface_niveau(0, nb_niveau, "Niveaux.txt");
+
+//    Map map;
+//    map.charger(1, "Niveaux.txt"); // Charge la map dans le fichier Niveaux.txt
+//    editer_map(map, taille_case, 1, 3, "Niveaux.txt");
+
+
 
     selection_niveau(true);
 

@@ -2,6 +2,7 @@
 #include "personnage.h"
 #include "correspondance.h"
 #include "graphismes.h"
+#include "Niveaux.h"
 
 Map::Map(){
 }
@@ -135,10 +136,9 @@ int Map::get_couleur(int x, int y) const{
     return grille_couleurs(x, y);
 }
 
-void Map::charger(int k){
-
-    string const nomFichier(srcPath("Niveaux_aventure.txt"));
-    ifstream flux(nomFichier.c_str());
+void Map::charger(int k, const string niveau){
+    string const nomFichier(stringSrcPath( niveau ));
+    ifstream flux(nomFichier);
 
     if(flux)
     {
@@ -193,10 +193,9 @@ void Map::charger(int k){
     }
 }
 
-void Map::sauvegarder(){
-
-    string const nomFichier(srcPath("Niveaux_perso.txt"));
-    ofstream flux(nomFichier.c_str(), ios::app); // flux d'ajout en fin de fichier
+void Map::sauvegarder(const string niveau) const{
+    string const nomFichier(stringSrcPath((niveau)));
+    ofstream flux(nomFichier, ios::app); // flux d'ajout en fin de fichier
 
     if(flux)
     {
@@ -220,4 +219,42 @@ void Map::sauvegarder(){
     {
         cout << "ERREUR: Impossible d'ouvrir le fichier." << endl;
     }
+}
+
+void Map::sauvegarder_et_ecraser(int num_map, const string niveau, int nb_niveaux) const{
+
+    if (num_map == nb_niveaux-1){
+        efface_niveau (num_map, nb_niveaux, niveau);
+        sauvegarder(niveau); // On sauvegarde le niveau a la place num_map
+        return;
+    }
+    // On conserve les niveaux avant num_map
+    vector <Map> Liste_maps1;
+    for (int i=0; i<num_map; i++){
+        Map map;
+        map.charger(i, niveau);
+        Liste_maps1.push_back(map);
+    }
+
+    // On conserve les niveaux apres num_map
+    vector <Map> Liste_maps2;
+    for (int i=num_map+1; i<nb_niveaux; i++){
+        Map map;
+        map.charger(i, niveau);
+        Liste_maps2.push_back(map);
+    }
+    efface_tous_niveaux(niveau); // On efface tout
+
+    // On reecrit les niveaux conserves
+    for (unsigned int m=0; m<Liste_maps1.size(); m++){
+        Liste_maps1[m].sauvegarder(niveau);
+    }
+    sauvegarder(niveau); // On sauvegarde le niveau a la place num_map
+
+    // On reecrit les niveaux conserves
+    for (unsigned int m=0; m<Liste_maps2.size(); m++){
+        Liste_maps2[m].sauvegarder(niveau);
+    }
+
+
 }
