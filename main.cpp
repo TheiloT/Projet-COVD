@@ -54,34 +54,34 @@ void affiche_grille(int H, int L, int taille_case){ // Affiche une grille_blocs 
     }
 }
 
-void drawAction(int x, int y, int k, int taille_case_editeur){
+void drawAction(int x, int y, int k, int taille_case){
     if (k == bouton_play){
-        int xa = x + int (0.25*taille_case_editeur);
-        int xb = x + int (0.25*taille_case_editeur);
-        int xc = x + int (0.85*taille_case_editeur);
-        int ya = y + int (0.80*taille_case_editeur);
-        int yb = y + int (0.20*taille_case_editeur);
-        int yc = y + int (0.5*taille_case_editeur);
+        int xa = x + int (0.25*taille_case);
+        int xb = x + int (0.25*taille_case);
+        int xc = x + int (0.85*taille_case);
+        int ya = y + int (0.80*taille_case);
+        int yb = y + int (0.20*taille_case);
+        int yc = y + int (0.5*taille_case);
         int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
-        fillRect(x, y, taille_case_editeur, taille_case_editeur, RED);
+        fillRect(x, y, taille_case, taille_case, RED);
         fillPoly(coord_triangle, 3, WHITE);
         drawPoly(coord_triangle, 3, BLACK, 2);
     }
 
     else if (k == bouton_sauvegarder){
         string s = "S";
-        drawString(x + int(0.2*taille_case_editeur), y + int(0.85*taille_case_editeur), s, BLACK, int (0.5*taille_case_editeur));
+        drawString(x + int(0.2*taille_case), y + int(0.85*taille_case), s, BLACK, int (0.5*taille_case));
     }
 
     else if (k == bouton_quitter){
-        int d = int (0.2 * taille_case_editeur);
-        fillRect(x, y, taille_case_editeur, taille_case_editeur, RED);
-        drawLine(x + 4 + d, y + 4 + d, x + taille_case_editeur - 4 - d, y + taille_case_editeur - 4 - d, WHITE, 8);
-        drawLine(x + taille_case_editeur - 4 - d, y + 4 + d, x + 4 + d, y + taille_case_editeur - 4 - d, WHITE, 8);
+        int d = int (0.2 * taille_case);
+        fillRect(x, y, taille_case, taille_case, RED);
+        drawLine(x + 4 + d, y + 4 + d, x + taille_case - 4 - d, y + taille_case - 4 - d, WHITE, 8);
+        drawLine(x + taille_case - 4 - d, y + 4 + d, x + 4 + d, y + taille_case - 4 - d, WHITE, 8);
     }
     else if (k == bouton_reset){
         string r = "R";
-        drawString(x + int(0.2*taille_case_editeur), y + int(0.85*taille_case_editeur), r, BLACK, int (0.5*taille_case_editeur));
+        drawString(x + int(0.2*taille_case), y + int(0.85*taille_case), r, BLACK, int (0.5*taille_case));
     }
 }
 
@@ -536,19 +536,17 @@ void jouer(Map map, int taille_case) {
 void draw_bouton_etiquette(int x, int y, int taille_bouton, int bouton) {
     if (bouton == 0) { // dessine le bouton d'edition
         fillRect(x, y, taille_bouton, taille_bouton, YELLOW);
-        drawRect(x, y, taille_bouton, taille_bouton, BLACK);
-        string E = "E";
-        ecris_dans_la_case(x-1, y+1, taille_bouton, taille_bouton, E, taille_bouton/2);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.2*taille_bouton), y + int(0.85*taille_bouton), "E", BLACK, int (0.5*taille_bouton));
     }
     if (bouton == 1) { // dessine le bouton de deletion
         fillRect(x, y, taille_bouton, taille_bouton, RED);
-        drawRect(x, y, taille_bouton, taille_bouton, BLACK);
-        string X = "X";
-        ecris_dans_la_case(x-1, y+1, taille_bouton, taille_bouton, X, taille_bouton/2);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", BLACK, int (0.5*taille_bouton));
     }
     if (bouton == 2) { // dessine le bouton jouer
         fillRect(x, y, taille_bouton, taille_bouton, GREEN);
-        drawRect(x, y, taille_bouton, taille_bouton, BLACK);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
 
         // triangle
         int xa = x + taille_bouton/5;
@@ -564,13 +562,14 @@ void draw_bouton_etiquette(int x, int y, int taille_bouton, int bouton) {
     }
 }
 
-void draw_etiquette(int x, int y, int largeur_etiquette, int hauteur_etiquette, int largeur_texte_etiquette,
+void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiquette, int largeur_texte_etiquette,
                     string nom_niveau, int taille_bouton, int marge_bouton, bool mode_perso) { // Dessine une etiquette
 
-    drawRect(x, y, largeur_etiquette, hauteur_etiquette, BLACK);
+    Color Couleurs[4] = {RED, BLUE, GREEN, PURPLE};
+    drawRect(x, y, largeur_etiquette, hauteur_etiquette, WHITE, 2);
     int taille_police = hauteur_etiquette/6;
-    ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police);
-    drawLine(x+largeur_texte_etiquette, y, x+largeur_texte_etiquette, y+hauteur_etiquette, BLACK);
+    ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police, Couleurs[k % 4]);
+    //drawLine(x+largeur_texte_etiquette, y, x+largeur_texte_etiquette, y+hauteur_etiquette, WHITE);
     int x_boutons = x + largeur_texte_etiquette;
     int y_boutons = y + (hauteur_etiquette-taille_bouton)/2;
     int pas = taille_bouton + marge_bouton;
@@ -583,17 +582,15 @@ void draw_etiquette(int x, int y, int largeur_etiquette, int hauteur_etiquette, 
 
 void draw_bouton_bas(int x, int y, int taille_bouton, int bouton) {
     if (bouton == 0) { // dessine le bouton de retour
-        drawRect(x, y, taille_bouton, taille_bouton, BLACK);
-        string X = "X";
-        ecris_dans_la_case(x-1, y+1, taille_bouton, taille_bouton, X, taille_bouton/2, BLACK);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", WHITE, int (0.5*taille_bouton));
     }
     if (bouton == 1) { // dessine le bouton d'ajout de niveau
-        drawRect(x, y, taille_bouton, taille_bouton, BLACK);
-        string plus = "+";
-        ecris_dans_la_case(x-2, y+1, taille_bouton, taille_bouton, plus, taille_bouton/2, BLACK);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.1*taille_bouton), y + int(0.85*taille_bouton), "+", WHITE, int (0.57*taille_bouton));
     }
     if (bouton == 2) { // dessine le bouton page suivante
-        drawRect(x, y, taille_bouton, taille_bouton, BLACK);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
 
         // triangle
         int xa = x + 4*taille_bouton/5;
@@ -605,10 +602,10 @@ void draw_bouton_bas(int x, int y, int taille_bouton, int bouton) {
         int yc = y + taille_bouton/2;
 
         int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
-        fillPoly(coord_triangle, 3, BLACK);
+        fillPoly(coord_triangle, 3, WHITE);
     }
     if (bouton == 3) { // dessine le bouton page precedente
-        drawRect(x, y, taille_bouton, taille_bouton, BLACK);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE);
 
         // triangle
         int xa = x + taille_bouton/5;
@@ -620,7 +617,7 @@ void draw_bouton_bas(int x, int y, int taille_bouton, int bouton) {
         int yc = y + taille_bouton/2;
 
         int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
-        fillPoly(coord_triangle, 3, BLACK);
+        fillPoly(coord_triangle, 3, WHITE);
     }
 }
 
@@ -635,15 +632,15 @@ void draw_selection_niveau(int marge_x, int marge_y, int largeur_etiquette, int 
     // Zone des etiquettes
     int x_etiquettes = marge_x;
     int y_etiquettes = marge_y;
-    for (int i=0; i<nombre_niveaux_affiches; i++) {
+    for (int i=0; i<min(nombre_niveaux,nombre_niveaux_affiches); i++) {
         string nom_niveau = get<0>(liste_niveaux[page*nombre_niveaux_affiches + i]);
         int pas = hauteur_etiquette + marge_y;
-        draw_etiquette(x_etiquettes, y_etiquettes + i*pas, largeur_etiquette, hauteur_etiquette, largeur_texte_etiquette, nom_niveau, taille_bouton, marge_bouton, mode_perso);
+        draw_etiquette(x_etiquettes, y_etiquettes + i*pas, page*nombre_niveaux_affiches + i, largeur_etiquette, hauteur_etiquette, largeur_texte_etiquette, nom_niveau, taille_bouton, marge_bouton, mode_perso);
     }
 
     // Barre du bas
     int y_barre_bas = y_etiquettes + nombre_niveaux_affiches*(hauteur_etiquette+marge_y);
-    drawLine(0, y_barre_bas, W, y_barre_bas, BLACK);
+    drawLine(0, y_barre_bas, W, y_barre_bas, WHITE, 2);
     int y_boutons_bas = y_barre_bas + marge_bouton_bas;
     // Bouton de retour vers le menu precedent
     int x_retour = marge_bouton_bas;
@@ -658,7 +655,7 @@ void draw_selection_niveau(int marge_x, int marge_y, int largeur_etiquette, int 
     draw_bouton_bas(x_page + taille_bouton_bas + largeur_index_page, y_boutons_bas, taille_bouton_bas, 3);
     int nb_pages = nombre_niveaux/nombre_niveaux_affiches;
     string index_page = to_string(page+1) + "/" + to_string(nb_pages+1);
-    ecris_dans_la_case(x_page + taille_bouton_bas, y_boutons_bas, largeur_index_page, taille_bouton_bas, index_page, taille_bouton_bas/2);
+    ecris_dans_la_case(x_page + taille_bouton_bas, y_boutons_bas, largeur_index_page, taille_bouton_bas, index_page, taille_bouton_bas/2, WHITE);
 }
 
 vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
@@ -735,6 +732,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
     while (!fin) {
         if (rafraichir_affichage) {
             clearWindow();
+            fillRect(0, 0, W_fenetre, H_fenetre, BLACK);
             draw_selection_niveau(marge_x, marge_y, largeur_etiquette, hauteur_etiquette,
                                   largeur_texte_etiquette, taille_bouton, marge_bouton,
                                   taille_bouton_bas, marge_bouton_bas, nombre_niveaux,
@@ -828,12 +826,12 @@ void menu_categorie_niveau(int taille_case){
 
                 closeWindow(menu_Window);
                 if (k==0){
-                    selection_niveau(true, taille_case);
+                    selection_niveau(false, taille_case);
                     menu_Window = openWindow(W_menu, H_menu, selection);
                     draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
                 }
                 else if (k==1){
-                    selection_niveau(false, taille_case);
+                    selection_niveau(true, taille_case);
                     menu_Window = openWindow(W_menu, H_menu, selection);
                     draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
                 }
@@ -1097,7 +1095,7 @@ void lancer_menu(int taille_case) {
 
 int main()
 {
-    initRandom();
+//    initRandom();
     int taille_case = 28;
 
 //    openWindow(taille_case*55, taille_case*22); // Ouverture d'une fenetre de bonne dimension pour afficher la map
