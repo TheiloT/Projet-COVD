@@ -36,3 +36,5 @@ public:
 };
 
 void dessineCase(int x, int y, int taille_case, int bloc, int couleur);
+
+void efface_map(int k);

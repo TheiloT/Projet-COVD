@@ -137,7 +137,7 @@ int Map::get_couleur(int x, int y) const{
 
 void Map::charger(int k){
 
-    string const nomFichier(srcPath("Niveaux.txt"));
+    string const nomFichier(srcPath("Niveaux_aventure.txt"));
     ifstream flux(nomFichier.c_str());
 
     if(flux)
@@ -195,7 +195,7 @@ void Map::charger(int k){
 
 void Map::sauvegarder(){
 
-    string const nomFichier(srcPath("Niveaux.txt"));
+    string const nomFichier(srcPath("Niveaux_perso.txt"));
     ofstream flux(nomFichier.c_str(), ios::app); // flux d'ajout en fin de fichier
 
     if(flux)
@@ -221,5 +221,3 @@ void Map::sauvegarder(){
         cout << "ERREUR: Impossible d'ouvrir le fichier." << endl;
     }
 }
-
-
