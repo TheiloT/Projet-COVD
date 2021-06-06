@@ -533,320 +533,6 @@ void jouer(Map map, int taille_case) {
 
 // ========== Fonctions du menu ==========
 
-void draw_bouton_etiquette(int x, int y, int taille_bouton, int bouton) {
-    if (bouton == 0) { // dessine le bouton d'edition
-        fillRect(x, y, taille_bouton, taille_bouton, YELLOW);
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.2*taille_bouton), y + int(0.85*taille_bouton), "E", BLACK, int (0.5*taille_bouton));
-    }
-    if (bouton == 1) { // dessine le bouton de deletion
-        fillRect(x, y, taille_bouton, taille_bouton, RED);
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", BLACK, int (0.5*taille_bouton));
-    }
-    if (bouton == 2) { // dessine le bouton jouer
-        fillRect(x, y, taille_bouton, taille_bouton, GREEN);
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-
-        // triangle
-        int xa = x + taille_bouton/5;
-        int xb = x + taille_bouton/5;
-        int xc = x + 4*taille_bouton/5;
-
-        int ya = y + taille_bouton/5;
-        int yb = y + 4*taille_bouton/5;
-        int yc = y + taille_bouton/2;
-
-        int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
-        fillPoly(coord_triangle, 3, BLACK);
-    }
-}
-
-void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiquette, int largeur_texte_etiquette,
-                    string nom_niveau, int taille_bouton, int marge_bouton, bool mode_perso) { // Dessine une etiquette
-
-    Color Couleurs[4] = {RED, BLUE, GREEN, PURPLE};
-    drawRect(x, y, largeur_etiquette, hauteur_etiquette, WHITE, 2);
-    int taille_police = hauteur_etiquette/6;
-    ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police, Couleurs[k % 4]);
-    //drawLine(x+largeur_texte_etiquette, y, x+largeur_texte_etiquette, y+hauteur_etiquette, WHITE);
-    int x_boutons = x + largeur_texte_etiquette;
-    int y_boutons = y + (hauteur_etiquette-taille_bouton)/2;
-    int pas = taille_bouton + marge_bouton;
-    if (mode_perso) {
-        for (int i=0; i<3; i++)
-            draw_bouton_etiquette(marge_bouton + x_boutons + i*pas, y_boutons, taille_bouton, i);
-    }
-    else draw_bouton_etiquette(x_boutons + 2*pas, y_boutons, taille_bouton, 2);
-}
-
-void draw_bouton_bas(int x, int y, int taille_bouton, int bouton) {
-    if (bouton == 0) { // dessine le bouton de retour
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", WHITE, int (0.5*taille_bouton));
-    }
-    if (bouton == 1) { // dessine le bouton d'ajout de niveau
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.1*taille_bouton), y + int(0.85*taille_bouton), "+", WHITE, int (0.57*taille_bouton));
-    }
-    if (bouton == 2) { // dessine le bouton page suivante
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-
-        // triangle
-        int xa = x + 4*taille_bouton/5;
-        int xb = x + 4*taille_bouton/5;
-        int xc = x + taille_bouton/5;
-
-        int ya = y + taille_bouton/5;
-        int yb = y + 4*taille_bouton/5;
-        int yc = y + taille_bouton/2;
-
-        int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
-        fillPoly(coord_triangle, 3, WHITE);
-    }
-    if (bouton == 3) { // dessine le bouton page precedente
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE);
-
-        // triangle
-        int xa = x + taille_bouton/5;
-        int xb = x + taille_bouton/5;
-        int xc = x + 4*taille_bouton/5;
-
-        int ya = y + taille_bouton/5;
-        int yb = y + 4*taille_bouton/5;
-        int yc = y + taille_bouton/2;
-
-        int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
-        fillPoly(coord_triangle, 3, WHITE);
-    }
-}
-
-
-
-void draw_selection_niveau(int marge_x, int marge_y, int largeur_etiquette, int hauteur_etiquette,
-                           int largeur_texte_etiquette, int taille_bouton, int marge_bouton,
-                           int taille_bouton_bas, int marge_bouton_bas, int nombre_niveaux,
-                           int nombre_niveaux_affiches, int page, const vector<tuple<string, int>> liste_niveaux, bool mode_perso) {
-    int W = largeur_etiquette + 2*marge_x;
-
-    // Zone des etiquettes
-    int x_etiquettes = marge_x;
-    int y_etiquettes = marge_y;
-    for (int i=0; i<min(nombre_niveaux,nombre_niveaux_affiches); i++) {
-        string nom_niveau = get<0>(liste_niveaux[page*nombre_niveaux_affiches + i]);
-        int pas = hauteur_etiquette + marge_y;
-        draw_etiquette(x_etiquettes, y_etiquettes + i*pas, page*nombre_niveaux_affiches + i, largeur_etiquette, hauteur_etiquette, largeur_texte_etiquette, nom_niveau, taille_bouton, marge_bouton, mode_perso);
-    }
-
-    // Barre du bas
-    int y_barre_bas = y_etiquettes + nombre_niveaux_affiches*(hauteur_etiquette+marge_y);
-    drawLine(0, y_barre_bas, W, y_barre_bas, WHITE, 2);
-    int y_boutons_bas = y_barre_bas + marge_bouton_bas;
-    // Bouton de retour vers le menu precedent
-    int x_retour = marge_bouton_bas;
-    draw_bouton_bas(x_retour, y_boutons_bas, taille_bouton_bas, 0);
-    // Bouton d'ajout de niveau
-    int x_ajout = W/2 - taille_bouton_bas;
-    draw_bouton_bas(x_ajout, y_boutons_bas, taille_bouton_bas, 1);
-    // Boutons de pages suivante et precedente
-    int largeur_index_page = 2*taille_bouton_bas; // largeur allouee a l'affichage de page/nombre_page
-    int x_page = W - marge_bouton_bas - 2*taille_bouton_bas - largeur_index_page;
-    draw_bouton_bas(x_page, y_boutons_bas, taille_bouton_bas, 2);
-    draw_bouton_bas(x_page + taille_bouton_bas + largeur_index_page, y_boutons_bas, taille_bouton_bas, 3);
-    int nb_pages = nombre_niveaux/nombre_niveaux_affiches;
-    string index_page = to_string(page+1) + "/" + to_string(nb_pages+1);
-    drawString(x_page + taille_bouton_bas + int(0.25*taille_bouton), y_boutons_bas + int(0.87*taille_bouton), index_page, WHITE, int (0.5*taille_bouton));
-}
-
-vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
-    vector<tuple<string, int>> liste_niveaux;
-
-    string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
-    string const nomFichier(stringSrcPath((txt_niveaux)));
-    ifstream flux(nomFichier); // flux de lecture
-
-    if(flux)
-    {
-        while(!flux.eof()){ // tant qu'on n'est pas a la fin du .txt
-            string map_name;
-            flux >> map_name;
-            liste_niveaux.push_back(tuple<string, int> (map_name, 0));
-            int h,l;
-            flux >> h;
-            flux >> l;
-            int corbeille; // Cette variable ne servira pas, on ne s'en sert que pour le passage au caractere suivant
-            for (int x=0; x<l; x++){
-                for (int y=0; y<h; y++){
-                    flux >> corbeille;
-                }
-            }
-            for (int x=0; x<l; x++){
-                for (int y=0; y<h; y++){
-                    flux >> corbeille;
-                }
-            }
-        }
-        if (liste_niveaux.size() > 0){
-            liste_niveaux.pop_back(); // Sans cela il reste un niveau artefact en fin de liste
-        }
-    }
-    else
-    {
-        cout << "ERREUR: Impossible d'ouvrir le fichier." << endl;
-    }
-    return liste_niveaux;
-}
-
-void selection_niveau(bool mode_perso, int taille_case) {
-    // Geometrie de la fenetre
-    const int largeur_etiquette = 600;
-    const int hauteur_etiquette = 120;
-    const int marge_x = int(largeur_etiquette/8); // marge entre une etiquette de niveau et le bord de la fenetre
-    const int marge_y = int(hauteur_etiquette/4); // marge entre deux etiquette de niveau
-
-    const int largeur_texte_etiquette = int(6*largeur_etiquette/10); // fraction de l'etiquette dediee aux boutons
-    const int taille_bouton = int(largeur_etiquette/10);
-    const int marge_bouton = int(largeur_etiquette/40); // marge entre deux boutons d'une etiquette
-
-    const int nombre_niveaux_affiches = 4;
-
-    const int hauteur_barre_bas = hauteur_etiquette;
-    const int taille_bouton_bas = int(hauteur_barre_bas/2);
-    const int marge_bouton_bas = int(hauteur_barre_bas/4);
-
-    const int W_fenetre = largeur_etiquette + 2*marge_x;
-    const int H_fenetre = nombre_niveaux_affiches * (hauteur_etiquette + marge_y) + marge_y + hauteur_barre_bas;
-    const string menu = "Séléction de niveau";
-    Window selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
-    setActiveWindow(selection_niveau_Window);
-
-    // Initialisation de la liste de niveaux
-    vector<tuple<string, int>> liste_niveaux = recuperer_niveaux(mode_perso); // Contient l'id du niveau (repere par la position dans le vecteur), le nom du niveau et le nombre d'étoile collecté sur ce niveau
-    int nombre_niveaux = liste_niveaux.size();
-
-    int page = 0;
-
-    // boucle principale
-    bool fin = false;
-    int x;
-    int y;
-    bool rafraichir_affichage = true; // Determine s'il faut rafraichir l'affichage lors du tour de boucle
-    while (!fin) {
-        if (rafraichir_affichage) {
-            clearWindow();
-            fillRect(0, 0, W_fenetre, H_fenetre, BLACK);
-            draw_selection_niveau(marge_x, marge_y, largeur_etiquette, hauteur_etiquette,
-                                  largeur_texte_etiquette, taille_bouton, marge_bouton,
-                                  taille_bouton_bas, marge_bouton_bas, nombre_niveaux,
-                                  nombre_niveaux_affiches, page, liste_niveaux, mode_perso);;
-            rafraichir_affichage = false;
-        }
-
-        getMouse(x, y);
-        if (y > marge_y && y < nombre_niveaux_affiches * (hauteur_etiquette + marge_y) + marge_y){ // si la souris est dans la zone des etiquette
-            int num_etiquette = (y - marge_y) / (hauteur_etiquette + marge_y);
-            int y_etiquette = (y - marge_y) % (hauteur_etiquette + marge_y);
-            int num_niveau = page*nombre_niveaux_affiches + num_etiquette;
-            bool dans_hauteur_bouton = y_etiquette > marge_bouton && (y_etiquette < marge_bouton + taille_bouton);
-            if (dans_hauteur_bouton) { // si la souris est dans la hauteur des boutons de l'etiquette
-                int num_bouton = (x - marge_x - largeur_texte_etiquette) / (taille_bouton + marge_bouton);
-                if (num_bouton == 0 && mode_perso) { // Lance l'editeur du niveau
-                    closeWindow(selection_niveau_Window);
-                    Map map_selectionnee;
-                    map_selectionnee.charger(num_niveau, "Niveaux_perso.txt");
-                    creer_map(map_selectionnee.nom, map_selectionnee.L, map_selectionnee.H, taille_case, true, map_selectionnee, num_niveau, nombre_niveaux, "Niveaux_perso.txt");
-                    selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
-                    setActiveWindow(selection_niveau_Window);
-                    rafraichir_affichage = true;
-                }
-                if (num_bouton == 1 && mode_perso) { // supprime le niveau
-                    efface_niveau(num_niveau, nombre_niveaux, "Niveaux_perso.txt");
-                    liste_niveaux = recuperer_niveaux(mode_perso);
-                    nombre_niveaux -= 1;
-                    page = min(page, nombre_niveaux/nombre_niveaux_affiches); // max entre la page atuel et le nouveau nombre de pages
-                    rafraichir_affichage = true;
-                }
-                if (num_bouton == 2) { // joue le niveau
-                    closeWindow(selection_niveau_Window);
-                    string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
-                    Map map_selectionnee;
-                    map_selectionnee.charger(num_niveau, txt_niveaux);
-                    jouer(map_selectionnee, taille_case);
-                    selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
-                    setActiveWindow(selection_niveau_Window);
-                    rafraichir_affichage = true;
-                }
-            }
-        }
-    }
-    click();
-    closeWindow(selection_niveau_Window);
-}
-
-void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y, int taille_case){
-
-    fillRect(0,0,W_menu,H_menu,BLACK); // fond noir
-    vector <string> Liste_categories = {"Niveaux classiques", "Mes niveaux", "Retour au menu"};
-    vector <Color> Liste_color = {RED, BLUE, GREEN};
-    // Dessin des boutons
-    for (int k=0; k<3; k++){
-        int x = marge_menu_x;
-        int y = (3*k+1)*marge_menu_y;
-        int w = W_menu - 2*marge_menu_x;
-        int h = 2*marge_menu_y;
-        drawRect(x, y, w, h, WHITE, 2);
-
-        ecris_dans_la_case (x, y, w, h, Liste_categories[k], 18, Liste_color[k]);
-    }
-}
-
-void menu_categorie_niveau(int taille_case){
-    const int W_menu = 600;
-    const int H_menu = 700;
-    const int marge_menu_x = int(W_menu/6);
-    const int marge_menu_y = int(H_menu/10);
-
-    const string selection = "Selection de la catégorie de niveau";
-    Window menu_Window = openWindow(W_menu, H_menu, selection);
-
-    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
-
-    // Coordonnees de la souris
-    int x;
-    int y;
-
-    bool fin = false;
-    while ( ! fin ){
-
-        getMouse(x, y);
-
-        if ( x > marge_menu_x && x < W_menu - marge_menu_x){ // Zonne de x dans laquelle se trouve les boutons
-            float num_y = y/(3.0*marge_menu_y);
-            if (num_y - floor(num_y) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
-
-                int k = floor(num_y); // Numero du bouton clique
-
-                closeWindow(menu_Window);
-                if (k==0){
-                    selection_niveau(false, taille_case);
-                    menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
-                }
-                else if (k==1){
-                    selection_niveau(true, taille_case);
-                    menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
-                }
-
-                else if (k==2){
-                    fin = true;
-                }
-            }
-        }
-    }
-
-}
-
 void draw_caracteristiques_niveau(int h, int hauteur, int largueur, string nom_map){
     int taille_police = 12;
 
@@ -999,6 +685,348 @@ void menu_creation_niveau(){
     }
 }
 
+void draw_bouton_etiquette(int x, int y, int taille_bouton, int bouton) {
+    if (bouton == 0) { // dessine le bouton d'edition
+        fillRect(x, y, taille_bouton, taille_bouton, YELLOW);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.2*taille_bouton), y + int(0.85*taille_bouton), "E", BLACK, int (0.5*taille_bouton));
+    }
+    if (bouton == 1) { // dessine le bouton de deletion
+        fillRect(x, y, taille_bouton, taille_bouton, RED);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", BLACK, int (0.5*taille_bouton));
+    }
+    if (bouton == 2) { // dessine le bouton jouer
+        fillRect(x, y, taille_bouton, taille_bouton, GREEN);
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+
+        // triangle
+        int xa = x + taille_bouton/5;
+        int xb = x + taille_bouton/5;
+        int xc = x + 4*taille_bouton/5;
+
+        int ya = y + taille_bouton/5;
+        int yb = y + 4*taille_bouton/5;
+        int yc = y + taille_bouton/2;
+
+        int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
+        fillPoly(coord_triangle, 3, BLACK);
+    }
+}
+
+void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiquette, int largeur_texte_etiquette,
+                    string nom_niveau, int taille_bouton, int marge_bouton, bool mode_perso) { // Dessine une etiquette
+
+    Color Couleurs[4] = {RED, BLUE, GREEN, PURPLE};
+    drawRect(x, y, largeur_etiquette, hauteur_etiquette, WHITE, 2);
+    int taille_police = hauteur_etiquette/6;
+    ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police, Couleurs[k % 4]);
+    //drawLine(x+largeur_texte_etiquette, y, x+largeur_texte_etiquette, y+hauteur_etiquette, WHITE);
+    int x_boutons = x + largeur_texte_etiquette;
+    int y_boutons = y + (hauteur_etiquette-taille_bouton)/2;
+    int pas = taille_bouton + marge_bouton;
+    if (mode_perso) {
+        for (int i=0; i<3; i++)
+            draw_bouton_etiquette(marge_bouton + x_boutons + i*pas, y_boutons, taille_bouton, i);
+    }
+    else draw_bouton_etiquette(x_boutons + 2*pas, y_boutons, taille_bouton, 2);
+}
+
+void draw_bouton_bas(int x, int y, int taille_bouton, int bouton) {
+    if (bouton == 0) { // dessine le bouton de retour
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", WHITE, int (0.5*taille_bouton));
+    }
+    if (bouton == 1) { // dessine le bouton d'ajout de niveau
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+        drawString(x + int(0.1*taille_bouton), y + int(0.85*taille_bouton), "+", WHITE, int (0.57*taille_bouton));
+    }
+    if (bouton == 2) { // dessine le bouton page suivante
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+
+        // triangle
+        int xa = x + 4*taille_bouton/5;
+        int xb = x + 4*taille_bouton/5;
+        int xc = x + taille_bouton/5;
+
+        int ya = y + taille_bouton/5;
+        int yb = y + 4*taille_bouton/5;
+        int yc = y + taille_bouton/2;
+
+        int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
+        fillPoly(coord_triangle, 3, WHITE);
+    }
+    if (bouton == 3) { // dessine le bouton page precedente
+        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+
+        // triangle
+        int xa = x + taille_bouton/5;
+        int xb = x + taille_bouton/5;
+        int xc = x + 4*taille_bouton/5;
+
+        int ya = y + taille_bouton/5;
+        int yb = y + 4*taille_bouton/5;
+        int yc = y + taille_bouton/2;
+
+        int coord_triangle[6] = {xa, ya, xb, yb, xc, yc};
+        fillPoly(coord_triangle, 3, WHITE);
+    }
+}
+
+
+void draw_selection_niveau(int W, int H, int marge_x, int marge_y, int largeur_etiquette, int hauteur_etiquette,
+                           int largeur_texte_etiquette, int taille_bouton, int marge_bouton,
+                           int taille_bouton_bas, int marge_bouton_bas, int nombre_niveaux,
+                           int nombre_niveaux_affiches, int page, const vector<tuple<string, int>> liste_niveaux, bool mode_perso) {
+    fillRect(0, 0, W, H, BLACK);
+
+    // Zone des etiquettes
+    int x_etiquettes = marge_x;
+    int y_etiquettes = marge_y;
+    for (int i=0; i<min(nombre_niveaux,nombre_niveaux_affiches); i++) {
+        if (page*nombre_niveaux_affiches + i < nombre_niveaux) {
+            string nom_niveau = get<0>(liste_niveaux[page*nombre_niveaux_affiches + i]);
+            int pas = hauteur_etiquette + marge_y;
+            draw_etiquette(x_etiquettes, y_etiquettes + i*pas, page*nombre_niveaux_affiches + i, largeur_etiquette, hauteur_etiquette, largeur_texte_etiquette, nom_niveau, taille_bouton, marge_bouton, mode_perso);
+        }
+    }
+
+    // Barre du bas
+    int y_barre_bas = y_etiquettes + nombre_niveaux_affiches*(hauteur_etiquette+marge_y);
+    drawLine(0, y_barre_bas, W, y_barre_bas, WHITE, 2);
+    int y_boutons_bas = y_barre_bas + marge_bouton_bas;
+    // Bouton de retour vers le menu precedent
+    int x_retour = marge_bouton_bas;
+    draw_bouton_bas(x_retour, y_boutons_bas, taille_bouton_bas, 0);
+    // Bouton d'ajout de niveau
+    int x_ajout = W/2 - taille_bouton_bas;
+    draw_bouton_bas(x_ajout, y_boutons_bas, taille_bouton_bas, 1);
+    // Boutons de pages suivante et precedente
+    int largeur_index_page = 2*taille_bouton_bas; // largeur allouee a l'affichage de page/nombre_page
+    int x_page = W - marge_bouton_bas - 2*taille_bouton_bas - largeur_index_page;
+    draw_bouton_bas(x_page, y_boutons_bas, taille_bouton_bas, 2);
+    draw_bouton_bas(x_page + taille_bouton_bas + largeur_index_page, y_boutons_bas, taille_bouton_bas, 3);
+    int nb_pages = max((nombre_niveaux-1)/nombre_niveaux_affiches, 0);
+    string index_page = to_string(page+1) + "/" + to_string(nb_pages+1);
+    drawString(x_page + taille_bouton_bas + int(0.25*taille_bouton), y_boutons_bas + int(0.87*taille_bouton), index_page, WHITE, int (0.5*taille_bouton));
+}
+
+vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
+    vector<tuple<string, int>> liste_niveaux;
+
+    string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
+    string const nomFichier(stringSrcPath((txt_niveaux)));
+    ifstream flux(nomFichier); // flux de lecture
+
+    if(flux)
+    {
+        while(!flux.eof()){ // tant qu'on n'est pas a la fin du .txt
+            string map_name;
+            flux >> map_name;
+            liste_niveaux.push_back(tuple<string, int> (map_name, 0));
+            int h,l;
+            flux >> h;
+            flux >> l;
+            int corbeille; // Cette variable ne servira pas, on ne s'en sert que pour le passage au caractere suivant
+            for (int x=0; x<l; x++){
+                for (int y=0; y<h; y++){
+                    flux >> corbeille;
+                }
+            }
+            for (int x=0; x<l; x++){
+                for (int y=0; y<h; y++){
+                    flux >> corbeille;
+                }
+            }
+        }
+        if (liste_niveaux.size() > 0){
+            liste_niveaux.pop_back(); // Sans cela il reste un niveau artefact en fin de liste
+        }
+    }
+    else
+    {
+        cout << "ERREUR: Impossible d'ouvrir le fichier." << endl;
+    }
+    return liste_niveaux;
+}
+
+void selection_niveau(bool mode_perso, int taille_case) {
+    // Geometrie de la fenetre
+    const int largeur_etiquette = 600;
+    const int hauteur_etiquette = 120;
+    const int marge_x = int(largeur_etiquette/8); // marge entre une etiquette de niveau et le bord de la fenetre
+    const int marge_y = int(hauteur_etiquette/4); // marge entre deux etiquette de niveau
+
+    const int largeur_texte_etiquette = int(6*largeur_etiquette/10); // fraction de l'etiquette dediee aux boutons
+    const int taille_bouton = int(largeur_etiquette/10);
+    const int marge_bouton = int(largeur_etiquette/40); // marge entre deux boutons d'une etiquette
+
+    const int nombre_niveaux_affiches = 4;
+
+    const int hauteur_barre_bas = hauteur_etiquette;
+    const int taille_bouton_bas = int(hauteur_barre_bas/2);
+    const int marge_bouton_bas = int(hauteur_barre_bas/4);
+
+    const int W_fenetre = largeur_etiquette + 2*marge_x;
+    const int H_fenetre = nombre_niveaux_affiches * (hauteur_etiquette + marge_y) + marge_y + hauteur_barre_bas;
+    const string menu = "Séléction de niveau";
+    Window selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
+    setActiveWindow(selection_niveau_Window);
+
+    // Initialisation de la liste de niveaux
+    vector<tuple<string, int>> liste_niveaux = recuperer_niveaux(mode_perso); // Contiendra le nom du niveau et le nombre d'etoiles collectees sur ce niveau (a programmer
+    int nombre_niveaux;
+
+    int page = 0;
+    int nombre_pages;
+
+    // boucle principale
+    bool fin = false;
+    int x;
+    int y;
+    bool rafraichir_affichage = true; // Determine s'il faut rafraichir l'affichage lors du tour de boucle
+    while (!fin) {
+        nombre_niveaux = liste_niveaux.size();
+        nombre_pages = max((nombre_niveaux-1)/nombre_niveaux_affiches, 0);
+        page = min(page, nombre_pages);
+        if (rafraichir_affichage) {
+            clearWindow();
+            draw_selection_niveau(W_fenetre, H_fenetre, marge_x, marge_y, largeur_etiquette, hauteur_etiquette,
+                                  largeur_texte_etiquette, taille_bouton, marge_bouton,
+                                  taille_bouton_bas, marge_bouton_bas, nombre_niveaux,
+                                  nombre_niveaux_affiches, page, liste_niveaux, mode_perso);;
+            rafraichir_affichage = false;
+        }
+
+        getMouse(x, y);
+        if (y > marge_y && y < nombre_niveaux_affiches * (hauteur_etiquette + marge_y) + marge_y){ // si la souris est dans la zone des etiquette
+            int num_etiquette = (y - marge_y) / (hauteur_etiquette + marge_y);
+            int y_etiquette = (y - marge_y) % (hauteur_etiquette + marge_y);
+            int num_niveau = page*nombre_niveaux_affiches + num_etiquette;
+            bool dans_hauteur_bouton = y_etiquette > marge_bouton && (y_etiquette < marge_bouton + taille_bouton);
+            if (dans_hauteur_bouton && num_niveau < nombre_niveaux) { // si la souris est dans la hauteur des boutons de l'etiquette ET que le numéro du niveau ne dépasse pas le nombre de niveaux existants
+                int num_bouton = (x - marge_x - largeur_texte_etiquette) / (taille_bouton + marge_bouton);
+                if (num_bouton == 0 && mode_perso) { // Lance l'editeur du niveau
+                    closeWindow(selection_niveau_Window);
+                    Map map_selectionnee;
+                    map_selectionnee.charger(num_niveau, "Niveaux_perso.txt");
+                    creer_map(map_selectionnee.nom, map_selectionnee.L, map_selectionnee.H, taille_case, true, map_selectionnee, num_niveau, nombre_niveaux, "Niveaux_perso.txt");
+                    liste_niveaux = recuperer_niveaux(mode_perso);
+                    selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
+                    setActiveWindow(selection_niveau_Window);
+                    rafraichir_affichage = true;
+                }
+                if (num_bouton == 1 && mode_perso) { // supprime le niveau
+                    efface_niveau(num_niveau, nombre_niveaux, "Niveaux_perso.txt");
+                    liste_niveaux = recuperer_niveaux(mode_perso);
+                    rafraichir_affichage = true;
+                }
+                if (num_bouton == 2) { // joue le niveau
+                    closeWindow(selection_niveau_Window);
+                    string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
+                    Map map_selectionnee;
+                    map_selectionnee.charger(num_niveau, txt_niveaux);
+                    jouer(map_selectionnee, taille_case);
+                    liste_niveaux = recuperer_niveaux(mode_perso);
+                    selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
+                    setActiveWindow(selection_niveau_Window);
+                    rafraichir_affichage = true;
+                }
+            }
+        }
+        int y_barre_bas = marge_y + nombre_niveaux_affiches*(hauteur_etiquette+marge_y);
+        if ((y > y_barre_bas + marge_bouton_bas) && (y < y_barre_bas + marge_bouton_bas + taille_bouton_bas)) { // Si la souris est dans la hauteur des boutons du bas
+            if ((x > marge_bouton_bas) && (x < marge_bouton_bas + taille_bouton_bas)) { // retourne au menu precedent
+                closeWindow(selection_niveau_Window);
+                fin = true;
+            }
+            if ((x > W_fenetre/2 - taille_bouton_bas) && (x < W_fenetre/2 + taille_bouton_bas)) { // Creation de niveau
+                closeWindow(selection_niveau_Window);
+                menu_creation_niveau();
+                liste_niveaux = recuperer_niveaux(mode_perso);
+                page = nombre_pages+1; // Pour diriger l'utilisateur a l'endroit du niveau qu'il vient de creer
+                selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
+                setActiveWindow(selection_niveau_Window);
+                rafraichir_affichage = true;
+            }
+            int largeur_index_page = 2*taille_bouton_bas; // largeur allouee a l'affichage de page/nombre_page
+            int x_page = W_fenetre - marge_bouton_bas - 2*taille_bouton_bas - largeur_index_page;
+            if ((x > x_page) && (x < x_page + taille_bouton_bas)) { // page precedente
+                page = max(page-1, 0);
+                rafraichir_affichage = true;
+            }
+            if ((x > W_fenetre - marge_bouton_bas - taille_bouton_bas) && (x < W_fenetre - marge_bouton_bas)) { // page suivante
+                page = page+1;
+                rafraichir_affichage = true;
+            }
+        }
+    }
+}
+
+void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y, int taille_case){
+
+    fillRect(0,0,W_menu,H_menu,BLACK); // fond noir
+    vector <string> Liste_categories = {"Niveaux classiques", "Mes niveaux", "Retour au menu"};
+    vector <Color> Liste_color = {RED, BLUE, GREEN};
+    // Dessin des boutons
+    for (int k=0; k<3; k++){
+        int x = marge_menu_x;
+        int y = (3*k+1)*marge_menu_y;
+        int w = W_menu - 2*marge_menu_x;
+        int h = 2*marge_menu_y;
+        drawRect(x, y, w, h, WHITE, 2);
+
+        ecris_dans_la_case (x, y, w, h, Liste_categories[k], 18, Liste_color[k]);
+    }
+}
+
+void menu_categorie_niveau(int taille_case){
+    const int W_menu = 600;
+    const int H_menu = 700;
+    const int marge_menu_x = int(W_menu/6);
+    const int marge_menu_y = int(H_menu/10);
+
+    const string selection = "Selection de la catégorie de niveau";
+    Window menu_Window = openWindow(W_menu, H_menu, selection);
+
+    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
+
+    // Coordonnees de la souris
+    int x;
+    int y;
+
+    bool fin = false;
+    while ( ! fin ){
+
+        getMouse(x, y);
+
+        if ( x > marge_menu_x && x < W_menu - marge_menu_x){ // Zonne de x dans laquelle se trouve les boutons
+            float num_y = y/(3.0*marge_menu_y);
+            if (num_y - floor(num_y) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
+
+                int k = floor(num_y); // Numero du bouton clique
+
+                closeWindow(menu_Window);
+                if (k==0){
+                    selection_niveau(false, taille_case);
+                    menu_Window = openWindow(W_menu, H_menu, selection);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
+                }
+                else if (k==1){
+                    selection_niveau(true, taille_case);
+                    menu_Window = openWindow(W_menu, H_menu, selection);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
+                }
+
+                else if (k==2){
+                    fin = true;
+                }
+            }
+        }
+    }
+
+}
+
 void menu_options(){
 
 }
@@ -1111,7 +1139,7 @@ int main()
 //    construire_map_a_la_main(map);
 //    run (map, taille_case);
 
-//      lancer_menu(taille_case);
+      lancer_menu(taille_case);
 
 //    int L = 30;
 //    int H = 20;
@@ -1137,7 +1165,7 @@ int main()
 
 //    selection_niveau(true, taille_case);
 
-    menu_creation_niveau();
+//    menu_creation_niveau();
 
     endGraphics();
     return 0;
