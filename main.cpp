@@ -799,8 +799,10 @@ void draw_selection_niveau(int W, int H, int marge_x, int marge_y, int largeur_e
     int x_retour = marge_bouton_bas;
     draw_bouton_bas(x_retour, y_boutons_bas, taille_bouton_bas, 0);
     // Bouton d'ajout de niveau
-    int x_ajout = W/2 - taille_bouton_bas;
-    draw_bouton_bas(x_ajout, y_boutons_bas, taille_bouton_bas, 1);
+    if (mode_perso) {
+        int x_ajout = W/2 - taille_bouton_bas;
+        draw_bouton_bas(x_ajout, y_boutons_bas, taille_bouton_bas, 1);
+    }
     // Boutons de pages suivante et precedente
     int largeur_index_page = 2*taille_bouton_bas; // largeur allouee a l'affichage de page/nombre_page
     int x_page = W - marge_bouton_bas - 2*taille_bouton_bas - largeur_index_page;
@@ -940,7 +942,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
                 closeWindow(selection_niveau_Window);
                 fin = true;
             }
-            if ((x > W_fenetre/2 - taille_bouton_bas) && (x < W_fenetre/2 + taille_bouton_bas)) { // Creation de niveau
+            if ((x > W_fenetre/2 - taille_bouton_bas) && (x < W_fenetre/2 + taille_bouton_bas) && mode_perso) { // Creation de niveau
                 closeWindow(selection_niveau_Window);
                 menu_creation_niveau();
                 liste_niveaux = recuperer_niveaux(mode_perso);
