@@ -310,7 +310,7 @@ void creer_map(string nom_map, int L, int H, int taille_case, bool editer = fals
                 drawLine(L * taille_case+1, 0, L * taille_case+1, H*taille_case,WHITE, 1); // Correction bug affichage
                 affiche_grille(H, L, taille_case);
             }
-            else if (bouton_action == bouton_sauvegarder){
+            else if (bouton_action == bouton_sauvegarder){ // Sauvevarder le niveau cree
                 if (!editer){
                     map_a_editer.sauvegarder(niveau);
                     closeWindow(w);
@@ -322,7 +322,7 @@ void creer_map(string nom_map, int L, int H, int taille_case, bool editer = fals
                     fin = true;
                 }
             }
-            else if (bouton_action == bouton_quitter){
+            else if (bouton_action == bouton_quitter){ // Quitter la creation de map sans sauvegarder
                 closeWindow(w);
                 fin = true;
             }
@@ -574,7 +574,7 @@ void menu_creation_niveau(){
 
     string hauteur = "20";
     string largueur = "40";
-    string nom_map = "Mon niveau";
+    string nom_map = "Mon_niveau";
 
     fillRect(0, 0, W, H, BLACK); // fond noir
     draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
@@ -617,29 +617,26 @@ void menu_creation_niveau(){
                     if (num_y - floor(num_y) > 0.3333 && num_x - floor(num_x) > 0.3333){ // Zone de y dans laquelle se trouve les boutons
                         k = floor(num_x) + 2*floor(num_y); // Numero du bouton
 
-                        if (k == 0){
+                        if (k == 0){ // Modification de la hauteur
                             hauteur = "0";
                             fillRect(0, 0, W, H, BLACK); // fond noir
                             draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
                         }
-                        else if (k == 1){
+                        else if (k == 1){ // Mofification de la largueur
                             largueur = "0";
                             fillRect(0, 0, W, H, BLACK); // fond noir
                             draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
                         }
 
-                        else if ( k == 2){
+                        else if ( k == 2){ // Bouton quitter
                             closeWindow(w);
                             fin = true;
                         }
 
-                        else if ( k == 3){
+                        else if ( k == 3){ // Bouton Creer
                             closeWindow(w);
                             creer_map(nom_map, stoi(largueur), stoi(hauteur), taille_case);
-                            w = openWindow(W, H, niveau);
-                            setActiveWindow(w);
-                            fillRect(0, 0, W, H, BLACK); // fond noir
-                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                            fin = true;
                         }
                     }
                 }
@@ -665,7 +662,7 @@ void menu_creation_niveau(){
                     }
             }
             else if (   k == -1
-                     && ( (key<='z' && key>= 'a') | (key<='9' && key>='0') | (key<='Z' && key>= 'A') | (key == ' ') )){
+                     && ( (key<='z' && key>= 'a') | (key<='9' && key>='0') | (key<='Z' && key>= 'A') | (key == '-') | (key == '_'))){
 
                 string caractere(1, char(key));
                 nom_map.append(caractere);
@@ -783,7 +780,7 @@ void draw_selection_niveau(int W, int H, int marge_x, int marge_y, int largeur_e
     // Zone des etiquettes
     int x_etiquettes = marge_x;
     int y_etiquettes = marge_y;
-    for (int i=0; i<min(nombre_niveaux,nombre_niveaux_affiches); i++) {
+    for (int i=0; i<nombre_niveaux_affiches; i++) {
         if (page*nombre_niveaux_affiches + i < nombre_niveaux) {
             string nom_niveau = get<0>(liste_niveaux[page*nombre_niveaux_affiches + i]);
             int pas = hauteur_etiquette + marge_y;
