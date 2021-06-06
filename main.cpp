@@ -1,7 +1,7 @@
 #include "map.h"
 #include "personnage.h"
 #include "correspondance.h"
-#include "Niveaux.h"
+#include "niveaux.h"
 #include "outils.h"
 
 void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur=BLACK){
@@ -655,7 +655,7 @@ void draw_selection_niveau(int marge_x, int marge_y, int largeur_etiquette, int 
     draw_bouton_bas(x_page + taille_bouton_bas + largeur_index_page, y_boutons_bas, taille_bouton_bas, 3);
     int nb_pages = nombre_niveaux/nombre_niveaux_affiches;
     string index_page = to_string(page+1) + "/" + to_string(nb_pages+1);
-    ecris_dans_la_case(x_page + taille_bouton_bas, y_boutons_bas, largeur_index_page, taille_bouton_bas, index_page, taille_bouton_bas/2, WHITE);
+    drawString(x_page + taille_bouton_bas + int(0.25*taille_bouton), y_boutons_bas + int(0.87*taille_bouton), index_page, WHITE, int (0.5*taille_bouton));
 }
 
 vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
@@ -663,11 +663,11 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
 
     string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
     string const nomFichier(stringSrcPath((txt_niveaux)));
-    ifstream flux(nomFichier, ios::app); // flux d'ajout en fin de fichier
+    ifstream flux(nomFichier); // flux de lecture
 
     if(flux)
     {
-        while(flux.peek()!=EOF){ // tant qu'on n'est pas a la fin du .txt
+        while(!flux.eof()){ // tant qu'on n'est pas a la fin du .txt
             string map_name;
             flux >> map_name;
             liste_niveaux.push_back(tuple<string, int> (map_name, 0));
@@ -686,7 +686,9 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
                 }
             }
         }
-        liste_niveaux.pop_back(); // Sans cela il reste un niveau artefact en fin de liste
+        if (liste_niveaux.size() > 0){
+            liste_niveaux.pop_back(); // Sans cela il reste un niveau artefact en fin de liste
+        }
     }
     else
     {
@@ -697,10 +699,10 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
 
 void selection_niveau(bool mode_perso, int taille_case) {
     // Geometrie de la fenetre
-    const int largeur_etiquette = 500;
-    const int hauteur_etiquette = 100;
+    const int largeur_etiquette = 600;
+    const int hauteur_etiquette = 120;
     const int marge_x = int(largeur_etiquette/8); // marge entre une etiquette de niveau et le bord de la fenetre
-    const int marge_y = int(hauteur_etiquette/8); // marge entre deux etiquette de niveau
+    const int marge_y = int(hauteur_etiquette/4); // marge entre deux etiquette de niveau
 
     const int largeur_texte_etiquette = int(6*largeur_etiquette/10); // fraction de l'etiquette dediee aux boutons
     const int taille_bouton = int(largeur_etiquette/10);
@@ -848,12 +850,12 @@ void menu_categorie_niveau(int taille_case){
 void draw_caracteristiques_niveau(int h, int hauteur, int largueur, string nom_map){
     int taille_police = 12;
 
-    drawRect(h, h, 5*h, h, BLACK, 2);
-    drawRect(h, 2*h, 5*h, h, BLACK, 2);
-    ecris_dans_la_case(h, h, 5*h, h, "Nom du niveau", taille_police);
-    ecris_dans_la_case(h, 2*h, 5*h, h, nom_map, taille_police);
+    drawRect(h, h, 5*h, h, WHITE, 2);
+    drawRect(h, 2*h, 5*h, h, WHITE, 2);
+    ecris_dans_la_case(h, h, 5*h, h, "Nom du niveau", taille_police, RED);
+    ecris_dans_la_case(h, 2*h, 5*h, h, nom_map, taille_police, WHITE);
 
-    vector<string> Liste_boutons = {"H", "L", "Retour", "Créer"};
+    vector<string> Liste_boutons = {"Hauteur", "Largueur", "Retour", "Créer"};
     vector<string> Liste_dim = {to_string(hauteur), to_string(largueur)};
 
     int y_dep = 3*h;
@@ -862,14 +864,14 @@ void draw_caracteristiques_niveau(int h, int hauteur, int largueur, string nom_m
             int x = (3*j+1)*h;
             int y = y_dep + (3*i+1)*h;
             int k = j + 2*i;
-            drawRect(x, y, 2*h, 2*h, BLACK, 2);
+            drawRect(x, y, 2*h, 2*h, WHITE, 2);
             if (i == 0){ // Boutons H et L
-                drawLine( (3*j+1)*h, y_dep + (3*i+2)*h, (3*j+3)*h, y_dep + (3*i+2)*h, BLACK, 2);
-                ecris_dans_la_case(x, y, 2*h, h, Liste_boutons[k], taille_police);
-                ecris_dans_la_case(x, y+h, 2*h, h, Liste_dim[k], taille_police);
+                drawLine( (3*j+1)*h, y_dep + (3*i+2)*h, (3*j+3)*h, y_dep + (3*i+2)*h, WHITE, 2);
+                ecris_dans_la_case(x, y, 2*h, h, Liste_boutons[k], taille_police, BLUE);
+                ecris_dans_la_case(x, y+h, 2*h, h, Liste_dim[k], taille_police, WHITE);
             }
             else{ // Boutons retour et creer
-                ecris_dans_la_case(x, y, 2*h, 2*h, Liste_boutons[k], taille_police);
+                ecris_dans_la_case(x, y, 2*h, 2*h, Liste_boutons[k], taille_police, GREEN);
             }
         }
     }
@@ -887,6 +889,8 @@ void menu_creation_niveau(){
     string hauteur = "20";
     string largueur = "40";
     string nom_map = "Mon niveau";
+
+    fillRect(0, 0, W, H, BLACK); // fond noir
     draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
 
     // Coordonnees de la souris
@@ -913,6 +917,8 @@ void menu_creation_niveau(){
                 if (y > h && y < 3*h ){
                     k = -1;
                     nom_map = "";
+                    fillRect(0, 0, W, H, BLACK); // fond noir
+                    draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
                 }
 
                 else{
@@ -927,12 +933,12 @@ void menu_creation_niveau(){
 
                         if (k == 0){
                             hauteur = "0";
-                            clearWindow();
+                            fillRect(0, 0, W, H, BLACK); // fond noir
                             draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
                         }
                         else if (k == 1){
                             largueur = "0";
-                            clearWindow();
+                            fillRect(0, 0, W, H, BLACK); // fond noir
                             draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
                         }
 
@@ -946,6 +952,7 @@ void menu_creation_niveau(){
                             creer_map(nom_map, stoi(largueur), stoi(hauteur), taille_case);
                             w = openWindow(W, H, niveau);
                             setActiveWindow(w);
+                            fillRect(0, 0, W, H, BLACK); // fond noir
                             draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
                         }
                     }
@@ -986,7 +993,7 @@ void menu_creation_niveau(){
             }
 
             clav = false;
-            clearWindow();
+            fillRect(0, 0, W, H, BLACK); // fond noir
             draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
         }
     }
@@ -1128,7 +1135,9 @@ int main()
 
 
 
-    selection_niveau(true, taille_case);
+//    selection_niveau(true, taille_case);
+
+    menu_creation_niveau();
 
     endGraphics();
     return 0;
