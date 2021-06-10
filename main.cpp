@@ -2,6 +2,7 @@
 #include "personnage.h"
 #include "correspondance.h"
 #include "niveaux.h"
+#include "graphismes.h"
 #include "outils.h"
 
 void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur=BLACK){
@@ -41,6 +42,7 @@ bool run (const Map &map, int taille_case){ // Joue le niveau
         while (clock() - t < deltat){  // On attend que le temps passe dans la boucle soit deltat
         }
     }
+    if(!perso.est_vivant()) perso.affiche_mort(taille_case);
     map.affiche_tout(taille_case, perso); // On affiche la map a la fin
     return(perso.est_arrive());
 }
@@ -311,15 +313,40 @@ void creer_map(string nom_map, int L, int H, int taille_case, bool editer = fals
                 affiche_grille(H, L, taille_case);
             }
             else if (bouton_action == bouton_sauvegarder){ // Sauvevarder le niveau cree
-                if (!editer){
-                    map_a_editer.sauvegarder(niveau);
-                    closeWindow(w);
-                    fin = true;
+                int nb_portes_entree = 0;
+                for (int j=0; j<L; j++) {
+                    for (int i=0; i<H; i++){
+                        nb_portes_entree += est_dans(map_a_editer.get_case(j, i), portes_entree);
+                    }
                 }
-                else{
-                    map_a_editer.sauvegarder_et_ecraser(num_map, niveau, nb_niveaux);
-                    closeWindow(w);
-                    fin = true;
+                if (nb_portes_entree==1) { // S'il y a bien une seule entree
+                    if (!editer){
+                        map_a_editer.sauvegarder(niveau);
+                        closeWindow(w);
+                        fin = true;
+                    }
+                    else{
+                        map_a_editer.sauvegarder_et_ecraser(num_map, niveau, nb_niveaux);
+                        closeWindow(w);
+                        fin = true;
+                    }
+                }
+                else {
+                    const int W_message = 700;
+                    const int H_message = 100;
+                    const int marge_x = int(W_message/12);
+                    const int marge_y = int(H_message/2);
+
+                    const string menu = "Erreur";
+                    Window message_Window = openWindow(W_message, H_message, menu);
+                    setActiveWindow(message_Window);
+                    fillRect(0, 0, W_message, H_message, BLACK);
+
+                    string message = "Votre niveau doit avoir exactement 1 entrée !";
+                    drawString(marge_x, marge_y, message, WHITE, W_message/40);
+                    click();
+                    closeWindow(message_Window);
+                    setActiveWindow(w);
                 }
             }
             else if (bouton_action == bouton_quitter){ // Quitter la creation de map sans sauvegarder
@@ -449,6 +476,56 @@ void clignote(int x, int y, int taille_case){
     milliSleep(250);
 }
 
+void affiche_etoiles(int x, int y, int hauteur_etoile, int largeur_etoiles) { // A adapter
+    const int taille_etoile = hauteur_etoile/2;
+    const int marge_etoile = taille_etoile/2;
+    int x_etoiles = x + largeur_etoiles/2 - (3*taille_etoile + 2*marge_etoile)/2;
+    for (int i=0; i<3; i++) {
+        trace_etoile(x_etoiles + i*(taille_etoile + marge_etoile), y, taille_etoile);
+    }
+}
+
+void affiche_retour(int x, int y, int taille_bouton){
+    drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
+    ecris_dans_la_case(x-2, y, taille_bouton, taille_bouton, "X", taille_bouton/2, WHITE);
+}
+
+void affiche_victoire() { // Affiche que le niveau est gagne
+    const int W_victoire = 400;
+    const int H_victoire = 500;
+    const int marge_x = int(W_victoire/15);
+    const int marge_y = int(H_victoire/10);
+    const int hauteur_etoiles = (H_victoire - marge_y)/5;
+    const int hauteur_gagne = (H_victoire - marge_y)/3;
+    const int hauteur_retour = (H_victoire - marge_y)/3;
+    const int taille_bouton = hauteur_retour/2;
+
+    const string menu = "Gagné !";
+    Window victoire_Window = openWindow(W_victoire, H_victoire, menu);
+    setActiveWindow(victoire_Window);
+    fillRect(0, 0, W_victoire, H_victoire, BLACK);
+
+    // Affichage du mot de victoire
+    const vector<string> mots_victoire = {"Victoire!", "Gagné!", "Bravo!", "Super!"}; // On tirera un mot au hasard parmi ceux-là
+    int mot = rand() % mots_victoire.size();
+    int x_gagne = marge_x;
+    int y_gagne = marge_y;
+    ecris_dans_la_case(x_gagne, y_gagne, W_victoire - 2*marge_x, hauteur_gagne, mots_victoire[mot], hauteur_gagne/5, couleur_au_hasard());
+
+    // Affichage des étoiles
+    int y_etoiles = marge_y + hauteur_gagne;
+    affiche_etoiles(marge_x, y_etoiles, hauteur_etoiles, W_victoire - 2*marge_x); // à compléter avec le relevé des étoiles
+
+    // Affichage du bouton de retour
+    int x_retour = W_victoire/2 - taille_bouton/2;
+    int y_retour = y_etoiles + hauteur_etoiles + hauteur_retour/2 - taille_bouton/2;
+    affiche_retour(x_retour, y_retour, taille_bouton);
+
+    click();
+    closeWindow(victoire_Window);
+
+}
+
 void jouer(Map map, int taille_case) {
     const int L = map.L;
     const int H = map.H;
@@ -492,6 +569,7 @@ void jouer(Map map, int taille_case) {
                 map.affiche_tout(taille_case);
 //                affiche_grille(H, L, taille_case);
                 if (fin){
+                    affiche_victoire();
                     closeWindow(w); // Fonction de fin a rajouter
                 }
             }
@@ -573,11 +651,11 @@ void menu_creation_niveau(){
     setActiveWindow(w);
 
     string hauteur = "20";
-    string largueur = "40";
+    string largeur = "40";
     string nom_map = "Mon_niveau";
 
     fillRect(0, 0, W, H, BLACK); // fond noir
-    draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+    draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largeur), nom_map); // stoi : string to integer
 
     // Coordonnees de la souris
     int x;
@@ -604,7 +682,7 @@ void menu_creation_niveau(){
                     k = -1;
                     nom_map = "";
                     fillRect(0, 0, W, H, BLACK); // fond noir
-                    draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                    draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largeur), nom_map);
                 }
 
                 else{
@@ -620,12 +698,12 @@ void menu_creation_niveau(){
                         if (k == 0){ // Modification de la hauteur
                             hauteur = "0";
                             fillRect(0, 0, W, H, BLACK); // fond noir
-                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largeur), nom_map);
                         }
                         else if (k == 1){ // Mofification de la largueur
-                            largueur = "0";
+                            largeur = "0";
                             fillRect(0, 0, W, H, BLACK); // fond noir
-                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+                            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largeur), nom_map);
                         }
 
                         else if ( k == 2){ // Bouton quitter
@@ -635,7 +713,7 @@ void menu_creation_niveau(){
 
                         else if ( k == 3){ // Bouton Creer
                             closeWindow(w);
-                            creer_map(nom_map, stoi(largueur), stoi(hauteur), taille_case);
+                            creer_map(nom_map, stoi(largeur), stoi(hauteur), taille_case);
                             fin = true;
                         }
                     }
@@ -655,10 +733,10 @@ void menu_creation_niveau(){
                     if (hauteur.size() == 0)
                         hauteur = "0";
                 }
-                else if (k == 1 && largueur.size() > 0){
-                    largueur.pop_back();
-                    if (largueur.size() == 0)
-                        largueur = "0";
+                else if (k == 1 && largeur.size() > 0){
+                    largeur.pop_back();
+                    if (largeur.size() == 0)
+                        largeur = "0";
                     }
             }
             else if (   k == -1
@@ -672,12 +750,12 @@ void menu_creation_niveau(){
                 hauteur.append(string (1, char(key)));
             }
             else if (k == 1 && key<='9' && key>='0'){
-                largueur.append(string (1, char(key)));
+                largeur.append(string (1, char(key)));
             }
 
             clav = false;
             fillRect(0, 0, W, H, BLACK); // fond noir
-            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largueur), nom_map);
+            draw_caracteristiques_niveau(h, stoi(hauteur), stoi(largeur), nom_map);
         }
     }
 }
@@ -817,9 +895,11 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
     string const nomFichier(stringSrcPath((txt_niveaux)));
     ifstream flux(nomFichier); // flux de lecture
 
-    if(flux)
+    if(flux) try
     {
-        while(!flux.eof()){ // tant qu'on n'est pas a la fin du .txt
+        bool fichier_vide = (flux.peek() == std::ifstream::traits_type::eof());
+            // indique si le fichier des maps n'est pas vide. En effet, le test !flux.eof() ne prend pas en compte ce cas.
+        while(!flux.eof() && !fichier_vide){ // tant qu'on n'est pas a la fin du .txt
             string map_name;
             flux >> map_name;
             liste_niveaux.push_back(tuple<string, int> (map_name, 0));
@@ -841,6 +921,9 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
         if (liste_niveaux.size() > 0){
             liste_niveaux.pop_back(); // Sans cela il reste un niveau artefact en fin de liste
         }
+    }
+    catch (std::bad_alloc error) {
+        cout << "Erreur a la lecture des niveaux. Verifiez que le fichier des niveaux '" + txt_niveaux + "' est correctement rempli, par exemple qu'il n'y a pas de nom de niveau avec un espace. \n";
     }
     else
     {
@@ -965,7 +1048,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
 void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y, int taille_case){
 
     fillRect(0,0,W_menu,H_menu,BLACK); // fond noir
-    vector <string> Liste_categories = {"Niveaux classiques", "Mes niveaux", "Retour au menu"};
+    vector <string> Liste_categories = {"Mode aventure", "Mes niveaux", "Retour au menu"};
     vector <Color> Liste_color = {RED, BLUE, GREEN};
     // Dessin des boutons
     for (int k=0; k<3; k++){
@@ -1026,8 +1109,34 @@ void menu_categorie_niveau(int taille_case){
 
 }
 
-void menu_options(){
+void menu_regles(){
+    int result = system("D:/Documents/Etudes/\"Ponts et Chaussees\"/Cours/COVD/projet-COVD/regles_du_jeu.txt");
+//    string folder = stringSrcPath("regles_du_jeu.txt");
+//    string fichier = "/regles_du_jeu.txt";
+//    string fichier_path = folder + fichier;
+//    char *regles_path = new char[fichier_path.length() + 1];
+//    strcpy(regles_path, fichier_path.c_str());
+//    int result = system(regles_path);
+//    delete [] regles_path;
 
+    if (result) {
+        const int W_message = 700;
+        const int H_message = 100;
+        const int marge_x = int(W_message/12);
+        const int marge_y = int(H_message/2);
+
+        const string menu = "Erreur";
+        Window message_Window = openWindow(W_message, H_message, menu);
+        setActiveWindow(message_Window);
+        fillRect(0, 0, W_message, H_message, BLACK);
+
+        string message = "Désolé, fichier \"regles_du_jeu.txt\" introuvable.";
+        string message2 = "Veuillez y accéder directement dans les dossiers du jeu !";
+        drawString(marge_x, marge_y, message, WHITE, W_message/50);
+        drawString(marge_x, marge_y + W_message/25, message2, WHITE, W_message/50);
+        click();
+        closeWindow(message_Window);
+    }
 }
 
 void draw_titre(int taille, int x, int y){ // Dessin du titre
@@ -1056,7 +1165,7 @@ void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
     //ecris_dans_la_case (x, marge_menu_y, w, h, "Paint Runner", 40, Color(hasard(0, 255), hasard(0, 255), hasard(0, 255)));
 
     // Dessin des boutons
-    vector <string> Liste_string = {"Jouer", "Options", "Quitter"}; // liste des noms des boutons
+    vector <string> Liste_string = {"Jouer", "Règles", "Quitter"}; // liste des noms des boutons
     vector <Color> Liste_color = {RED, BLUE, GREEN}; // liste des couleurs des boutons
     for (int k=1; k<4; k++){
         int y = (3*k+1)*marge_menu_y;
@@ -1103,7 +1212,7 @@ void lancer_menu(int taille_case) {
                 }
 
                 else if (k==2){
-                    menu_options();
+                    menu_regles();
                     menu_Window = openWindow(W_menu, H_menu, menu);
                     setActiveWindow(menu_Window);
                     draw_menu(W_menu, H_menu, marge_menu_x, marge_menu_y);
@@ -1129,7 +1238,7 @@ void lancer_menu(int taille_case) {
 
 int main()
 {
-//    initRandom();
+    initRandom();
     int taille_case = 28;
 
 //    openWindow(taille_case*55, taille_case*22); // Ouverture d'une fenetre de bonne dimension pour afficher la map

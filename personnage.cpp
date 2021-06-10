@@ -200,6 +200,19 @@ void Personnage::affiche(int taille_case) const{
     drawLine(u, v + taille_case - 1, u + taille_case - 1, v, WHITE, epaisseur);
 }
 
+void Personnage::affiche_mort(int taille_case) const{
+    int u = x*taille_case;
+    int v = y*taille_case;
+    int epaisseur = taille_case/4;
+
+    fillRect(u, v, taille_case, taille_case, couleur_au_hasard());
+    milliSleep(100);
+    for (int i=0; i<4; i++) {
+        drawRect(u-i*epaisseur/2, v-i*epaisseur/2, taille_case+i*epaisseur, taille_case+i*epaisseur, couleur_au_hasard(), epaisseur);
+        milliSleep(100);
+    }
+}
+
 void Personnage::gravite(){
     vy += 0.02; // On prend g = 0.02
 }

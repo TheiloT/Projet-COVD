@@ -12,6 +12,7 @@ using namespace Imagine;
 #include <map>
 using namespace std;
 
+#include <stdlib.h>
 
 #include <time.h>
 
