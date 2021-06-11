@@ -1,4 +1,4 @@
-#include "Niveaux.h"
+#include "niveaux.h"
 #include "map.h"
 
 void efface_tous_niveaux(const string niveau){ // Efface le Niveaux.txt

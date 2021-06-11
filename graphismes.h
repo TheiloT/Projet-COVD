@@ -2,8 +2,6 @@
 
 #include "outils.h"
 
-void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur=BLACK);
-
 void efface_bloc(int x, int y, int taille_case);
 
 void contour_bloc(int x, int y, int taille_case);

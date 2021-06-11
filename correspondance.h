@@ -14,7 +14,7 @@ const int porte_entree_gauche = 3;
 const int porte_entree_droite = 4;
 const int porte_sortie = 5;
 
-const vector<int> murs = {mur_non_modif, mur_modif};
+const vector<int> murs = {mur_non_modif, mur_modif}; // On rassemble certains de ces numeros dans des vecteurs, ce qui facilite entre autres beaucoup de tests et de boucles dans le reste du code
 const vector<int> portes_entree = {porte_entree_droite, porte_entree_gauche};
 
 // Les effets de couleur: de 30 a 49
@@ -62,6 +62,7 @@ const int bleu = 3;
 const vector<int> couleurs = {neutre, rouge, vert, bleu};
 
 // ========== Correspondances bouton - type d'action ==========
+// Utilises dans les interfaces de jeu et d'edition
 
 const int bouton_play = 0;
 const int bouton_sauvegarder = 1;
@@ -69,14 +70,15 @@ const int bouton_quitter = 2;
 const int bouton_reset = 3;
 
 // ========== Correspondances bouton - couleur ==========
-
 // Les memes correspondances que pour les couleurs
+
 const int bouton_neutre = neutre;
 const int bouton_rouge = rouge;
 const int bouton_vert = vert;
 const int bouton_bleu = bleu;
 
 // ========== Correspondances bouton - type de bloc ==========
+// Utilises dans l'edition de niveaux ; il s'agit de vecteurs car le joueur peut appuyer plusieurs fois sur un bloc place pour le modifier par un autre bloc du vecteur
 
 const vector<int> bouton_mur = murs;
 const vector<int> bouton_porte_entree = portes_entree;

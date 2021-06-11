@@ -17,12 +17,14 @@ add_executable(main
                outils.h
                edition.cpp
                edition.h
+               jeu.cpp
+               jeu.h
                graphismes.h
                graphismes.cpp
                menus.cpp
                menus.h
                niveaux.h
-               Niveaux.cpp
+               niveaux.cpp
                Niveaux_perso.txt
                Niveaux_aventure.txt
                regles_du_jeu.txt)
