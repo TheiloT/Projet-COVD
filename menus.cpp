@@ -209,7 +209,7 @@ vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
     return liste_niveaux;
 }
 
-void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y, int taille_case){
+void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
 
     fillRect(0,0,W_menu,H_menu,BLACK); // fond noir
     vector <string> Liste_categories = {"Mode aventure", "Mes niveaux", "Retour au menu"};
@@ -510,7 +510,7 @@ void menu_categorie_niveau(int taille_case){
     const string selection = "Selection de la catégorie de niveau";
     Window menu_Window = openWindow(W_menu, H_menu, selection);
 
-    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
+    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
 
     // Coordonnees de la souris
     int x;
@@ -531,12 +531,12 @@ void menu_categorie_niveau(int taille_case){
                 if (k==0){
                     selection_niveau(false, taille_case);
                     menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
                 }
                 else if (k==1){
                     selection_niveau(true, taille_case);
                     menu_Window = openWindow(W_menu, H_menu, selection);
-                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y, taille_case);
+                    draw_categorie_niveau(W_menu, H_menu, marge_menu_x, marge_menu_y);
                 }
 
                 else if (k==2){
@@ -549,9 +549,12 @@ void menu_categorie_niveau(int taille_case){
 }
 
 void menu_regles(){
-    // Ouverture du fichier .txt des regles du jeu
-    int result = system("D:/Documents/Etudes/\"Ponts et Chaussees\"/Cours/COVD/projet-COVD/regles_du_jeu.txt");
-//    int result = system(srcPath("regles_du_jeu.txt"));
+    // Ouverture du fichier .txt des regles du jeu.
+    // La fonction system execute une commande, ici l'ouverture du .txt des regles du jeu.
+    // Or, des problemes surviennent avec l'utilisation de srcPath. Notre hypothese est que les problemes surviennent lorsque des espaces existent dans les noms de dossier du chemin vers le .txt.
+    // Ainsi, en commentaire, on a renseigné notre chemin local en echappant par un antislash des guillemets encadrant le nom du dossier posant probleme...
+//    int result = system("D:/Documents/Etudes/\"Ponts et Chaussees\"/Cours/COVD/projet-COVD/regles_du_jeu.txt");
+    int result = system(srcPath("regles_du_jeu.txt"));
 
     if (result) { // En cas de mauvais chargement, on ouvre une fenetre avec un message d'erreur
         const int W_message = 700;

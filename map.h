@@ -14,7 +14,7 @@ private:
     string nom;
 
 public:
-    void drawCase(int x, int y, int taille_case) const;
+    void drawCase(int x, int y, int taille_case) const; // Dessine la case
     void efface_etoiles_collectees(int x, int y, int taille_case, const Personnage &perso) const; // Affiche les etoiles
 
     Map(string nom_map, int h, int l);

@@ -147,11 +147,11 @@ int Map::get_couleur(int x, int y) const{
     return grille_couleurs(x, y);
 }
 
-void Map::charger(int k, const string niveau){
+void Map::charger(int k, const string niveau){ // L'entier k indique la map a charger (ainsi reperee par sa position dans le fichier .txt)
     string const nomFichier(stringSrcPath( niveau ));
-    ifstream flux(nomFichier);
+    ifstream flux(nomFichier); // Flux de lecture du fichier .txt contenant les codes des maps
 
-    if(flux)
+    if(flux) // Si le fichier est bien lu
     {
         for(int n=0; n<k; n++){ // Boucle: on lit tous les niveaux avant le niveau k
             string map_name;

@@ -47,7 +47,6 @@ void InitRandom()
     rand();
 }
 
-//Renvoit un entier au hasard entre a et b
 int hasard(int a, int b)
 {
     return a+(rand()%(b-a+1));
@@ -58,8 +57,7 @@ Color couleur_au_hasard(){
 }
 
 void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur){
-    int dx = int ( (w - taille_police * 0.88*message.size()) /2 );
+    int dx = int ( (w - taille_police * 0.88*message.size()) /2 ); // Le coefficient 0.88 est choisi empiriquement pour tenir compte du fait que tous les caracteres n'ont pas la meme taille
     int dy = int ( (h - taille_police) /2 );
     drawString(x + dx, y + h - dy, message, couleur, taille_police);
 }
-//taille_police * 0.88*message.size()
