@@ -448,7 +448,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
                         closeWindow(selection_niveau_Window);
                         Map map_selectionnee;
                         map_selectionnee.charger(num_niveau, "Niveaux_perso.txt");
-                        creer_map(map_selectionnee.nom, map_selectionnee.L, map_selectionnee.H, taille_case, true, map_selectionnee, num_niveau, nombre_niveaux, "Niveaux_perso.txt");
+                        creer_map(map_selectionnee.get_nom(), map_selectionnee.get_L(), map_selectionnee.get_H(), taille_case, true, map_selectionnee, num_niveau, nombre_niveaux, "Niveaux_perso.txt");
                         liste_niveaux = recuperer_niveaux(mode_perso);
                         selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
                         setActiveWindow(selection_niveau_Window);

@@ -6,8 +6,8 @@ Personnage::Personnage(const Map &map){
     float vitesse = 0.125; // Regle la norme de la vitesse du perso
 
     int x0, y0; // Coordonnees de depart
-    for (int j=0; j<map.L; j++){
-        for (int i=0; i<map.H; i++){
+    for (int j=0; j<map.get_L(); j++){
+        for (int i=0; i<map.get_H(); i++){
             if ( est_dans(map.get_case(j, i), portes_entree) ){
                 x0 = j;
                 y0 = i;
@@ -65,7 +65,7 @@ bool Personnage::il_y_a_de_la_terre_en_dessous(const Map &map) const{
         int k = map.get_case(x_d, y_d); // Contenu de la case dans laquelle se trouve le detecteur
 
         assertion =      (  est_dans(k, murs) || est_dans(k, effets ))
-                      && ( couleur != map.grille_couleurs(x_d, y_d) || couleur == neutre ) ;
+                      && ( couleur != map.get_couleur(x_d, y_d) || couleur == neutre ) ;
         i+=1;
     }
     return assertion;
@@ -116,12 +116,12 @@ void Personnage::collision( const Map &map){
         int delta_x = x_c - x_c_prev;
         int delta_y = y_c - y_c_prev;
 
-        if ( (x_c + delta_x < 0) || (x_c + delta_x >= map.L) || (y_c + delta_y < 0) || (y_c + delta_y >= map.H) ) { // Verifie si on sort de la map
+        if ( (x_c + delta_x < 0) || (x_c + delta_x >= map.get_L()) || (y_c + delta_y < 0) || (y_c + delta_y >= map.get_H()) ) { // Verifie si on sort de la map
             collision_resolue = true;
             vivant = false;
         }
 
-        else if (     ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
+        else if (     ( couleur != map.get_couleur(x_c, y_c) || couleur == neutre )
                  &&
                  ( est_dans(k, murs)
                 || est_dans(k, effets_action)
@@ -325,10 +325,10 @@ void Personnage::collision_obstacle(const Map &map){ // gere les collisions avec
         if ( est_dans(k, pics) ){
 
             if (      est_coin_oppose(i, k)
-                 && ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )){
+                 && ( couleur != map.get_couleur(x_c, y_c) || couleur == neutre )){
                 vivant = false;
             }
-            if (    ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
+            if (    ( couleur != map.get_couleur(x_c, y_c) || couleur == neutre )
                  && collision_pic(coin.x, coin.y, k) ){
                 vivant = false;
             }

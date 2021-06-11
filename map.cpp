@@ -107,6 +107,18 @@ void Map::affiche_tout(int taille_case, const Personnage &perso) const{ // Affic
     }
 }
 
+string Map::get_nom() const {
+    return nom;
+}
+
+int Map::get_H() const{
+    return H;
+}
+
+int Map::get_L() const{
+    return L;
+}
+
 void Map::affiche(int taille_case, const Personnage &perso) const{ // Rafraichit la map autour du joueur seulement
     int x_p = floor(perso.get_x());
     int y_p = floor(perso.get_y());

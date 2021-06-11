@@ -287,5 +287,5 @@ void creer_map(string nom_map, int L, int H, int taille_case, bool editer, Map m
 }
 
 void editer_map(Map map, int taille_case, int num_map, int nb_niveaux, string niveau){
-    creer_map (map.nom, map.L, map.H, taille_case, true, map, num_map, nb_niveaux, niveau);
+    creer_map (map.get_nom(), map.get_L(), map.get_H(), taille_case, true, map, num_map, nb_niveaux, niveau);
 }

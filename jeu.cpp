@@ -199,9 +199,9 @@ bool run (const Map &map, int taille_case, int &nb_etoiles_collectees){ // Joue 
 }
 
 void jouer(Map map, int taille_case) {
-    const int L = map.L;
-    const int H = map.H;
-    const string nom = map.nom;
+    const int L = map.get_L();
+    const int H = map.get_H();
+    const string nom = map.get_nom();
 
     std::map<int, int> blocs_disponibles;
     for (int k=0; k<int(effets.size()); k++)

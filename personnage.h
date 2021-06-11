@@ -4,6 +4,7 @@
 #include "outils.h"
 
 class Personnage {
+private:
     // Position
     float x;
     float y;
