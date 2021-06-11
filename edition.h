@@ -11,7 +11,7 @@ void drawBouton(int x, int y, int k, int taille_case_editeur);
 
 void affiche_boutons(int H, int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map);
 
-void affiche_boutons_joueur(int L, int H, int taille_case, int taille_case_editeur, int bande_texte, string nom_map, std::map<int, int> blocs_disponibles);
+void affiche_boutons_joueur(int H_win, int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map, std::map<int, int> blocs_disponibles);
 
 bool getAction(int x, int y, int &bouton_action, int bande_texte, int L, int taille_case, int taille_case_editeur);
 

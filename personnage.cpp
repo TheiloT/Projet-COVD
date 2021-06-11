@@ -108,18 +108,24 @@ void Personnage::collision( const Map &map){
         int y_c = floor(coin.y);
         int k = map.get_case(x_c, y_c); // Contenu de la case dans laquelle se trouve le coin
 
-        if (     ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
+        int x_c_prev = floor(coin.x - vx);
+        int y_c_prev = floor(coin.y - vy);
+
+        int delta_x = x_c - x_c_prev;
+        int delta_y = y_c - y_c_prev;
+
+        if ( (x_c + delta_x < 0) || (x_c + delta_x >= map.L) || (y_c + delta_y < 0) || (y_c + delta_y >= map.H) ) { // Verifie si on sort de la map
+            collision_resolue = true;
+            vivant = false;
+        }
+
+        else if (     ( couleur != map.grille_couleurs(x_c, y_c) || couleur == neutre )
                  &&
                  ( est_dans(k, murs)
                 || est_dans(k, effets_action)
                 || est_dans(k, effets_couleur) ) ){
 
             il_y_a_eu_collision = true;
-            int x_c_prev = floor(coin.x - vx);
-            int y_c_prev = floor(coin.y - vy);
-
-            int delta_x = x_c - x_c_prev;
-            int delta_y = y_c - y_c_prev;
 
             if ( delta_y == 0 && delta_x != 0){ // Percute un mur
                 vivant = false;
@@ -199,11 +205,12 @@ void Personnage::affiche(int taille_case) const{
     drawLine(u, v + taille_case - 1, u + taille_case - 1, v, WHITE, epaisseur);
 }
 
-void Personnage::affiche_mort(int taille_case) const{
+void Personnage::affiche_mort(const Map &map, int taille_case) const{
     int u = x*taille_case;
     int v = y*taille_case;
     int epaisseur = taille_case/4;
 
+    map.affiche_tout(taille_case);
     fillRect(u, v, taille_case, taille_case, couleur_au_hasard());
     milliSleep(100);
     for (int i=0; i<4; i++) {

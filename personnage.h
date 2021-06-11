@@ -42,7 +42,7 @@ public:
     bool est_arrive() const; // Renvoit true si le joueur a atteint la porte de sortie
     bool est_sur_terre(const Map &map) const; // Renvoie true si le perso cours sur le sol
     void affiche(int taille_case) const; // Affiche le personnage
-    void affiche_mort(int taille_case) const;
+    void affiche_mort(const Map &map, int taille_case) const;
     void actualise_position(); // Calcul la nouvelle position a partir de la vitesse
     void collision(const Map &map); // Gere les collisions suivant qu'elles soient verticales ou horizontales
     void interragit(const Map &map); // Gere les Sauts, les retours arriere

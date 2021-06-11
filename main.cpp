@@ -40,7 +40,7 @@ bool run (const Map &map, int taille_case){ // Joue le niveau
         while (clock() - t < deltat){  // On attend que le temps passe dans la boucle soit deltat
         }
     }
-    if(!perso.est_vivant()) perso.affiche_mort(taille_case);
+    if(!perso.est_vivant()) perso.affiche_mort(map, taille_case);
     map.affiche_tout(taille_case, perso); // On affiche la map a la fin
     return(perso.est_arrive());
 }
@@ -198,12 +198,13 @@ void jouer(Map map, int taille_case) {
     const int nb_lignes = 2;
 
     // Ouverture de la fenetre
-    Window w = openWindow(L*taille_case + 6.5 * taille_case_editeur, max( H*taille_case, int(bande_texte + (9.0 * taille_case_editeur)) ) );
+    const int H_win = max( H*taille_case, int(bande_texte + (9.0 * taille_case_editeur)) );
+    Window w = openWindow(L*taille_case + 6.5 * taille_case_editeur, H_win);
     setActiveWindow(w);
     // Affichage de la map, de la grille et des boutons
     map.affiche_tout(taille_case);
     // affiche_grille(H, L, taille_case);
-    affiche_boutons_joueur(L, H, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
+    affiche_boutons_joueur(H_win, L, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
 
     int bouton_action = 4; // Correspond a aucune action
     int bouton_effet = 7; // Correspond au mur modifiable
