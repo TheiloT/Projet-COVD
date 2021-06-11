@@ -17,7 +17,6 @@ using namespace std;
 
 struct Point
 {
-public:
     float x;
     float y;
 
@@ -33,7 +32,7 @@ int Clavier(int &x, int &y, bool &clic, bool &clav);
 
 void InitRandom();
 
-//Renvoit un entier au hasard entre a et b
+//Renvoie un entier au hasard entre a et b
 int hasard(int a, int b);
 
 Color couleur_au_hasard(); // Renvoit une couleur au hasard
