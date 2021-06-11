@@ -27,6 +27,8 @@ Personnage::Personnage(const Map &map){
     y_change_dir = -1;
     nb_etoile = 0;
     Liste_etoiles_collectees = {};
+    // Nous n'avons pas eu le temps d'implémenter les etoiles comme initialement pense donc cet attribut n'est pas utilise,
+    // mais aurait pu l'être pour mieux gerer les etoiles effectivement collectees par le joueur
 }
 
 float Personnage::get_x() const{

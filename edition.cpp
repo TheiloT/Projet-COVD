@@ -121,8 +121,8 @@ bool getCouleur(int x, int y, int &bouton_couleur, int bande_texte, int L, int t
 bool getBloc(int x, int y, int &bouton_bloc, int bande_texte, int L, int taille_case, int taille_case_editeur, int nb_lignes){
     int x_dep = L*taille_case;
     int y_dep = bande_texte + 4*taille_case_editeur;
-    float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
-    float num_y = (2.0 *(y - y_dep) / float(taille_case_editeur)) / 3.0;
+    float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0; // numero de la colonne de boutons
+    float num_y = (2.0 *(y - y_dep) / float(taille_case_editeur)) / 3.0; // numero de la ligne de boutons
     if (       num_x - floor(num_x) > 1/3.0 && num_y - floor(num_y) > 1/3.0
             && floor(num_x >= 0 && floor(num_x) < 4
             && floor(num_y >= 0 && floor(num_y) < nb_lignes  ))){
@@ -135,8 +135,8 @@ bool getBloc(int x, int y, int &bouton_bloc, int bande_texte, int L, int taille_
 bool getEffet(int x, int y, int &bouton_effet, int bande_texte, int L, int taille_case, int taille_case_editeur, int nb_lignes){
     int x_dep = L*taille_case;
     int y_dep = bande_texte + 2*taille_case_editeur;
-    float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
-    float num_y = (2.0 *(y - y_dep) / float(taille_case_editeur)) / 3.0;
+    float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0; // numero de la colonne de boutons
+    float num_y = (2.0 *(y - y_dep) / float(taille_case_editeur)) / 3.0; // numero de la ligne de boutons
     if (       num_x - floor(num_x) > 1/3.0 && num_y - floor(num_y) > 1/3.0
             && floor(num_x >= 0 && floor(num_x) < 4
             && floor(num_y >= 0 && floor(num_y) < nb_lignes  ))){
@@ -168,7 +168,7 @@ void creer_map(string nom_map, int L, int H, int taille_case, bool editer, Map m
 
     map_a_editer.affiche_tout(taille_case); // Affichage de la map
     // Affichage de la grille et des boutons
-    affiche_boutons(H, L, taille_case, taille_case_editeur, bande_texte, nom_map);
+    affiche_boutons(L, taille_case, taille_case_editeur, bande_texte, nom_map);
     affiche_grille(H, L, taille_case);
 
     int bouton_couleur = bouton_neutre; // Initialisation de la couleur a neutre

@@ -38,3 +38,5 @@ void InitRandom();
 int hasard(int a, int b);
 
 Color couleur_au_hasard(); // Renvoit une couleur au hasard
+
+void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur=BLACK); // Ecris au centre du rectangle.

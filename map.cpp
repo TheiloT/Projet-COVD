@@ -1,7 +1,7 @@
 #include "map.h"
 #include "correspondance.h"
 #include "personnage.h"
-#include "Niveaux.h"
+#include "niveaux.h"
 #include "graphismes.h"
 
 Map::Map(){
@@ -17,7 +17,6 @@ Map::Map(string nom_map, int h, int l)
     grille_couleurs = MultiArray<int, 2> (L, H);
     grille_couleurs.fill(neutre);
 }
-
 
 void dessineCase (int x, int y, int taille_case, int bloc, int couleur){
 

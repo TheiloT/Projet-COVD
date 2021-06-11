@@ -1,6 +1,8 @@
 #pragma once
 #include "outils.h"
 
+// Fonctions graphiques et outils specifiques aux menus
+
 void draw_caracteristiques_niveau(int h, int hauteur, int largueur, string nom_map);
 
 void draw_bouton_etiquette(int x, int y, int taille_bouton, int bouton);
@@ -23,3 +25,15 @@ void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_m
 void draw_titre(int taille, int x, int y);
 
 void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y);
+
+// Fonction d'appel des menus a proprement parler
+
+void menu_creation_niveau();
+
+void selection_niveau(bool mode_perso, int taille_case);
+
+void menu_categorie_niveau(int taille_case);
+
+void menu_regles();
+
+void lancer_menu(int taille_case);

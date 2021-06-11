@@ -56,3 +56,10 @@ int hasard(int a, int b)
 Color couleur_au_hasard(){
     return Color(hasard(0,255),hasard(0,255),hasard(0,255));
 }
+
+void ecris_dans_la_case(int x, int y, int w, int h, string message, int taille_police, Color couleur){
+    int dx = int ( (w - taille_police * 0.88*message.size()) /2 );
+    int dy = int ( (h - taille_police) /2 );
+    drawString(x + dx, y + h - dy, message, couleur, taille_police);
+}
+//taille_police * 0.88*message.size()
