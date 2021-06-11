@@ -1,6 +1,5 @@
 #include "personnage.h"
 #include "correspondance.h"
-#include "outils.h"
 
 Personnage::Personnage(const Map &map){
 
@@ -359,16 +358,3 @@ void Personnage::cherche_etoile(const Map &map){
 int Personnage::get_nb_etoile(){
     return nb_etoile;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

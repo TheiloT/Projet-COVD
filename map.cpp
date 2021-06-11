@@ -1,8 +1,8 @@
 #include "map.h"
-#include "personnage.h"
 #include "correspondance.h"
-#include "graphismes.h"
+#include "personnage.h"
 #include "Niveaux.h"
+#include "graphismes.h"
 
 Map::Map(){
 }

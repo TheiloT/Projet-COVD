@@ -1,0 +1,34 @@
+Bienvenue sur PaintRunner !
+Dans ce jeu, vous incarnez un petit cube de couleur qui doit se frayer un chemin d'une porte d'entrée jusqu'à une porte de sortie.
+Votre cube se déplace tout seul, vers la droite ou vers la gauche, et doit traverser des obstacles de diverses natures.
+Pour cela, le joueur place des blocs d'action permettant au cube de franchir ces obstacles : saut, inversion du sens de parcours et...
+Changement de couleur ! Et oui, votre cube peut prendre différentes couleurs, de même que les obstacles rencontrés.
+Si la couleur du joueur est la même que celle d'un obsacle, le joueur peut librement traverser ce dernier !
+Mais attention, le noir n'est pas une couleur, et ne permettra de passer au travers d'aucun obstacle...
+Et pour vous lancer des défis, les niveaux comportent aussi des étoiles que vous pouvez ramasser en bonus !
+
+Lorsque vous arrivez sur le menu et que vous cliquez sur "Jouez", plusieurs options s'offrent à vous :
+<< Mode aventure >> et << Mes niveaux >>.
+Le mode aventure rassemble les niveaux créés par les développeurs du jeu.
+Dans << Mes niveaux >> en revanche, vous pouvez créer vos propres niveaux, les éditer ou les supprimer. 
+Laissez libre cours à votre imagination !
+
+Lorsque vous lancez une partie, vous arrivez sur une interface vous permettant de placer vos effets avant de faire partir le cube. 
+Sur la section verticale à droite, vous trouvez de haut en bas :
+- Le nom du niveau en cours,
+- De gauche à droite, les boutons pour faire partir le cube, pour réinitialiser le placement des effets et pour quitter le niveau,
+- Le nombre de chaque effet que vous pouvez encore placer.
+Vous devez alors cliquer sur les effets pour les sélectionner, puis les placer à la souris sur les réceptacles à effet : les blocs violets.
+Si vous faites partir le cube et que vous parvenez à atteindre la porte de sortie, c'est gagné !
+
+Enfin, à la création d'un niveau, vous pouvez sélectionner un nom de niveau et des dimensions en nombre de cases.
+En validant, vous entrez alors en mode éditeur. L'interface est proche de celle du mode "jouer", à quelques différences près :
+la grille du niveau est apparente, le bouton de réinitialisation des placements est remplacé par un bouton "sauvegarder",
+une barre de sélection de la couleur est présente et il y a plus de choix de blocs.
+Cliquez sur les blocs pour les placer. En cliquant plusieurs fois sur un bloc placé, vous pouvez, selon la nature de celui-ci,
+changer son type, son orientation... Ainsi, un réceptacle à effet se place en cliquant sur un mur (bloc noir) déjà placé.
+Vous pouvez également sélectionner une couleur puis cliquer sur les blocs placés pour leur attribuer cette couleur.
+Une fois votre niveau terminé, sauvergardez-le.
+Au lancement du niveau, les blocs d'effet seront alors convertis en réceptacles à effet et le joueur devra les replacer !
+
+Voilà, vous savez l'essentiel. Amusez-vous bien !

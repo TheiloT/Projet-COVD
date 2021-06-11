@@ -6,13 +6,13 @@ using namespace Imagine;
 #include<iostream>
 #include <fstream>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "algorithm"
 #include <vector>
 #include <map>
 using namespace std;
 
-#include <stdlib.h>
 
 #include <time.h>
 

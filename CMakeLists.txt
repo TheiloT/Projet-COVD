@@ -15,10 +15,15 @@ add_executable(main
                Map.h
                outils.cpp
                outils.h
+               edition.cpp
+               edition.h
                graphismes.h
                graphismes.cpp
+               menus.cpp
+               menus.h
+               niveaux.h
+               Niveaux.cpp
                Niveaux_perso.txt
                Niveaux_aventure.txt
-               niveaux.h
-               Niveaux.cpp)
+               regles_du_jeu.txt)
 ImagineUseModules(main Images)
