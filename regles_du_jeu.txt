@@ -1,4 +1,5 @@
 Bienvenue sur PaintRunner !
+
 Dans ce jeu, vous incarnez un petit cube de couleur qui doit se frayer un chemin d'une porte d'entrée jusqu'à une porte de sortie.
 Votre cube se déplace tout seul, vers la droite ou vers la gauche, et doit traverser des obstacles de diverses natures.
 Pour cela, le joueur place des blocs d'action permettant au cube de franchir ces obstacles : saut, inversion du sens de parcours et...
@@ -24,7 +25,7 @@ Si vous faites partir le cube et que vous parvenez à atteindre la porte de sort
 Enfin, à la création d'un niveau, vous pouvez sélectionner un nom de niveau et des dimensions en nombre de cases.
 En validant, vous entrez alors en mode éditeur. L'interface est proche de celle du mode "jouer", à quelques différences près :
 la grille du niveau est apparente, le bouton de réinitialisation des placements est remplacé par un bouton "sauvegarder",
-une barre de sélection de la couleur est présente et il y a plus de choix de blocs.
+une barre de sélection de la couleur est présente et il y a plus de choix de blocs car vous pouvez placer les obstacles.
 Cliquez sur les blocs pour les placer. En cliquant plusieurs fois sur un bloc placé, vous pouvez, selon la nature de celui-ci,
 changer son type, son orientation... Ainsi, un réceptacle à effet se place en cliquant sur un mur (bloc noir) déjà placé.
 Vous pouvez également sélectionner une couleur puis cliquer sur les blocs placés pour leur attribuer cette couleur.

@@ -24,6 +24,6 @@ bool getEffet(int x, int y, int &bouton_effet, int bande_texte, int L, int taill
 bool placeBloc(int x, int y, int L, int H, int taille_case);// Renvoie si le joueur a cherche a placer un bloc
 
 void creer_map(string nom_map, int L, int H, int taille_case, bool editer = false, Map map_a_editer = Map("",0,0), int num_map = -1, int nb_niveaux = -1, const string niveau = "Niveaux_perso.txt");
-// creation de mmap. Des arguments sont passes avec une valeur par defaut arbitraire pour permettre l'edition d'un niveau deja existant.
+// creation de map. Des arguments sont passes avec une valeur par defaut arbitraire pour permettre l'edition d'un niveau deja existant.
 
 void editer_map(Map map, int taille_case, int num_map, int nb_niveaux, string niveau = "Niveaux_perso"); // Edition de niveau

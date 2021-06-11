@@ -13,10 +13,9 @@ using namespace Imagine;
 #include <map>
 using namespace std;
 
-
 #include <time.h>
 
-class Point
+struct Point
 {
 public:
     float x;
