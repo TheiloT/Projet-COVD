@@ -69,7 +69,7 @@ void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiq
     drawRect(x, y, largeur_etiquette, hauteur_etiquette, WHITE, 2);
     int taille_police = hauteur_etiquette/6;
     ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police, Couleurs[k % 4]);
-    //drawLine(x+largeur_texte_etiquette, y, x+largeur_texte_etiquette, y+hauteur_etiquette, WHITE);
+//    drawLine(x+largeur_texte_etiquette, y, x+largeur_texte_etiquette, y+hauteur_etiquette, WHITE);
     int x_boutons = x + largeur_texte_etiquette;
     int y_boutons = y + (hauteur_etiquette-taille_bouton)/2;
     int pas = taille_bouton + marge_bouton;
@@ -77,7 +77,7 @@ void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiq
         for (int i=0; i<3; i++)
             draw_bouton_etiquette(marge_bouton + x_boutons + i*pas, y_boutons, taille_bouton, i);
     }
-    else draw_bouton_etiquette(x_boutons + 2*pas, y_boutons, taille_bouton, 2);
+    else draw_bouton_etiquette(marge_bouton + x_boutons + 2*pas, y_boutons, taille_bouton, 2);
 }
 
 void draw_bouton_bas(int x, int y, int taille_bouton, int bouton) {

@@ -440,25 +440,29 @@ void selection_niveau(bool mode_perso, int taille_case) {
             int num_etiquette = (y - marge_y) / (hauteur_etiquette + marge_y);
             int y_etiquette = (y - marge_y) % (hauteur_etiquette + marge_y);
             int num_niveau = page*nombre_niveaux_affiches + num_etiquette;
-            bool dans_hauteur_bouton = y_etiquette > marge_bouton && (y_etiquette < marge_bouton + taille_bouton);
+            bool dans_hauteur_bouton = y_etiquette > (hauteur_etiquette-taille_bouton)/2 && (y_etiquette < (hauteur_etiquette+taille_bouton)/2);
             if (dans_hauteur_bouton && num_niveau < nombre_niveaux) { // si la souris est dans la hauteur des boutons de l'etiquette ET que le numéro du niveau ne dépasse pas le nombre de niveaux existants
-                int num_bouton = (x - marge_x - largeur_texte_etiquette) / (taille_bouton + marge_bouton);
-                if (num_bouton == 0 && mode_perso) { // Lance l'editeur du niveau
-                    closeWindow(selection_niveau_Window);
-                    Map map_selectionnee;
-                    map_selectionnee.charger(num_niveau, "Niveaux_perso.txt");
-                    creer_map(map_selectionnee.nom, map_selectionnee.L, map_selectionnee.H, taille_case, true, map_selectionnee, num_niveau, nombre_niveaux, "Niveaux_perso.txt");
-                    liste_niveaux = recuperer_niveaux(mode_perso);
-                    selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
-                    setActiveWindow(selection_niveau_Window);
-                    rafraichir_affichage = true;
-                }
-                if (num_bouton == 1 && mode_perso) { // supprime le niveau
-                    efface_niveau(num_niveau, nombre_niveaux, "Niveaux_perso.txt");
-                    liste_niveaux = recuperer_niveaux(mode_perso);
-                    rafraichir_affichage = true;
-                }
-                if (num_bouton == 2) { // joue le niveau
+                int x_boutons = marge_x + largeur_texte_etiquette;
+                int num_bouton = (x - x_boutons) / (taille_bouton + marge_bouton);
+                bool est_dans_largeur_bouton = (x > (x_boutons + marge_bouton + num_bouton*(taille_bouton + marge_bouton)))
+                                                && (x < (x_boutons + marge_bouton + (num_bouton+1)*(taille_bouton + marge_bouton) - marge_bouton));
+                if (est_dans_largeur_bouton) {
+                        if (num_bouton == 0 && mode_perso) { // Lance l'editeur du niveau
+                        closeWindow(selection_niveau_Window);
+                        Map map_selectionnee;
+                        map_selectionnee.charger(num_niveau, "Niveaux_perso.txt");
+                        creer_map(map_selectionnee.nom, map_selectionnee.L, map_selectionnee.H, taille_case, true, map_selectionnee, num_niveau, nombre_niveaux, "Niveaux_perso.txt");
+                        liste_niveaux = recuperer_niveaux(mode_perso);
+                        selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
+                        setActiveWindow(selection_niveau_Window);
+                        rafraichir_affichage = true;
+                    }
+                    if (num_bouton == 1 && mode_perso) { // supprime le niveau
+                        efface_niveau(num_niveau, nombre_niveaux, "Niveaux_perso.txt");
+                        liste_niveaux = recuperer_niveaux(mode_perso);
+                        rafraichir_affichage = true;
+                    }
+                    if (num_bouton == 2) { // joue le niveau
                     closeWindow(selection_niveau_Window);
                     string txt_niveaux = (mode_perso) ? "niveaux_perso.txt" : "niveaux_aventure.txt";
                     Map map_selectionnee;
@@ -468,6 +472,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
                     selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
                     setActiveWindow(selection_niveau_Window);
                     rafraichir_affichage = true;
+                }
                 }
             }
         }
