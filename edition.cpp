@@ -92,14 +92,14 @@ void affiche_boutons(int H, int L, int taille_case, int taille_case_editeur, int
     }
 }
 
-void affiche_boutons_joueur(int H_win, int L, int taille_case, int taille_case_editeur, int bande_texte, string nom_map, std::map<int, int> blocs_disponibles){
+void affiche_boutons_joueur(int L, int H, int taille_case, int taille_case_editeur, int bande_texte, string nom_map, std::map<int, int> blocs_disponibles){
 
     int x_dep = L * taille_case;
 
     // Lignes de separation
     drawLine(x_dep, bande_texte, x_dep + 6.5 * taille_case_editeur, bande_texte, BLACK, 2);
     drawLine(x_dep, bande_texte + 2 * taille_case_editeur, x_dep + 6.5 * taille_case_editeur, bande_texte + 2 * taille_case_editeur, BLACK, 2);
-    drawLine(x_dep+1, 0, x_dep+1, H_win,BLACK, 2);
+    drawLine(x_dep+1, 0, x_dep+1, H*taille_case, BLACK, 2);
 
     // Affichage du nom de la map
     int dx = int (3.25*taille_case_editeur - taille_case_editeur * 0.125 * nom_map.size() );

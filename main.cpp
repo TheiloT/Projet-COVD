@@ -204,7 +204,7 @@ void jouer(Map map, int taille_case) {
     // Affichage de la map, de la grille et des boutons
     map.affiche_tout(taille_case);
     // affiche_grille(H, L, taille_case);
-    affiche_boutons_joueur(H_win, L, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
+    affiche_boutons_joueur(L, H, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
 
     int bouton_action = 4; // Correspond a aucune action
     int bouton_effet = 7; // Correspond au mur modifiable
