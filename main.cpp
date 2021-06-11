@@ -554,8 +554,8 @@ void menu_categorie_niveau(int taille_case){
 }
 
 void menu_regles(){
-//    int result = system("D:/Documents/Etudes/\"Ponts et Chaussees\"/Cours/COVD/projet-COVD/regles_du_jeu.txt");
-    int result = system(srcPath("regles_du_jeu.txt"));
+    int result = system("D:/Documents/Etudes/\"Ponts et Chaussees\"/Cours/COVD/projet-COVD/regles_du_jeu.txt");
+//    int result = system(srcPath("regles_du_jeu.txt"));
 
     if (result) {
         const int W_message = 700;
