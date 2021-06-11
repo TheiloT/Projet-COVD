@@ -73,12 +73,11 @@ void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiq
     Color Couleurs[4] = {RED, BLUE, GREEN, PURPLE};
     drawRect(x, y, largeur_etiquette, hauteur_etiquette, WHITE, 2);
     int taille_police = hauteur_etiquette/6;
-    ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police, Couleurs[k % 4]);
-//    drawLine(x+largeur_texte_etiquette, y, x+largeur_texte_etiquette, y+hauteur_etiquette, WHITE);
+    ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police, Couleurs[k % 4]); // Ecrit le nom du niveau dans la couleur correspondant au numero de l'etiquette en partant du haut
     int x_boutons = x + largeur_texte_etiquette;
     int y_boutons = y + (hauteur_etiquette-taille_bouton)/2;
     int pas = taille_bouton + marge_bouton;
-    if (mode_perso) {
+    if (mode_perso) { // On affiche plus de boutons en mode "Mes niveaux"
         for (int i=0; i<3; i++)
             draw_bouton_etiquette(marge_bouton + x_boutons + i*pas, y_boutons, taille_bouton, i);
     }
@@ -550,10 +549,11 @@ void menu_categorie_niveau(int taille_case){
 }
 
 void menu_regles(){
+    // Ouverture du fichier .txt des regles du jeu
     int result = system("D:/Documents/Etudes/\"Ponts et Chaussees\"/Cours/COVD/projet-COVD/regles_du_jeu.txt");
 //    int result = system(srcPath("regles_du_jeu.txt"));
 
-    if (result) {
+    if (result) { // En cas de mauvais chargement, on ouvre une fenetre avec un message d'erreur
         const int W_message = 700;
         const int H_message = 100;
         const int marge_x = int(W_message/12);

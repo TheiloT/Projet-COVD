@@ -60,8 +60,8 @@ void affiche_boutons_joueur(int L, int H, int taille_case, int taille_case_edite
 
 bool getAction_joueur(int x, int y, int &bouton_action, int bande_texte, int L, int taille_case, int taille_case_editeur){
     int x_dep = L*taille_case;
-    if ( y < bande_texte + 1.5*taille_case_editeur && y > bande_texte + 0.5*taille_case_editeur){
-        float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0;
+    if ( y < bande_texte + 1.5*taille_case_editeur && y > bande_texte + 0.5*taille_case_editeur){ // Verifie si la souris est a la bonne hauteur
+        float num_x = (2.0 *(x - x_dep) / float(taille_case_editeur)) / 3.0; // Numero du bouton (numerotation de gauche a droite)
         if (num_x - floor(num_x) > 1/3.0
                 && floor(num_x >= 0 && floor(num_x) < 4)){
             int numero_case=floor(num_x);
@@ -74,10 +74,10 @@ bool getAction_joueur(int x, int y, int &bouton_action, int bande_texte, int L, 
 
 void prepare_map(Map map, int L, int H, std::map<int, int> &blocs_disponibles) {
     int k; // case courante
-    for (int i=0; i<H; i++) {
+    for (int i=0; i<H; i++) { // On parcourt l'ensemble de la map
         for (int j=0; j<L; j++) {
             k = map.get_case(j, i);
-            if (est_dans(k, effets)) {
+            if (est_dans(k, effets)) { // Si le bloc est un effet, on le convertit en bloc modifiable et on incremente le stock d'effets correspondant
                 map.set_case(j, i, mur_modif);
                 blocs_disponibles[k] ++;
             }
@@ -116,7 +116,7 @@ void affiche_etoiles(int x, int y, int hauteur_etoile, int largeur_etoiles, int 
     const int marge_etoile = taille_etoile/2;
     int x_etoiles = x + largeur_etoiles/2 - (3*taille_etoile + 2*marge_etoile)/2;
     for (int i=0; i<3; i++) {
-        int collectee = (i < nb_etoiles_collectees);
+        int collectee = (i < nb_etoiles_collectees); // Le nombre d'etoiles pleines affichees (jusqu'a 3) est le nombre d'etoiles collectees durant la partie, les autres apparaissant creuses.
         trace_etoile_pleine_vide(x_etoiles + i*(taille_etoile + marge_etoile), y, taille_etoile, collectee);
     }
 }
@@ -150,7 +150,7 @@ void affiche_victoire(int nb_etoiles_collectees) { // Affiche que le niveau est 
 
     // Affichage des étoiles
     int y_etoiles = marge_y + hauteur_gagne;
-    affiche_etoiles(marge_x, y_etoiles, hauteur_etoiles, W_victoire - 2*marge_x, nb_etoiles_collectees); // à compléter avec le relevé des étoiles
+    affiche_etoiles(marge_x, y_etoiles, hauteur_etoiles, W_victoire - 2*marge_x, nb_etoiles_collectees);
 
     // Affichage du bouton de retour
     int x_retour = W_victoire/2 - taille_bouton/2;
@@ -199,19 +199,21 @@ bool run (const Map &map, int taille_case, int &nb_etoiles_collectees){ // Joue 
 }
 
 void jouer(Map map, int taille_case) {
+    // Geometrie
     const int L = map.get_L();
     const int H = map.get_H();
     const string nom = map.get_nom();
 
+    // Vecteur des stocks de chaque effet disponibles
     std::map<int, int> blocs_disponibles;
     for (int k=0; k<int(effets.size()); k++)
         blocs_disponibles[effets[k]] = 0;
 
     prepare_map(map, L, H, blocs_disponibles);
 
-    const int taille_case_editeur = 2*taille_case;
-    const int bande_texte = taille_case_editeur;
-    const int nb_lignes = 2;
+    const int taille_case_editeur = 2*taille_case; // dimension d'une case de l'editeur (bouton)
+    const int bande_texte = taille_case_editeur; // hauteur de la bande contenant le nom du niveau
+    const int nb_lignes = 2; // nombre de lignes de boutons
 
     // Ouverture de la fenetre
     const int H_win = max( H*taille_case, int(bande_texte + (9.0 * taille_case_editeur)) );
@@ -219,7 +221,6 @@ void jouer(Map map, int taille_case) {
     setActiveWindow(w);
     // Affichage de la map, de la grille et des boutons
     map.affiche_tout(taille_case);
-    // affiche_grille(H, L, taille_case);
     affiche_boutons_joueur(L, H, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
 
     int bouton_action = 4; // Correspond a aucune action
@@ -230,36 +231,34 @@ void jouer(Map map, int taille_case) {
     int y;
 
     bool fin = false;
-    while ( ! fin ){
+    while ( ! fin ){ // boucle principale
 
         getMouse(x, y);
 
-        if (getEffet(x, y, bouton_effet, bande_texte, L, taille_case, taille_case_editeur, nb_lignes));
+        if (getEffet(x, y, bouton_effet, bande_texte, L, taille_case, taille_case_editeur, nb_lignes)); // Le joueur selectionne un effet
 
         else if ( getAction_joueur(x, y, bouton_action, bande_texte, L, taille_case, taille_case_editeur) ){
-            if (bouton_action == bouton_play){
+            if (bouton_action == bouton_play){ // Si le joueur lance la partie
                 int nb_etoiles_collectees;
                 fin = run(map, taille_case, nb_etoiles_collectees);
                 map.affiche_tout(taille_case);
-//                affiche_grille(H, L, taille_case);
-                if (fin){
+                if (fin){ // Si le joueur gagne la partie, on affiche la fenetre de victoire
                     affiche_victoire(nb_etoiles_collectees);
-                    closeWindow(w); // Fonction de fin a rajouter
+                    closeWindow(w);
                 }
             }
-            else if (bouton_action == bouton_reset){
+            else if (bouton_action == bouton_reset){ // Reinitialise le placement des effets
                 prepare_map(map, L, H, blocs_disponibles);
                 map.affiche_tout(taille_case);
-//                affiche_grille(H, L, taille_case);
                 affiche_boutons_joueur(L, H, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
             }
-            else if (bouton_action == bouton_quitter){
+            else if (bouton_action == bouton_quitter){ // Retour vers le menu precedent
                 closeWindow(w);
                 fin = true;
             }
         }
 
-        else if (placeBloc(x, y, L, H, taille_case)){
+        else if (placeBloc(x, y, L, H, taille_case)){ // Le joueur place un effet
             int x_case = floor(x/taille_case);
             int y_case = floor(y/taille_case);
             int bloc = map.get_case(x_case, y_case);
@@ -277,7 +276,6 @@ void jouer(Map map, int taille_case) {
 
             // Dessin de la case
             map.drawCase(x_case, y_case, taille_case);
-//            affiche_grille(H, L, taille_case);
             affiche_boutons_joueur(L, H, taille_case, taille_case_editeur, bande_texte, nom, blocs_disponibles);
         }
     }
