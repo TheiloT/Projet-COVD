@@ -27,7 +27,7 @@ void drawAction(int x, int y, int k, int taille_case){
 
     else if (k == bouton_sauvegarder){
         string s = "S";
-        drawString(x + int(0.2*taille_case), y + int(0.85*taille_case), s, BLACK, int (0.5*taille_case));
+        drawString(x + int(0.2*taille_case), y + int(0.85*taille_case), s, BLACK, int (0.4*taille_case));
     }
 
     else if (k == bouton_quitter){
@@ -38,7 +38,7 @@ void drawAction(int x, int y, int k, int taille_case){
     }
     else if (k == bouton_reset){
         string r = "R";
-        drawString(x + int(0.2*taille_case), y + int(0.85*taille_case), r, BLACK, int (0.5*taille_case));
+        drawString(x + int(0.2*taille_case), y + int(0.85*taille_case), r, BLACK, int (0.4*taille_case));
     }
 }
 

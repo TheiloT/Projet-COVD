@@ -3,6 +3,7 @@
 #include "edition.h"
 #include "personnage.h"
 #include "outils.h"
+#include "menus.h"
 
 // Fonctions pour le mode "jouer"
 
@@ -123,7 +124,7 @@ void affiche_etoiles(int x, int y, int hauteur_etoile, int largeur_etoiles, int 
 
 void affiche_retour(int x, int y, int taille_bouton){
     drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-    ecris_dans_la_case(x-2, y, taille_bouton, taille_bouton, "X", taille_bouton/2, WHITE);
+    ecris_dans_la_case(x, y, taille_bouton, taille_bouton, "X", 0.4 * taille_bouton, WHITE);
 }
 
 void affiche_victoire(int nb_etoiles_collectees) { // Affiche que le niveau est gagne
@@ -155,7 +156,7 @@ void affiche_victoire(int nb_etoiles_collectees) { // Affiche que le niveau est 
     // Affichage du bouton de retour
     int x_retour = W_victoire/2 - taille_bouton/2;
     int y_retour = y_etoiles + hauteur_etoiles + hauteur_retour/2 - taille_bouton/2;
-    affiche_retour(x_retour, y_retour, taille_bouton);
+    draw_bouton_etiquette(x_retour, y_retour, taille_bouton, 1);
 
     click();
     closeWindow(victoire_Window);

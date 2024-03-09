@@ -42,12 +42,13 @@ void draw_bouton_etiquette(int x, int y, int taille_bouton, int bouton) {
     if (bouton == 0) { // dessine le bouton d'edition
         fillRect(x, y, taille_bouton, taille_bouton, YELLOW);
         drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.2*taille_bouton), y + int(0.85*taille_bouton), "E", BLACK, int (0.5*taille_bouton));
+        drawString(x + int(0.2*taille_bouton), y + int(0.85*taille_bouton), "E", BLACK, int (0.4*taille_bouton));
     }
     if (bouton == 1) { // dessine le bouton de deletion
+        int d = int (0.2 * taille_bouton);
         fillRect(x, y, taille_bouton, taille_bouton, RED);
-        drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", BLACK, int (0.5*taille_bouton));
+        drawLine(x + 4 + d, y + 4 + d, x + taille_bouton - 4 - d, y + taille_bouton - 4 - d, WHITE, 8);
+        drawLine(x + taille_bouton - 4 - d, y + 4 + d, x + 4 + d, y + taille_bouton - 4 - d, WHITE, 8);
     }
     if (bouton == 2) { // dessine le bouton jouer
         fillRect(x, y, taille_bouton, taille_bouton, GREEN);
@@ -72,9 +73,9 @@ void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiq
 
     Color Couleurs[4] = {RED, BLUE, GREEN, PURPLE};
     drawRect(x, y, largeur_etiquette, hauteur_etiquette, WHITE, 2);
-    int taille_police = hauteur_etiquette/6;
+    int taille_police = 18;
     ecris_dans_la_case(x, y, largeur_texte_etiquette, hauteur_etiquette, nom_niveau, taille_police, Couleurs[k % 4]); // Ecrit le nom du niveau dans la couleur correspondant au numero de l'etiquette en partant du haut
-    int x_boutons = x + largeur_texte_etiquette;
+    int x_boutons = x + int(1.4 * largeur_texte_etiquette);
     int y_boutons = y + (hauteur_etiquette-taille_bouton)/2;
     int pas = taille_bouton + marge_bouton;
     if (mode_perso) { // On affiche plus de boutons en mode "Mes niveaux"
@@ -86,12 +87,16 @@ void draw_etiquette(int x, int y, int k, int largeur_etiquette, int hauteur_etiq
 
 void draw_bouton_bas(int x, int y, int taille_bouton, int bouton) {
     if (bouton == 0) { // dessine le bouton de retour
+        // draw_bouton_etiquette(x, y, taille_bouton, 1);
+        int d = int (0.2 * taille_bouton);
+        // fillRect(x, y, taille_bouton, taille_bouton, RED);
         drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.23*taille_bouton), y + int(0.85*taille_bouton), "X", WHITE, int (0.5*taille_bouton));
+        drawLine(x + 4 + d, y + 4 + d, x + taille_bouton - 4 - d, y + taille_bouton - 4 - d, WHITE, 8);
+        drawLine(x + taille_bouton - 4 - d, y + 4 + d, x + 4 + d, y + taille_bouton - 4 - d, WHITE, 8);
     }
     if (bouton == 1) { // dessine le bouton d'ajout de niveau
         drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
-        drawString(x + int(0.1*taille_bouton), y + int(0.85*taille_bouton), "+", WHITE, int (0.57*taille_bouton));
+        drawString(x + int(0.1*taille_bouton), y + int(0.85*taille_bouton), "+", WHITE, int (0.45*taille_bouton));
     }
     if (bouton == 2) { // dessine le bouton page suivante
         drawRect(x, y, taille_bouton, taille_bouton, WHITE, 2);
@@ -162,7 +167,7 @@ void draw_selection_niveau(int W, int H, int marge_x, int marge_y, int largeur_e
     draw_bouton_bas(x_page + taille_bouton_bas + largeur_index_page, y_boutons_bas, taille_bouton_bas, 3);
     int nb_pages = max((nombre_niveaux-1)/nombre_niveaux_affiches, 0);
     string index_page = to_string(page+1) + "/" + to_string(nb_pages+1);
-    drawString(x_page + taille_bouton_bas + int(0.25*taille_bouton), y_boutons_bas + int(0.87*taille_bouton), index_page, WHITE, int (0.5*taille_bouton));
+    drawString(x_page + taille_bouton_bas + int(0.25*taille_bouton), y_boutons_bas + int(0.87*taille_bouton), index_page, WHITE, int (0.4*taille_bouton));
 }
 
 vector<tuple<string, int>> recuperer_niveaux(bool mode_perso) {
@@ -229,14 +234,15 @@ void draw_categorie_niveau(int W_menu, int H_menu, int marge_menu_x, int marge_m
 void draw_titre(int taille, int x, int y){ // Dessin du titre
     string titre = "Paint Runner";
     Color Liste_couleurs[12] = {Color(170,20,200), Color(169,27,176), Color(196,30,153), Color(207,0,99), Color(230,21,119), Color(243,77,154), Color(255,0,0), Color(223,40,35), Color(247,106,4), Color(206,156,72), Color(250,194,0), Color(254,221,39)};
+    const double facteur = 1.4;
     for (unsigned int i=0; i<3; i++){
-        drawString(x + taille*i, y, {titre[i]}, Liste_couleurs[i], taille );
+        drawString(x + facteur * taille*i, y, {titre[i]}, Liste_couleurs[i], taille );
     }
     for (unsigned int i=3; i<5; i++){
-        drawString(x + taille*i - 0.6*taille, y, {titre[i]}, Liste_couleurs[i], taille );
+        drawString(x + facteur * taille*i - 0.6*taille, y, {titre[i]}, Liste_couleurs[i], taille );
     }
     for (unsigned int i=5; i<titre.size(); i++){
-        drawString(x + taille*i - 1.2*taille, y, {titre[i]}, Liste_couleurs[i], taille );
+        drawString(x + facteur * taille*i - 1.2*taille, y, {titre[i]}, Liste_couleurs[i], taille );
     }
 }
 
@@ -248,7 +254,7 @@ void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
     int w = W_menu - 2*marge_menu_x; // largueur des boutons
     int h = 2*marge_menu_y; // hauteur des boutons
 
-    draw_titre(48, x/2, 2.5*marge_menu_y);
+    draw_titre(48, int(1.2*x), 2.5*marge_menu_y);
     //ecris_dans_la_case (x, marge_menu_y, w, h, "Paint Runner", 40, Color(hasard(0, 255), hasard(0, 255), hasard(0, 255)));
 
     // Dessin des boutons
@@ -264,7 +270,7 @@ void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y){
 
 // Fonction d'appel des menus a proprement parler
 
-void menu_creation_niveau(){
+void menu_creation_niveau(int taille_case){
     const int h = 60;
     const int W = 7*h;
     const int H = 10*h;
@@ -290,8 +296,6 @@ void menu_creation_niveau(){
     //  Booleen qui indique si key correspond a un clic ou non
     bool clic = false;
     bool clav = false;
-
-    int taille_case = 20; // A regler
 
     bool fin = false;
     while ( ! fin ){
@@ -385,12 +389,12 @@ void menu_creation_niveau(){
 
 void selection_niveau(bool mode_perso, int taille_case) {
     // Geometrie de la fenetre
-    const int largeur_etiquette = 600;
-    const int hauteur_etiquette = 120;
+    const int largeur_etiquette = 1200;
+    const int hauteur_etiquette = 240;
     const int marge_x = int(largeur_etiquette/8); // marge entre une etiquette de niveau et le bord de la fenetre
     const int marge_y = int(hauteur_etiquette/4); // marge entre deux etiquette de niveau
 
-    const int largeur_texte_etiquette = int(6*largeur_etiquette/10); // fraction de l'etiquette dediee aux boutons
+    const int largeur_texte_etiquette = int(4*largeur_etiquette/10); // fraction de l'etiquette dediee aux boutons
     const int taille_bouton = int(largeur_etiquette/10);
     const int marge_bouton = int(largeur_etiquette/40); // marge entre deux boutons d'une etiquette
 
@@ -407,7 +411,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
     setActiveWindow(selection_niveau_Window);
 
     // Initialisation de la liste de niveaux
-    vector<tuple<string, int>> liste_niveaux = recuperer_niveaux(mode_perso); // Contiendra le nom du niveau et le nombre d'etoiles collectees sur ce niveau (a programmer
+    vector<tuple<string, int>> liste_niveaux = recuperer_niveaux(mode_perso); // Contiendra le nom du niveau et le nombre d'etoiles collectees sur ce niveau
     int nombre_niveaux;
 
     int page = 0;
@@ -438,7 +442,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
             int num_niveau = page*nombre_niveaux_affiches + num_etiquette;
             bool dans_hauteur_bouton = y_etiquette > (hauteur_etiquette-taille_bouton)/2 && (y_etiquette < (hauteur_etiquette+taille_bouton)/2);
             if (dans_hauteur_bouton && num_niveau < nombre_niveaux) { // si la souris est dans la hauteur des boutons de l'etiquette ET que le numéro du niveau ne dépasse pas le nombre de niveaux existants
-                int x_boutons = marge_x + largeur_texte_etiquette;
+                int x_boutons = marge_x + int(1.4 * largeur_texte_etiquette);
                 int num_bouton = (x - x_boutons) / (taille_bouton + marge_bouton);
                 bool est_dans_largeur_bouton = (x > (x_boutons + marge_bouton + num_bouton*(taille_bouton + marge_bouton)))
                                                 && (x < (x_boutons + marge_bouton + (num_bouton+1)*(taille_bouton + marge_bouton) - marge_bouton));
@@ -480,7 +484,7 @@ void selection_niveau(bool mode_perso, int taille_case) {
             }
             if ((x > W_fenetre/2 - taille_bouton_bas) && (x < W_fenetre/2 + taille_bouton_bas) && mode_perso) { // Creation de niveau
                 closeWindow(selection_niveau_Window);
-                menu_creation_niveau();
+                menu_creation_niveau(taille_case);
                 liste_niveaux = recuperer_niveaux(mode_perso);
                 page = nombre_pages+1; // Pour diriger l'utilisateur a l'endroit du niveau qu'il vient de creer
                 selection_niveau_Window = openWindow(W_fenetre, H_fenetre, menu);
@@ -502,8 +506,8 @@ void selection_niveau(bool mode_perso, int taille_case) {
 }
 
 void menu_categorie_niveau(int taille_case){
-    const int W_menu = 600;
-    const int H_menu = 700;
+    const int W_menu = 1200;
+    const int H_menu = 1400;
     const int marge_menu_x = int(W_menu/6);
     const int marge_menu_y = int(H_menu/10);
 
@@ -577,8 +581,8 @@ void menu_regles(){
 }
 
 void lancer_menu(int taille_case) {
-    const int W_menu = 600;
-    const int H_menu = 721;
+    const int W_menu = 1200;
+    const int H_menu = 1442;
     const int marge_menu_x = int(W_menu/6);
     const int marge_menu_y = int(H_menu/13);
 

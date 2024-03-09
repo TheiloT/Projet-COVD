@@ -30,7 +30,7 @@ void draw_menu(int W_menu, int H_menu, int marge_menu_x, int marge_menu_y); // F
 
 // Fonction d'appel des menus a proprement parler
 
-void menu_creation_niveau(); // Ouvre le menu de creation de niveau : choix du nom de niveau, de ses dimensions
+void menu_creation_niveau(int taille_case); // Ouvre le menu de creation de niveau : choix du nom de niveau, de ses dimensions
 
 void selection_niveau(bool mode_perso, int taille_case); // Ouvre la selection du niveau parmi la liste des niveaux disponibles, en fonction de la categorie de niveaux selectionnee
 
